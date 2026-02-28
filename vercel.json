@@ -1,10 +1,6 @@
 {
   "crons": [
     {
-      "path": "/api/collect",
-      "schedule": "0 6 * * *"
-    },
-    {
       "path": "/api/collect/group1",
       "schedule": "0 6 * * *"
     },

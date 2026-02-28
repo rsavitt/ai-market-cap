@@ -35,6 +35,7 @@ const SIGNAL_NAMES = [
   'hackernewsSignal', 'redditSignal',
   'openRouterSignal',
   'semanticScholarCitations',
+  'openAlexCitations',
 ] as const;
 
 type SignalName = typeof SIGNAL_NAMES[number];
@@ -56,20 +57,23 @@ export function exponentialDecay(dayAge: number, halfLife: number): number {
 }
 
 /**
- * Normalize values within a category using 90-day rolling baselines.
- * score = ((value - min_90d) / (max_90d - min_90d)) * 95
- * Leader capped at 95, floor at 0.
+ * Normalize values within a category using log-percentile ranking.
+ * log_value = log(1 + raw_value)
+ * percentile_rank = rank_within_category / category_size
+ * score = percentile_rank * 95
+ *
+ * This ensures even distribution from 0–95 regardless of raw value skew.
+ * When only 1 entity has data, fall back to a fixed mid-range score (47.5).
  */
 function normalizeWithinCategory(
   values: Map<string, number>,
   entityIds: string[],
-  signalName: string,
+  _signalName: string,
   category: string,
-  baselines: Map<string, { min: number; max: number }>,
+  _baselines: Map<string, { min: number; max: number }>,
   entityRegistry: RegisteredEntity[],
 ): Map<string, number> {
   const result = new Map<string, number>();
-  const baseline = baselines.get(signalName);
 
   // Get category entity IDs
   const categoryEntityIds = entityIds.filter(id => {
@@ -77,16 +81,47 @@ function normalizeWithinCategory(
     return entity?.category === category;
   });
 
+  // Collect log-transformed values for entities that have data
+  const logValues: { id: string; logVal: number }[] = [];
   for (const id of categoryEntityIds) {
-    const value = values.get(id) ?? 0;
-
-    if (baseline && baseline.max > baseline.min) {
-      const normalized = ((value - baseline.min) / (baseline.max - baseline.min)) * 95;
-      result.set(id, Math.max(0, Math.min(95, Math.round(normalized * 100) / 100)));
-    } else {
-      // No baseline range — use raw value capped at 95
-      result.set(id, Math.min(95, Math.max(0, value)));
+    const raw = values.get(id) ?? 0;
+    if (raw > 0) {
+      logValues.push({ id, logVal: Math.log(1 + raw) });
     }
+  }
+
+  // Sort ascending for percentile ranking
+  logValues.sort((a, b) => a.logVal - b.logVal);
+
+  const withData = logValues.length;
+
+  if (withData === 0) {
+    // No data at all — everyone gets baseline
+    for (const id of categoryEntityIds) {
+      result.set(id, 0);
+    }
+    return result;
+  }
+
+  if (withData === 1) {
+    // Only 1 entity has data — give it a mid-range score instead of 95
+    for (const id of categoryEntityIds) {
+      result.set(id, 0);
+    }
+    result.set(logValues[0].id, 47.5);
+    return result;
+  }
+
+  // Assign percentile-based scores
+  const entityScoreMap = new Map<string, number>();
+  for (let i = 0; i < logValues.length; i++) {
+    const percentile = (i + 1) / withData; // rank from 1/n to 1.0
+    const score = Math.round(percentile * 95 * 100) / 100;
+    entityScoreMap.set(logValues[i].id, score);
+  }
+
+  for (const id of categoryEntityIds) {
+    result.set(id, entityScoreMap.get(id) ?? 0);
   }
 
   return result;
@@ -178,6 +213,7 @@ function calculateConfidence(entityId: string, raw: RawSignals): { confidence: n
     raw.hackernewsSignal, raw.redditSignal,
     raw.openRouterSignal,
     raw.semanticScholarCitations,
+    raw.openAlexCitations,
   ];
 
   let available = 0;
@@ -217,6 +253,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     redditSignal: new Map(),
     openRouterSignal: new Map(),
     semanticScholarCitations: new Map(),
+    openAlexCitations: new Map(),
   };
 
   const signalToRaw: Record<SignalName, Map<string, number>> = {
@@ -229,6 +266,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     redditSignal: raw.redditSignal,
     openRouterSignal: raw.openRouterSignal,
     semanticScholarCitations: raw.semanticScholarCitations,
+    openAlexCitations: raw.openAlexCitations,
   };
 
   for (const [category] of Object.entries(categoriesMap)) {
@@ -271,10 +309,11 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
   ], entityIds);
 
-  // Expert: Semantic Scholar (0.65) + HN (0.35)
+  // Expert: Semantic Scholar (0.45) + OpenAlex (0.25) + HN (0.30)
   const expertScores = combineDimension([
-    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.65 },
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.45 },
+    { normalized: normalizedSignals.openAlexCitations, weight: 0.25 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.30 },
   ], entityIds);
 
   // Compute category medians for new entrant handling
