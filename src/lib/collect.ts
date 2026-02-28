@@ -1,4 +1,4 @@
-import { getDb, insertRawSignal, insertProvenance, getPreviousDayScores } from './db';
+import { ensureDb, getPreviousDayScores } from './db';
 import { entityRegistry } from './entity-registry';
 import { computeScores, type RawSignals } from './scoring';
 import { collectPyPI } from './collectors/pypi';
@@ -39,7 +39,7 @@ async function safeCollect<T>(
 /**
  * Write all raw signal values to the raw_signals table for historical tracking.
  */
-function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, number>, today: string): void {
+async function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, number>, today: string): Promise<void> {
   const signalEntries: [string, Map<string, number>][] = [
     ['pypi_downloads', raw.pypiDownloads],
     ['npm_downloads', raw.npmDownloads],
@@ -52,22 +52,37 @@ function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, number>, t
     ['semantic_scholar_citations', raw.semanticScholarCitations],
   ];
 
+  const db = await ensureDb();
+  const stmts: { sql: string; args: any[] }[] = [];
+
   for (const [signalName, values] of signalEntries) {
     values.forEach((value, entityId) => {
-      insertRawSignal(entityId, today, signalName, value);
+      stmts.push({
+        sql: `INSERT INTO raw_signals (entity_id, date, signal_name, raw_value)
+              VALUES (?, ?, ?, ?)
+              ON CONFLICT(entity_id, date, signal_name) DO UPDATE SET raw_value = excluded.raw_value`,
+        args: [entityId, today, signalName, value],
+      });
     });
+  }
+
+  if (stmts.length > 0) {
+    await db.batch(stmts, 'write');
   }
 }
 
 /**
  * Write provenance records comparing new scores to previous day.
  */
-function writeProvenance(
+async function writeProvenance(
   scores: Map<string, { usage_score: number; attention_score: number; capability_score: number; expert_score: number; total_score: number; confidence: number }>,
   raw: RawSignals,
-): void {
-  const previousScores = getPreviousDayScores();
+): Promise<void> {
+  const previousScores = await getPreviousDayScores();
   const timestamp = new Date().toISOString();
+
+  const db = await ensureDb();
+  const stmts: { sql: string; args: any[] }[] = [];
 
   scores.forEach((score, entityId) => {
     const prev = previousScores.get(entityId);
@@ -92,15 +107,16 @@ function writeProvenance(
       }
     }
 
-    insertProvenance(
-      entityId,
-      timestamp,
-      signalContributions,
-      prev?.total_score ?? null,
-      score.total_score,
-      score.confidence,
-    );
+    stmts.push({
+      sql: `INSERT INTO provenance (entity_id, timestamp, signal_contributions, previous_total, new_total, confidence)
+            VALUES (?, ?, ?, ?, ?, ?)`,
+      args: [entityId, timestamp, JSON.stringify(signalContributions), prev?.total_score ?? null, score.total_score, score.confidence],
+    });
   });
+
+  if (stmts.length > 0) {
+    await db.batch(stmts, 'write');
+  }
 }
 
 export async function runCollection(): Promise<CollectionResult> {
@@ -108,6 +124,9 @@ export async function runCollection(): Promise<CollectionResult> {
   const today = new Date().toISOString().split('T')[0];
   const sources: Record<string, { count: number; error?: string }> = {};
   const anomalies: string[] = [];
+
+  // Ensure DB is initialized
+  await ensureDb();
 
   // Run collectors in parallel groups to respect rate limits
   // Group 1: No auth required, generous rate limits
@@ -147,64 +166,57 @@ export async function runCollection(): Promise<CollectionResult> {
   };
 
   // Store all raw signals for historical baselines
-  storeRawSignals(raw, githubAbsolute, today);
+  await storeRawSignals(raw, githubAbsolute, today);
 
   // Compute scores
-  const scores = computeScores(raw);
+  const scores = await computeScores(raw);
 
-  // Anomaly detection
-  scores.forEach((score, entityId) => {
-    const anomalyResult = detectVelocityAnomaly(entityId, score.total_score);
+  // Anomaly detection (sequential — each call awaits DB)
+  const scoreEntries = Array.from(scores.entries());
+  for (const [entityId, score] of scoreEntries) {
+    const anomalyResult = await detectVelocityAnomaly(entityId, score.total_score);
     if (anomalyResult.isAnomaly) {
       anomalies.push(`${entityId}: ${anomalyResult.reason}`);
     }
-  });
+  }
 
   // Write provenance records
-  writeProvenance(scores, raw);
+  await writeProvenance(scores, raw);
 
   // Ensure entities exist in DB and write scores
-  const db = getDb();
-  const insertEntity = db.prepare(`
-    INSERT OR IGNORE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '')
-  `);
-  const upsertScore = db.prepare(`
-    INSERT INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(entity_id, date) DO UPDATE SET
-      usage_score = excluded.usage_score,
-      attention_score = excluded.attention_score,
-      capability_score = excluded.capability_score,
-      expert_score = excluded.expert_score,
-      total_score = excluded.total_score,
-      confidence_lower = excluded.confidence_lower,
-      confidence_upper = excluded.confidence_upper
-  `);
+  const db = await ensureDb();
 
+  const entityStmts: { sql: string; args: any[] }[] = [];
+  const scoreStmts: { sql: string; args: any[] }[] = [];
   let entitiesUpdated = 0;
 
-  const writeAll = db.transaction(() => {
-    for (const entity of entityRegistry) {
-      insertEntity.run(
-        entity.id, entity.name, entity.category, entity.company,
-        entity.release_date, entity.pricing_tier, entity.availability,
-        entity.open_source, entity.description,
-      );
+  for (const entity of entityRegistry) {
+    entityStmts.push({
+      sql: `INSERT OR IGNORE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
+      args: [entity.id, entity.name, entity.category, entity.company, entity.release_date, entity.pricing_tier, entity.availability, entity.open_source, entity.description],
+    });
 
-      const s = scores.get(entity.id);
-      if (s) {
-        upsertScore.run(
-          entity.id, today,
-          s.usage_score, s.attention_score, s.capability_score, s.expert_score, s.total_score,
-          s.confidence_lower, s.confidence_upper,
-        );
-        entitiesUpdated++;
-      }
+    const s = scores.get(entity.id);
+    if (s) {
+      scoreStmts.push({
+        sql: `INSERT INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+              ON CONFLICT(entity_id, date) DO UPDATE SET
+                usage_score = excluded.usage_score,
+                attention_score = excluded.attention_score,
+                capability_score = excluded.capability_score,
+                expert_score = excluded.expert_score,
+                total_score = excluded.total_score,
+                confidence_lower = excluded.confidence_lower,
+                confidence_upper = excluded.confidence_upper`,
+        args: [entity.id, today, s.usage_score, s.attention_score, s.capability_score, s.expert_score, s.total_score, s.confidence_lower, s.confidence_upper],
+      });
+      entitiesUpdated++;
     }
-  });
+  }
 
-  writeAll();
+  await db.batch([...entityStmts, ...scoreStmts], 'write');
 
   if (anomalies.length > 0) {
     console.log(`[anomaly] ${anomalies.length} anomalies detected:`, anomalies);

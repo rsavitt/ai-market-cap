@@ -11,11 +11,11 @@ export interface AnomalyResult {
 /**
  * Flag if daily score change > 3 standard deviations from 90-day mean of daily deltas.
  */
-export function detectVelocityAnomaly(
+export async function detectVelocityAnomaly(
   entityId: string,
   newScore: number,
-): AnomalyResult {
-  const history = getScoreHistory(entityId, 90);
+): Promise<AnomalyResult> {
+  const history = await getScoreHistory(entityId, 90);
 
   if (history.length < 7) {
     return { isAnomaly: false, dailyChange: 0, meanDelta: 0, stdDevDelta: 0 };

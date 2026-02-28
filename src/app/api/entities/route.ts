@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get('sort') || 'total_score';
     const order = searchParams.get('order') || 'desc';
 
-    let entities = getLatestScores();
+    let entities = await getLatestScores();
 
     if (category) {
       entities = entities.filter(e => e.category === category);

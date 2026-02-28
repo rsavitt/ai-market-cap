@@ -1,4 +1,4 @@
-import { getDb } from './db';
+import { ensureDb } from './db';
 
 interface EntitySeed {
   id: string; name: string; category: string; company: string;
@@ -92,71 +92,74 @@ const SEED_SIGNAL_MAP: Record<string, (e: EntitySeed, usage: number, attention: 
   ],
 };
 
-export function seedDatabase(): void {
-  const db = getDb();
+export async function seedDatabase(): Promise<void> {
+  const db = await ensureDb();
 
-  const count = db.prepare('SELECT COUNT(*) as c FROM entities').get() as any;
+  const countResult = await db.execute('SELECT COUNT(*) as c FROM entities');
+  const count = countResult.rows[0] as unknown as { c: number };
   if (count.c > 0) return;
 
-  const insertEntity = db.prepare(`
-    INSERT OR IGNORE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+  // Build all statements
+  const stmts: { sql: string; args: any[] }[] = [];
 
-  const insertScore = db.prepare(`
-    INSERT OR IGNORE INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+  for (const e of entities) {
+    stmts.push({
+      sql: `INSERT OR IGNORE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [e.id, e.name, e.category, e.company, e.release_date, e.pricing_tier, e.availability, e.open_source, e.description, ''],
+    });
 
-  const insertRawSignal = db.prepare(`
-    INSERT OR IGNORE INTO raw_signals (entity_id, date, signal_name, raw_value)
-    VALUES (?, ?, ?, ?)
-  `);
+    const now = new Date('2026-02-25');
+    let usage = e.base_usage;
+    let attention = e.base_attention;
+    let capability = e.base_capability;
+    let expert = e.base_expert;
 
-  const insertAll = db.transaction(() => {
-    for (const e of entities) {
-      insertEntity.run(e.id, e.name, e.category, e.company, e.release_date, e.pricing_tier, e.availability, e.open_source, e.description, '');
+    for (let d = 29; d >= 0; d--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - d);
+      const dateStr = date.toISOString().split('T')[0];
 
-      const now = new Date('2026-02-25');
-      let usage = e.base_usage;
-      let attention = e.base_attention;
-      let capability = e.base_capability;
-      let expert = e.base_expert;
+      usage = clamp(usage + e.trend * 0.4 + gaussRand() * e.noise, 5, 100);
+      attention = clamp(attention + e.trend * 0.3 + gaussRand() * e.noise * 1.2, 5, 100);
+      capability = clamp(capability + e.trend * 0.1 + gaussRand() * e.noise * 0.3, 5, 100);
+      expert = clamp(expert + e.trend * 0.05 + gaussRand() * e.noise * 0.2, 5, 100);
 
-      for (let d = 29; d >= 0; d--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - d);
-        const dateStr = date.toISOString().split('T')[0];
+      const total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
 
-        usage = clamp(usage + e.trend * 0.4 + gaussRand() * e.noise, 5, 100);
-        attention = clamp(attention + e.trend * 0.3 + gaussRand() * e.noise * 1.2, 5, 100);
-        capability = clamp(capability + e.trend * 0.1 + gaussRand() * e.noise * 0.3, 5, 100);
-        expert = clamp(expert + e.trend * 0.05 + gaussRand() * e.noise * 0.2, 5, 100);
+      // Confidence based on synthetic signal availability (most entities have ~3-4 signals)
+      const signalCount = 3 + Math.floor(rand() * 4); // 3-6 signals
+      const confidence = signalCount / 8;
+      const band = (1 - confidence) * 10;
+      const confidenceLower = Math.max(0, Math.round((total - band) * 100) / 100);
+      const confidenceUpper = Math.min(100, Math.round((total + band) * 100) / 100);
 
-        const total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
-
-        // Confidence based on synthetic signal availability (most entities have ~3-4 signals)
-        const signalCount = 3 + Math.floor(rand() * 4); // 3-6 signals
-        const confidence = signalCount / 8;
-        const band = (1 - confidence) * 10;
-        const confidenceLower = Math.max(0, Math.round((total - band) * 100) / 100);
-        const confidenceUpper = Math.min(100, Math.round((total + band) * 100) / 100);
-
-        insertScore.run(e.id, dateStr,
+      stmts.push({
+        sql: `INSERT OR IGNORE INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [e.id, dateStr,
           Math.round(usage*100)/100, Math.round(attention*100)/100,
           Math.round(capability*100)/100, Math.round(expert*100)/100,
-          total, confidenceLower, confidenceUpper);
+          total, confidenceLower, confidenceUpper],
+      });
 
-        // Insert synthetic raw signals
-        for (const [, signalFn] of Object.entries(SEED_SIGNAL_MAP)) {
-          const signals = signalFn(e, usage, attention, capability, expert);
-          for (const [signalName, rawValue] of signals) {
-            insertRawSignal.run(e.id, dateStr, signalName, Math.round(rawValue * 100) / 100);
-          }
+      // Insert synthetic raw signals
+      for (const [, signalFn] of Object.entries(SEED_SIGNAL_MAP)) {
+        const signals = signalFn(e, usage, attention, capability, expert);
+        for (const [signalName, rawValue] of signals) {
+          stmts.push({
+            sql: `INSERT OR IGNORE INTO raw_signals (entity_id, date, signal_name, raw_value)
+                  VALUES (?, ?, ?, ?)`,
+            args: [e.id, dateStr, signalName, Math.round(rawValue * 100) / 100],
+          });
         }
       }
     }
-  });
+  }
 
-  insertAll();
+  // Batch in chunks of 1000 (Turso batch limit)
+  for (let i = 0; i < stmts.length; i += 1000) {
+    const chunk = stmts.slice(i, i + 1000);
+    await db.batch(chunk, 'write');
+  }
 }

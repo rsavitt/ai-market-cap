@@ -191,7 +191,7 @@ function calculateConfidence(entityId: string, raw: RawSignals): { confidence: n
   return { confidence, lower: -band, upper: band }; // offsets from total_score
 }
 
-export function computeScores(raw: RawSignals): Map<string, EntityScores> {
+export async function computeScores(raw: RawSignals): Promise<Map<string, EntityScores>> {
   const entityIds = getAllEntityIds();
   const scores = new Map<string, EntityScores>();
 
@@ -226,7 +226,7 @@ export function computeScores(raw: RawSignals): Map<string, EntityScores> {
   };
 
   for (const [category] of Object.entries(categoriesMap)) {
-    const baselines = get90DayBaselines(category);
+    const baselines = await get90DayBaselines(category);
 
     for (const signalName of SIGNAL_NAMES) {
       const categoryNormalized = normalizeWithinCategory(

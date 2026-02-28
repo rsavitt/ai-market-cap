@@ -8,13 +8,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const entity = getEntityById(params.id);
+    const entity = await getEntityById(params.id);
     if (!entity) {
       return NextResponse.json({ error: 'Entity not found' }, { status: 404 });
     }
 
-    const history = getDailyScores(params.id, 30);
-    const allScored = getLatestScores();
+    const history = await getDailyScores(params.id, 30);
+    const allScored = await getLatestScores();
     const scored = allScored.find(e => e.id === params.id);
 
     const competitors = allScored
@@ -36,6 +36,8 @@ export async function GET(
         capability_score: scored?.capability_score ?? 0,
         expert_score: scored?.expert_score ?? 0,
         total_score: scored?.total_score ?? 0,
+        confidence_lower: scored?.confidence_lower ?? null,
+        confidence_upper: scored?.confidence_upper ?? null,
         overall_rank: scored?.overall_rank ?? 0,
         category_rank: scored?.category_rank ?? 0,
         momentum_7d: scored?.momentum_7d ?? 0,

@@ -48,7 +48,7 @@ export async function collectGitHub(): Promise<{ velocity: Map<string, number>; 
       absolute.set(entity.id, totalStars);
 
       // Compute velocity: today's stars minus 7 days ago
-      const stars7dAgo = getRawSignalValue(entity.id, 'github_stars', 7);
+      const stars7dAgo = await getRawSignalValue(entity.id, 'github_stars', 7);
       if (stars7dAgo !== null) {
         velocity.set(entity.id, totalStars - stars7dAgo);
       } else {
