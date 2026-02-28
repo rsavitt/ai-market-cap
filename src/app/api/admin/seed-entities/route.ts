@@ -523,7 +523,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Command R+", "Cohere"],
       reddit: ["Command R+", "Cohere"],
       artificialAnalysis: "command-r-plus",
-      openRouter: "cohere/command-r-plus",
+      openRouter: "cohere/command-r-plus-08-2024",
     }
   },
   {
@@ -536,7 +536,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-4.5"],
       reddit: ["GPT-4.5", "GPT 4.5"],
       artificialAnalysis: "gpt-4-5",
-      openRouter: "openai/gpt-4.5-preview",
     }
   },
   {
@@ -588,7 +587,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Sonnet 4.6", "Claude Sonnet"],
       reddit: ["Claude Sonnet 4.6"],
       artificialAnalysis: "claude-sonnet-4-6",
-      openRouter: "anthropic/claude-sonnet-4-6",
+      openRouter: "anthropic/claude-sonnet-4.6",
     }
   },
   {
@@ -601,7 +600,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Haiku", "Claude Haiku 4"],
       reddit: ["Claude Haiku"],
       artificialAnalysis: "claude-haiku-4-5",
-      openRouter: "anthropic/claude-haiku-4-5",
+      openRouter: "anthropic/claude-haiku-4.5",
     }
   },
   {
@@ -614,7 +613,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Gemini 2.5 Pro", "Gemini 2.5"],
       reddit: ["Gemini 2.5 Pro", "Gemini 2.5"],
       artificialAnalysis: "gemini-2-5-pro",
-      openRouter: "google/gemini-2.5-pro-preview-03-25",
+      openRouter: "google/gemini-2.5-pro",
     }
   },
   {
@@ -694,7 +693,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Gemini 3", "Gemini 3 Pro"],
       reddit: ["Gemini 3", "Gemini 3 Pro"],
       artificialAnalysis: "gemini-3-pro",
-      openRouter: "google/gemini-3-pro",
+      openRouter: "google/gemini-3-pro-preview",
     }
   },
   {
@@ -720,7 +719,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Mistral Large 3", "Mistral AI"],
       reddit: ["Mistral Large 3"],
       artificialAnalysis: "mistral-large-3",
-      openRouter: "mistralai/mistral-large-3",
+      openRouter: "mistralai/mistral-large-2512",
     }
   },
   {
