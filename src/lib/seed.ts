@@ -72,6 +72,26 @@ const entities: EntitySeed[] = [
   { id:"command-r-plus", name:"Command R+", category:"general_llm", company:"Cohere", release_date:"2024-04-04", pricing_tier:"freemium", availability:"API", open_source:0, description:"Enterprise-focused RAG-optimized LLM", base_usage:28, base_attention:35, base_capability:75, base_expert:70, trend:-0.2, noise:1.2 },
 ];
 
+// Map of synthetic signal names for seed raw_signals
+const SEED_SIGNAL_MAP: Record<string, (e: EntitySeed, usage: number, attention: number, capability: number, expert: number) => [string, number][]> = {
+  usage: (e, usage) => [
+    ['pypi_downloads', usage * 1000 * (0.5 + rand())],
+    ['npm_downloads', usage * 800 * (0.5 + rand())],
+    ['huggingface_signal', usage * 50 * (0.3 + rand())],
+    ['github_stars', usage * 200 * (0.5 + rand())],
+  ],
+  attention: (_e, _u, attention) => [
+    ['hackernews_signal', attention * 2 * (0.3 + rand())],
+    ['reddit_signal', attention * 5 * (0.3 + rand())],
+  ],
+  capability: (_e, _u, _a, capability) => [
+    ['artificial_analysis_score', capability * (0.8 + rand() * 0.4)],
+  ],
+  expert: (_e, _u, _a, _c, expert) => [
+    ['semantic_scholar_citations', expert * 10 * (0.3 + rand())],
+  ],
+};
+
 export function seedDatabase(): void {
   const db = getDb();
 
@@ -84,8 +104,13 @@ export function seedDatabase(): void {
   `);
 
   const insertScore = db.prepare(`
-    INSERT OR IGNORE INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT OR IGNORE INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const insertRawSignal = db.prepare(`
+    INSERT OR IGNORE INTO raw_signals (entity_id, date, signal_name, raw_value)
+    VALUES (?, ?, ?, ?)
   `);
 
   const insertAll = db.transaction(() => {
@@ -110,7 +135,25 @@ export function seedDatabase(): void {
 
         const total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
 
-        insertScore.run(e.id, dateStr, Math.round(usage*100)/100, Math.round(attention*100)/100, Math.round(capability*100)/100, Math.round(expert*100)/100, total);
+        // Confidence based on synthetic signal availability (most entities have ~3-4 signals)
+        const signalCount = 3 + Math.floor(rand() * 4); // 3-6 signals
+        const confidence = signalCount / 8;
+        const band = (1 - confidence) * 10;
+        const confidenceLower = Math.max(0, Math.round((total - band) * 100) / 100);
+        const confidenceUpper = Math.min(100, Math.round((total + band) * 100) / 100);
+
+        insertScore.run(e.id, dateStr,
+          Math.round(usage*100)/100, Math.round(attention*100)/100,
+          Math.round(capability*100)/100, Math.round(expert*100)/100,
+          total, confidenceLower, confidenceUpper);
+
+        // Insert synthetic raw signals
+        for (const [, signalFn] of Object.entries(SEED_SIGNAL_MAP)) {
+          const signals = signalFn(e, usage, attention, capability, expert);
+          for (const [signalName, rawValue] of signals) {
+            insertRawSignal.run(e.id, dateStr, signalName, Math.round(rawValue * 100) / 100);
+          }
+        }
       }
     }
   });

@@ -1,4 +1,5 @@
 import { entityRegistry } from '../entity-registry';
+import { getRawSignalValue } from '../db';
 
 interface GitHubRepo {
   stargazers_count: number;
@@ -6,8 +7,14 @@ interface GitHubRepo {
   open_issues_count: number;
 }
 
-export async function collectGitHub(): Promise<Map<string, number>> {
-  const results = new Map<string, number>();
+/**
+ * Collect GitHub stars and return velocity (7-day delta) instead of absolute count.
+ * Absolute count is still stored in raw_signals by the collection pipeline.
+ * On first run (no history), falls back to absolute count.
+ */
+export async function collectGitHub(): Promise<{ velocity: Map<string, number>; absolute: Map<string, number> }> {
+  const velocity = new Map<string, number>();
+  const absolute = new Map<string, number>();
   const token = process.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {
@@ -38,9 +45,18 @@ export async function collectGitHub(): Promise<Map<string, number>> {
     }
 
     if (totalStars > 0) {
-      results.set(entity.id, totalStars);
+      absolute.set(entity.id, totalStars);
+
+      // Compute velocity: today's stars minus 7 days ago
+      const stars7dAgo = getRawSignalValue(entity.id, 'github_stars', 7);
+      if (stars7dAgo !== null) {
+        velocity.set(entity.id, totalStars - stars7dAgo);
+      } else {
+        // Graceful degradation: use absolute count if no history
+        velocity.set(entity.id, totalStars);
+      }
     }
   }
 
-  return results;
+  return { velocity, absolute };
 }

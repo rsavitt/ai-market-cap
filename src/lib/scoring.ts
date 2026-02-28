@@ -1,4 +1,5 @@
-import { getAllEntityIds } from './entity-registry';
+import { getAllEntityIds, entityRegistry } from './entity-registry';
+import { get90DayBaselines } from './db';
 
 export interface RawSignals {
   // usage signals
@@ -21,123 +22,298 @@ export interface EntityScores {
   capability_score: number;
   expert_score: number;
   total_score: number;
+  confidence: number;
+  confidence_lower: number;
+  confidence_upper: number;
+}
+
+// Signal-to-dimension mapping for counting available signals per entity
+const SIGNAL_NAMES = [
+  'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'githubStars',
+  'hackernewsSignal', 'redditSignal',
+  'artificialAnalysisScore',
+  'semanticScholarCitations',
+] as const;
+
+type SignalName = typeof SIGNAL_NAMES[number];
+
+// Decay half-lives by dimension (in days) — used by baseline computations
+export const DECAY_HALF_LIVES: Record<string, number> = {
+  usage: 60,
+  attention: 21,
+  capability: 180,
+  expert: 90,
+};
+
+/**
+ * Exponential decay weight for a data point of a given age.
+ * Returns a value between 0 and 1.
+ */
+export function exponentialDecay(dayAge: number, halfLife: number): number {
+  return Math.pow(2, -dayAge / halfLife);
 }
 
 /**
- * Convert raw values to percentile ranks (0-100).
- * Entities not in the map get a score of 0.
+ * Normalize values within a category using 90-day rolling baselines.
+ * score = ((value - min_90d) / (max_90d - min_90d)) * 95
+ * Leader capped at 95, floor at 0.
  */
-function percentileRank(values: Map<string, number>, entityIds: string[]): Map<string, number> {
+function normalizeWithinCategory(
+  values: Map<string, number>,
+  entityIds: string[],
+  signalName: string,
+  category: string,
+  baselines: Map<string, { min: number; max: number }>,
+): Map<string, number> {
   const result = new Map<string, number>();
+  const baseline = baselines.get(signalName);
 
-  // Collect all values with entity IDs
-  const entries: { id: string; value: number }[] = [];
-  for (const id of entityIds) {
-    entries.push({ id, value: values.get(id) ?? 0 });
-  }
+  // Get category entity IDs
+  const categoryEntityIds = entityIds.filter(id => {
+    const entity = entityRegistry.find(e => e.id === id);
+    return entity?.category === category;
+  });
 
-  // Sort ascending
-  entries.sort((a, b) => a.value - b.value);
+  for (const id of categoryEntityIds) {
+    const value = values.get(id) ?? 0;
 
-  const n = entries.length;
-  if (n === 0) return result;
-
-  // Assign percentile ranks (handle ties with average rank)
-  let i = 0;
-  while (i < n) {
-    let j = i;
-    while (j < n && entries[j].value === entries[i].value) j++;
-    const avgRank = (i + j - 1) / 2;
-    const percentile = Math.round((avgRank / (n - 1)) * 100);
-    for (let k = i; k < j; k++) {
-      result.set(entries[k].id, n === 1 ? 50 : percentile);
+    if (baseline && baseline.max > baseline.min) {
+      const normalized = ((value - baseline.min) / (baseline.max - baseline.min)) * 95;
+      result.set(id, Math.max(0, Math.min(95, Math.round(normalized * 100) / 100)));
+    } else {
+      // No baseline range — use raw value capped at 95
+      result.set(id, Math.min(95, Math.max(0, value)));
     }
-    i = j;
   }
 
   return result;
 }
 
 /**
- * Combine multiple percentile-ranked signals with sub-weights into a dimension score.
- * Missing signals are ignored (weight redistributed).
+ * Combine multiple normalized signals with sub-weights into a dimension score.
+ * Enforces 30% source cap: if any single signal exceeds 30% of the dimension weight,
+ * clamp and redistribute.
  */
 function combineDimension(
-  signals: { percentiles: Map<string, number>; weight: number }[],
+  signals: { normalized: Map<string, number>; weight: number }[],
   entityIds: string[],
 ): Map<string, number> {
   const result = new Map<string, number>();
+  const SOURCE_CAP = 0.30;
 
   for (const id of entityIds) {
-    let weightedSum = 0;
     let totalWeight = 0;
+    const contributions: { value: number; weight: number }[] = [];
 
     for (const signal of signals) {
-      const val = signal.percentiles.get(id);
+      const val = signal.normalized.get(id);
       if (val !== undefined && val > 0) {
-        weightedSum += val * signal.weight;
+        contributions.push({ value: val, weight: signal.weight });
         totalWeight += signal.weight;
       }
     }
 
-    // If entity has no data for any signal in this dimension, give baseline score
-    result.set(id, totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 100) / 100 : 5);
+    if (totalWeight === 0) {
+      result.set(id, 5); // baseline for no data
+      continue;
+    }
+
+    // Normalize weights and apply 30% cap
+    let weightedSum = 0;
+    let cappedWeight = 0;
+    let uncappedWeight = 0;
+    const cappedContribs: { value: number; normalizedWeight: number; capped: boolean }[] = [];
+
+    for (const c of contributions) {
+      const normalizedWeight = c.weight / totalWeight;
+      const isCapped = normalizedWeight > SOURCE_CAP;
+      cappedContribs.push({
+        value: c.value,
+        normalizedWeight: isCapped ? SOURCE_CAP : normalizedWeight,
+        capped: isCapped,
+      });
+      if (isCapped) {
+        cappedWeight += normalizedWeight - SOURCE_CAP;
+      } else {
+        uncappedWeight += normalizedWeight;
+      }
+    }
+
+    // Redistribute capped weight to uncapped signals
+    for (const c of cappedContribs) {
+      let finalWeight = c.normalizedWeight;
+      if (!c.capped && uncappedWeight > 0 && cappedWeight > 0) {
+        finalWeight += (c.normalizedWeight / uncappedWeight) * cappedWeight;
+      }
+      weightedSum += c.value * finalWeight;
+    }
+
+    result.set(id, Math.round(weightedSum * 100) / 100);
   }
 
   return result;
+}
+
+/**
+ * Check if an entity is a new entrant (release_date < 14 days ago).
+ */
+function isNewEntrant(entityId: string): boolean {
+  const entity = entityRegistry.find(e => e.id === entityId);
+  if (!entity?.release_date) return false;
+  const releaseDate = new Date(entity.release_date);
+  const fourteenDaysAgo = new Date();
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  return releaseDate > fourteenDaysAgo;
+}
+
+/**
+ * Calculate signal completeness confidence for an entity.
+ */
+function calculateConfidence(entityId: string, raw: RawSignals): { confidence: number; lower: number; upper: number } {
+  const signalMaps: Map<string, number>[] = [
+    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.githubStars,
+    raw.hackernewsSignal, raw.redditSignal,
+    raw.artificialAnalysisScore,
+    raw.semanticScholarCitations,
+  ];
+
+  let available = 0;
+  for (const map of signalMaps) {
+    const val = map.get(entityId);
+    if (val !== undefined && val > 0) {
+      available++;
+    }
+  }
+
+  const confidence = available / SIGNAL_NAMES.length;
+  const band = (1 - confidence) * 10;
+
+  return { confidence, lower: -band, upper: band }; // offsets from total_score
 }
 
 export function computeScores(raw: RawSignals): Map<string, EntityScores> {
   const entityIds = getAllEntityIds();
   const scores = new Map<string, EntityScores>();
 
-  // ── Percentile rank each raw signal ──
-  const pypiPct = percentileRank(raw.pypiDownloads, entityIds);
-  const npmPct = percentileRank(raw.npmDownloads, entityIds);
-  const hfPct = percentileRank(raw.huggingfaceSignal, entityIds);
-  const ghPct = percentileRank(raw.githubStars, entityIds);
-  const hnPct = percentileRank(raw.hackernewsSignal, entityIds);
-  const redditPct = percentileRank(raw.redditSignal, entityIds);
-  const aaPct = percentileRank(raw.artificialAnalysisScore, entityIds);
-  const ssPct = percentileRank(raw.semanticScholarCitations, entityIds);
+  // Group entities by category
+  const categoriesMap: Record<string, string[]> = {};
+  for (const entity of entityRegistry) {
+    if (!categoriesMap[entity.category]) categoriesMap[entity.category] = [];
+    categoriesMap[entity.category].push(entity.id);
+  }
+
+  // Per-category normalization
+  const normalizedSignals: Record<SignalName, Map<string, number>> = {
+    pypiDownloads: new Map(),
+    npmDownloads: new Map(),
+    huggingfaceSignal: new Map(),
+    githubStars: new Map(),
+    hackernewsSignal: new Map(),
+    redditSignal: new Map(),
+    artificialAnalysisScore: new Map(),
+    semanticScholarCitations: new Map(),
+  };
+
+  const signalToRaw: Record<SignalName, Map<string, number>> = {
+    pypiDownloads: raw.pypiDownloads,
+    npmDownloads: raw.npmDownloads,
+    huggingfaceSignal: raw.huggingfaceSignal,
+    githubStars: raw.githubStars,
+    hackernewsSignal: raw.hackernewsSignal,
+    redditSignal: raw.redditSignal,
+    artificialAnalysisScore: raw.artificialAnalysisScore,
+    semanticScholarCitations: raw.semanticScholarCitations,
+  };
+
+  for (const [category] of Object.entries(categoriesMap)) {
+    const baselines = get90DayBaselines(category);
+
+    for (const signalName of SIGNAL_NAMES) {
+      const categoryNormalized = normalizeWithinCategory(
+        signalToRaw[signalName],
+        entityIds,
+        signalName,
+        category,
+        baselines,
+      );
+      categoryNormalized.forEach((val, id) => {
+        normalizedSignals[signalName].set(id, val);
+      });
+    }
+  }
 
   // ── Combine into dimensions ──
   // Usage: PyPI (0.30) + npm (0.30) + HuggingFace (0.25) + GitHub (0.15)
   const usageScores = combineDimension([
-    { percentiles: pypiPct, weight: 0.30 },
-    { percentiles: npmPct, weight: 0.30 },
-    { percentiles: hfPct, weight: 0.25 },
-    { percentiles: ghPct, weight: 0.15 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.30 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.30 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.25 },
+    { normalized: normalizedSignals.githubStars, weight: 0.15 },
   ], entityIds);
 
   // Attention: HackerNews (0.55) + Reddit (0.45)
   const attentionScores = combineDimension([
-    { percentiles: hnPct, weight: 0.55 },
-    { percentiles: redditPct, weight: 0.45 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.55 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.45 },
   ], entityIds);
 
   // Capability: Artificial Analysis (0.70) + HN expert signal (0.30)
   const capabilityScores = combineDimension([
-    { percentiles: aaPct, weight: 0.70 },
-    { percentiles: hnPct, weight: 0.30 }, // High-point HN stories correlate with capability
+    { normalized: normalizedSignals.artificialAnalysisScore, weight: 0.70 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.30 },
   ], entityIds);
 
   // Expert: Semantic Scholar (0.50) + Artificial Analysis (0.30) + HN (0.20)
   const expertScores = combineDimension([
-    { percentiles: ssPct, weight: 0.50 },
-    { percentiles: aaPct, weight: 0.30 },
-    { percentiles: hnPct, weight: 0.20 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.50 },
+    { normalized: normalizedSignals.artificialAnalysisScore, weight: 0.30 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.20 },
   ], entityIds);
+
+  // Compute category medians for new entrant handling
+  const categoryMedians: Record<string, number> = {};
+  for (const [category, catIds] of Object.entries(categoriesMap)) {
+    const totals: number[] = [];
+    for (const id of catIds) {
+      if (!isNewEntrant(id)) {
+        const usage = usageScores.get(id) ?? 5;
+        const attention = attentionScores.get(id) ?? 5;
+        const capability = capabilityScores.get(id) ?? 5;
+        const expert = expertScores.get(id) ?? 5;
+        totals.push(0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert);
+      }
+    }
+    totals.sort((a, b) => a - b);
+    categoryMedians[category] = totals.length > 0 ? totals[Math.floor(totals.length / 2)] : 30;
+  }
 
   // ── Final composite ──
   for (const id of entityIds) {
+    const entity = entityRegistry.find(e => e.id === id);
     const usage = usageScores.get(id) ?? 5;
     const attention = attentionScores.get(id) ?? 5;
     const capability = capabilityScores.get(id) ?? 5;
     const expert = expertScores.get(id) ?? 5;
-    const total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
 
-    scores.set(id, { usage_score: usage, attention_score: attention, capability_score: capability, expert_score: expert, total_score: total });
+    let total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
+
+    // New entrants start at category median
+    if (isNewEntrant(id) && entity) {
+      total = categoryMedians[entity.category] ?? total;
+    }
+
+    const { confidence, lower, upper } = calculateConfidence(id, raw);
+
+    scores.set(id, {
+      usage_score: usage,
+      attention_score: attention,
+      capability_score: capability,
+      expert_score: expert,
+      total_score: total,
+      confidence,
+      confidence_lower: Math.max(0, Math.round((total + lower) * 100) / 100),
+      confidence_upper: Math.min(100, Math.round((total + upper) * 100) / 100),
+    });
   }
 
   return scores;
