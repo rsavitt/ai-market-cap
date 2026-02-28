@@ -64,6 +64,15 @@ let client: Client | null = null;
 export function getClient(): Client {
   if (client) return client;
 
+  // USE_LOCAL_DB=1 uses a local SQLite file instead of remote Turso
+  const useLocal = process.env.USE_LOCAL_DB === '1';
+
+  if (useLocal) {
+    const localPath = process.env.LOCAL_DB_PATH || 'file:local.db';
+    client = createClient({ url: localPath });
+    return client;
+  }
+
   const url = process.env.TURSO_DATABASE_URL;
   if (!url) {
     throw new Error('TURSO_DATABASE_URL is not set');
