@@ -19,6 +19,93 @@ const MAX_CONTEXT_LENGTH = 200_000;
 const MAX_COMPLETION_TOKENS = 128_000;
 const MAX_COMPLETION_COST = 0.0001; // $0.0001 per token — anything above is "expensive"
 
+export async function collectOpenRouterUsage(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
+  const results = new Map<string, number>();
+
+  // Build reverse map: OpenRouter model ID → entity ID
+  const orIdToEntity = new Map<string, string>();
+  for (const entity of entityRegistry) {
+    if (entity.sources.openRouter) {
+      orIdToEntity.set(entity.sources.openRouter, entity.id);
+    }
+  }
+
+  if (orIdToEntity.size === 0) return results;
+
+  try {
+    const headers: Record<string, string> = { 'Accept': 'application/json' };
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
+    // Fetch models API to build model_id → canonical_slug map
+    const modelsRes = await fetch(
+      'https://openrouter.ai/api/v1/models',
+      { headers, signal: AbortSignal.timeout(15000) }
+    );
+    if (!modelsRes.ok) return results;
+
+    const modelsBody = await modelsRes.json() as { data: OpenRouterModel[] };
+    // canonical_slug is typically the same as model id for OpenRouter
+    const slugToEntityId = new Map<string, string>();
+    for (const model of modelsBody.data) {
+      const entityId = orIdToEntity.get(model.id);
+      if (entityId) {
+        // Use model.id as the canonical_slug (matches model_permaslug in rankings)
+        slugToEntityId.set(model.id, entityId);
+      }
+    }
+
+    if (slugToEntityId.size === 0) return results;
+
+    // Fetch rankings HTML
+    const rankingsRes = await fetch(
+      'https://openrouter.ai/rankings',
+      { headers: { 'Accept': 'text/html' }, signal: AbortSignal.timeout(15000) }
+    );
+    if (!rankingsRes.ok) return results;
+
+    const html = await rankingsRes.text();
+
+    // Parse ranking entries from SSR HTML
+    // Quotes are escaped as \" in Next.js SSR payloads
+    const permaslugRegex = /\\?"model_permaslug\\?"\s*:\s*\\?"([^"\\]+)\\?"/g;
+    const completionTokensRegex = /\\?"total_completion_tokens\\?"\s*:\s*(\d+)/g;
+    const promptTokensRegex = /\\?"total_prompt_tokens\\?"\s*:\s*(\d+)/g;
+
+    const permalugs: string[] = [];
+    const completionTokens: number[] = [];
+    const promptTokens: number[] = [];
+
+    let match: RegExpExecArray | null;
+    while ((match = permaslugRegex.exec(html)) !== null) {
+      permalugs.push(match[1]);
+    }
+    while ((match = completionTokensRegex.exec(html)) !== null) {
+      completionTokens.push(parseInt(match[1], 10));
+    }
+    while ((match = promptTokensRegex.exec(html)) !== null) {
+      promptTokens.push(parseInt(match[1], 10));
+    }
+
+    // Arrays should be parallel — each index corresponds to the same model
+    const count = Math.min(permalugs.length, completionTokens.length, promptTokens.length);
+    for (let i = 0; i < count; i++) {
+      const entityId = slugToEntityId.get(permalugs[i]);
+      if (entityId) {
+        const totalTokens = completionTokens[i] + promptTokens[i];
+        if (totalTokens > 0) {
+          results.set(entityId, totalTokens);
+        }
+      }
+    }
+  } catch {
+    // Rankings unavailable — return empty
+  }
+
+  return results;
+}
+
 export async function collectOpenRouter(): Promise<Map<string, number>> {
   const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();

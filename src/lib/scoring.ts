@@ -6,6 +6,7 @@ export interface RawSignals {
   pypiDownloads: Map<string, number>;
   npmDownloads: Map<string, number>;
   huggingfaceSignal: Map<string, number>;
+  openRouterUsage: Map<string, number>;
   githubStars: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
@@ -30,7 +31,7 @@ export interface EntityScores {
 
 // Signal-to-dimension mapping for counting available signals per entity
 const SIGNAL_NAMES = [
-  'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'githubStars',
+  'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'openRouterUsage', 'githubStars',
   'hackernewsSignal', 'redditSignal',
   'artificialAnalysisScore', 'openRouterSignal',
   'semanticScholarCitations',
@@ -173,7 +174,7 @@ function isNewEntrant(entityId: string, entityRegistry: RegisteredEntity[]): boo
  */
 function calculateConfidence(entityId: string, raw: RawSignals): { confidence: number; lower: number; upper: number } {
   const signalMaps: Map<string, number>[] = [
-    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.githubStars,
+    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.openRouterUsage, raw.githubStars,
     raw.hackernewsSignal, raw.redditSignal,
     raw.artificialAnalysisScore, raw.openRouterSignal,
     raw.semanticScholarCitations,
@@ -210,6 +211,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     pypiDownloads: new Map(),
     npmDownloads: new Map(),
     huggingfaceSignal: new Map(),
+    openRouterUsage: new Map(),
     githubStars: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
@@ -222,6 +224,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     pypiDownloads: raw.pypiDownloads,
     npmDownloads: raw.npmDownloads,
     huggingfaceSignal: raw.huggingfaceSignal,
+    openRouterUsage: raw.openRouterUsage,
     githubStars: raw.githubStars,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
@@ -249,12 +252,13 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Combine into dimensions ──
-  // Usage: PyPI (0.30) + npm (0.30) + HuggingFace (0.25) + GitHub (0.15)
+  // Usage: PyPI (0.25) + npm (0.25) + HuggingFace (0.20) + OpenRouter Usage (0.20) + GitHub (0.10)
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.30 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.30 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.25 },
-    { normalized: normalizedSignals.githubStars, weight: 0.15 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.25 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.25 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.20 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.20 },
+    { normalized: normalizedSignals.githubStars, weight: 0.10 },
   ], entityIds);
 
   // Attention: HackerNews (0.55) + Reddit (0.45)
