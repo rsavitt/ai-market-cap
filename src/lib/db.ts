@@ -64,8 +64,13 @@ let client: Client | null = null;
 export function getClient(): Client {
   if (client) return client;
 
+  const url = process.env.TURSO_DATABASE_URL;
+  if (!url) {
+    throw new Error('TURSO_DATABASE_URL is not set');
+  }
+
   client = createClient({
-    url: process.env.TURSO_DATABASE_URL!,
+    url,
     authToken: process.env.TURSO_AUTH_TOKEN,
   });
 
