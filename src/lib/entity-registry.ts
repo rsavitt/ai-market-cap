@@ -7,7 +7,6 @@ export interface EntitySources {
   huggingface: string[] | null;
   hackernews: string[];
   reddit: string[];
-  artificialAnalysis: string | null;
   openRouter: string | null;
   semanticScholar: string | null;
 }
@@ -36,7 +35,6 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     huggingface: null,
     hackernews: [],
     reddit: [],
-    artificialAnalysis: null,
     openRouter: null,
     semanticScholar: null,
   };
@@ -64,9 +62,6 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'reddit':
         sources.reddit.push(row.source_value);
-        break;
-      case 'artificialAnalysis':
-        sources.artificialAnalysis = row.source_value;
         break;
       case 'openRouter':
         sources.openRouter = row.source_value;

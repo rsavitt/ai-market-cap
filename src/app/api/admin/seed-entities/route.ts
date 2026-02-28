@@ -69,7 +69,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python", "openai/openai-node"],
       hackernews: ["GPT-4o coding", "GPT-4o code"],
       reddit: ["GPT-4o coding", "GPT-4o code"],
-      artificialAnalysis: "gpt-4o",
       openRouter: "openai/gpt-4o",
       semanticScholar: "GPT-4o system card",
     }
@@ -83,7 +82,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["deepseek-ai/DeepSeek-Coder-V2-Instruct"],
       hackernews: ["DeepSeek Coder", "DeepSeek code"],
       reddit: ["DeepSeek Coder", "DeepSeek coding"],
-      artificialAnalysis: "deepseek-coder-v3",
       semanticScholar: "DeepSeek-Coder-V2",
     }
   },
@@ -141,6 +139,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-03-12", pricing_tier: "paid", availability: "Web", open_source: 0,
     description: "Autonomous AI software engineer",
     sources: {
+      github: ["CognitionAI/devin-swebench-results"],
       hackernews: ["Devin AI", "Cognition Devin"],
       reddit: ["Devin AI", "Cognition Devin"],
     }
@@ -265,6 +264,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-06-17", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "Professional AI video generation and editing",
     sources: {
+      github: ["runwayml/sdk-python"],
       hackernews: ["Runway Gen-3", "Runway AI"],
       reddit: ["Runway Gen-3", "Runway AI"],
     }
@@ -349,7 +349,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "Leading AI voice synthesis and cloning platform",
     sources: {
       pypi: ["elevenlabs"],
-      github: ["elevenlabs/elevenlabs-python"],
+      github: ["elevenlabs/elevenlabs-python", "elevenlabs/elevenlabs-js"],
       hackernews: ["ElevenLabs"],
       reddit: ["ElevenLabs"],
     }
@@ -405,7 +405,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python", "openai/openai-node"],
       hackernews: ["GPT-4o mini", "GPT-4o-mini"],
       reddit: ["GPT-4o mini", "GPT-4o-mini"],
-      artificialAnalysis: "gpt-4o-mini",
       openRouter: "openai/gpt-4o-mini",
       semanticScholar: "GPT-4o mini system card",
     }
@@ -419,7 +418,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python", "openai/openai-node"],
       hackernews: ["GPT-4o", "GPT4o"],
       reddit: ["GPT-4o", "GPT4o"],
-      artificialAnalysis: "gpt-4o",
       openRouter: "openai/gpt-4o",
       semanticScholar: "GPT-4o system card",
     }
@@ -433,7 +431,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude 3.5 Sonnet", "Claude Sonnet"],
       reddit: ["Claude 3.5 Sonnet", "Claude Sonnet"],
-      artificialAnalysis: "claude-3-5-sonnet",
       openRouter: "anthropic/claude-3.5-sonnet",
       semanticScholar: "The Claude 3 Model Family",
     }
@@ -447,7 +444,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["google-gemini/generative-ai-python"],
       hackernews: ["Gemini 2.0 Flash", "Gemini Flash"],
       reddit: ["Gemini 2.0 Flash", "Gemini Flash"],
-      artificialAnalysis: "gemini-2-0-flash",
       openRouter: "google/gemini-2.0-flash-001",
       semanticScholar: "Gemini: A Family of Highly Capable Multimodal Models",
     }
@@ -461,7 +457,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["deepseek-ai/DeepSeek-V3"],
       hackernews: ["DeepSeek V3", "DeepSeek-V3"],
       reddit: ["DeepSeek V3", "DeepSeek-V3"],
-      artificialAnalysis: "deepseek-v3",
       openRouter: "deepseek/deepseek-chat",
       semanticScholar: "DeepSeek-V3 Technical Report",
     }
@@ -476,7 +471,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["meta-llama/Llama-3.3-70B-Instruct"],
       hackernews: ["Llama 3.3", "Llama 3"],
       reddit: ["Llama 3.3", "Llama 3"],
-      artificialAnalysis: "llama-3-3-70b",
       openRouter: "meta-llama/llama-3.3-70b-instruct",
       semanticScholar: "The Llama 3 Herd of Models",
     }
@@ -486,9 +480,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-02-17", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "xAI latest model trained on Colossus cluster",
     sources: {
+      github: ["xai-org/grok-prompts"],
       hackernews: ["Grok 3", "Grok xAI"],
       reddit: ["Grok 3", "xAI Grok"],
-      artificialAnalysis: "grok-3",
       openRouter: "x-ai/grok-3",
     }
   },
@@ -499,9 +493,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       pypi: ["mistralai"], npm: ["@mistralai/mistralai"],
       github: ["mistralai/mistral-inference"],
+      huggingface: ["mistralai/Mistral-Large-Instruct-2407"],
       hackernews: ["Mistral Large", "Mistral AI"],
       reddit: ["Mistral Large", "Mistral AI"],
-      artificialAnalysis: "mistral-large-2",
       openRouter: "mistralai/mistral-large",
     }
   },
@@ -514,7 +508,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["Qwen/Qwen2.5-72B-Instruct"],
       hackernews: ["Qwen 2.5", "Qwen"],
       reddit: ["Qwen 2.5", "Qwen"],
-      artificialAnalysis: "qwen-2-5-72b",
       openRouter: "qwen/qwen-2.5-72b-instruct",
       semanticScholar: "Qwen2 Technical Report",
     }
@@ -524,6 +517,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-11-15", pricing_tier: "freemium", availability: "Web,Mobile,API", open_source: 0,
     description: "AI-powered answer engine with real-time search",
     sources: {
+      github: ["ppl-ai/pplx-kernels"],
       hackernews: ["Perplexity AI", "Perplexity"],
       reddit: ["Perplexity AI", "Perplexity"],
     }
@@ -536,7 +530,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       pypi: ["cohere"], npm: ["cohere-ai"],
       hackernews: ["Command R+", "Cohere"],
       reddit: ["Command R+", "Cohere"],
-      artificialAnalysis: "command-r-plus",
       openRouter: "cohere/command-r-plus-08-2024",
     }
   },
@@ -549,7 +542,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python"],
       hackernews: ["GPT-4.5"],
       reddit: ["GPT-4.5", "GPT 4.5"],
-      artificialAnalysis: "gpt-4-5",
     }
   },
   {
@@ -561,7 +553,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude 3.7", "Claude 3.7 Sonnet"],
       reddit: ["Claude 3.7 Sonnet", "Claude 3.7"],
-      artificialAnalysis: "claude-3-7-sonnet",
       openRouter: "anthropic/claude-3.7-sonnet",
     }
   },
@@ -574,7 +565,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude Sonnet 4", "Claude 4 Sonnet"],
       reddit: ["Claude Sonnet 4", "Claude 4"],
-      artificialAnalysis: "claude-sonnet-4",
       openRouter: "anthropic/claude-sonnet-4",
     }
   },
@@ -587,7 +577,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude Opus", "Claude Opus 4"],
       reddit: ["Claude Opus", "Claude Opus 4"],
-      artificialAnalysis: "claude-opus-4",
       openRouter: "anthropic/claude-opus-4",
     }
   },
@@ -600,7 +589,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude Sonnet 4.6", "Claude Sonnet"],
       reddit: ["Claude Sonnet 4.6"],
-      artificialAnalysis: "claude-sonnet-4-6",
       openRouter: "anthropic/claude-sonnet-4.6",
     }
   },
@@ -613,7 +601,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
       hackernews: ["Claude Haiku", "Claude Haiku 4"],
       reddit: ["Claude Haiku"],
-      artificialAnalysis: "claude-haiku-4-5",
       openRouter: "anthropic/claude-haiku-4.5",
     }
   },
@@ -626,8 +613,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["google-gemini/generative-ai-python"],
       hackernews: ["Gemini 2.5 Pro", "Gemini 2.5"],
       reddit: ["Gemini 2.5 Pro", "Gemini 2.5"],
-      artificialAnalysis: "gemini-2-5-pro",
       openRouter: "google/gemini-2.5-pro",
+      semanticScholar: "Gemini 2.5: Pushing the Frontier",
     }
   },
   {
@@ -640,7 +627,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["meta-llama/Llama-4-Scout-17B-16E-Instruct"],
       hackernews: ["Llama 4", "Llama 4 Scout"],
       reddit: ["Llama 4", "Llama 4 Scout"],
-      artificialAnalysis: "llama-4-scout",
       openRouter: "meta-llama/llama-4-scout",
     }
   },
@@ -653,7 +639,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["deepseek-ai/DeepSeek-R1"],
       hackernews: ["DeepSeek R1", "DeepSeek-R1"],
       reddit: ["DeepSeek R1", "DeepSeek-R1"],
-      artificialAnalysis: "deepseek-r1",
       openRouter: "deepseek/deepseek-r1",
       semanticScholar: "DeepSeek-R1",
     }
@@ -667,7 +652,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python"],
       hackernews: ["OpenAI o3", "o3 model"],
       reddit: ["OpenAI o3", "o3 model"],
-      artificialAnalysis: "o3",
       openRouter: "openai/o3",
     }
   },
@@ -680,7 +664,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python"],
       hackernews: ["o3-mini", "o3 mini"],
       reddit: ["o3-mini", "o3 mini"],
-      artificialAnalysis: "o3-mini",
       openRouter: "openai/o3-mini",
     }
   },
@@ -693,8 +676,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python"],
       hackernews: ["GPT-5", "GPT 5.2"],
       reddit: ["GPT-5", "GPT 5.2"],
-      artificialAnalysis: "gpt-5-2",
       openRouter: "openai/gpt-5.2",
+      semanticScholar: "OpenAI GPT-5 System Card",
     }
   },
   {
@@ -706,7 +689,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["google-gemini/generative-ai-python"],
       hackernews: ["Gemini 3", "Gemini 3 Pro"],
       reddit: ["Gemini 3", "Gemini 3 Pro"],
-      artificialAnalysis: "gemini-3-pro",
       openRouter: "google/gemini-3-pro-preview",
     }
   },
@@ -719,8 +701,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       huggingface: ["deepseek-ai/DeepSeek-V3"],
       hackernews: ["DeepSeek V3.2", "DeepSeek-V3.2"],
       reddit: ["DeepSeek V3.2"],
-      artificialAnalysis: "deepseek-v3-2",
       openRouter: "deepseek/deepseek-chat-v3-0324",
+      semanticScholar: "DeepSeek-V3 Technical Report",
     }
   },
   {
@@ -730,9 +712,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       pypi: ["mistralai"], npm: ["@mistralai/mistralai"],
       github: ["mistralai/mistral-inference"],
+      huggingface: ["mistralai/Mistral-Large-3-675B-Instruct-2512"],
       hackernews: ["Mistral Large 3", "Mistral AI"],
       reddit: ["Mistral Large 3"],
-      artificialAnalysis: "mistral-large-3",
       openRouter: "mistralai/mistral-large-2512",
     }
   },
@@ -741,9 +723,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-07-01", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "xAI latest model with strong agentic tool-calling capabilities",
     sources: {
+      github: ["xai-org/grok-prompts"],
       hackernews: ["Grok 4", "xAI Grok 4"],
       reddit: ["Grok 4", "xAI Grok"],
-      artificialAnalysis: "grok-4",
       openRouter: "x-ai/grok-4",
     }
   },
@@ -768,8 +750,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["google-gemini/generative-ai-python"],
       hackernews: ["Gemini 2.5 Flash"],
       reddit: ["Gemini 2.5 Flash"],
-      artificialAnalysis: "gemini-2-5-flash",
       openRouter: "google/gemini-2.5-flash",
+      semanticScholar: "Gemini 2.5: Pushing the Frontier",
     }
   },
   {
@@ -818,6 +800,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-5 mini", "GPT-5-mini"],
       reddit: ["GPT-5 mini"],
       openRouter: "openai/gpt-5-mini",
+      semanticScholar: "OpenAI GPT-5 System Card",
     }
   },
   {
@@ -830,6 +813,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-5 nano"],
       reddit: ["GPT-5 nano"],
       openRouter: "openai/gpt-5-nano",
+      semanticScholar: "OpenAI GPT-5 System Card",
     }
   },
   {
@@ -854,7 +838,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["openai/openai-python"],
       hackernews: ["GPT-4.1"],
       reddit: ["GPT-4.1", "GPT 4.1"],
-      artificialAnalysis: "gpt-4-1",
       openRouter: "openai/gpt-4.1",
     }
   },
@@ -875,6 +858,8 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2026-02-11", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "MiniMax latest frontier model with massive API usage",
     sources: {
+      github: ["MiniMax-AI/MiniMax-M1"],
+      huggingface: ["MiniMaxAI/MiniMax-M2.5"],
       hackernews: ["MiniMax", "MiniMax M2"],
       reddit: ["MiniMax AI", "MiniMax M2"],
       openRouter: "minimax/minimax-m2.5",
@@ -885,6 +870,8 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2026-02-11", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "Zhipu AI flagship bilingual model",
     sources: {
+      github: ["THUDM/GLM-4"],
+      huggingface: ["zai-org/GLM-5"],
       hackernews: ["GLM-5", "Zhipu AI"],
       reddit: ["GLM-5", "Zhipu"],
       openRouter: "z-ai/glm-5",
@@ -895,9 +882,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2026-01-27", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "Moonshot AI latest model with strong reasoning capabilities",
     sources: {
+      github: ["MoonshotAI/Kimi-K2"],
+      huggingface: ["moonshotai/Kimi-K2.5"],
       hackernews: ["Kimi K2", "Moonshot AI"],
       reddit: ["Kimi K2", "Moonshot"],
       openRouter: "moonshotai/kimi-k2.5",
+      semanticScholar: "Kimi K2: Open Agentic Intelligence",
     }
   },
   {
@@ -905,6 +895,8 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-10-01", pricing_tier: "freemium", availability: "API", open_source: 0,
     description: "StepFun fast inference model with strong multilingual capabilities",
     sources: {
+      github: ["stepfun-ai/Step3"],
+      huggingface: ["stepfun-ai/Step-3.5-Flash"],
       hackernews: ["StepFun", "Step Flash"],
       reddit: ["StepFun"],
       openRouter: "stepfun/step-3.5-flash",
@@ -920,6 +912,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Qwen 3", "Qwen3"],
       reddit: ["Qwen 3", "Qwen3"],
       openRouter: "qwen/qwen3-235b-a22b",
+      semanticScholar: "Qwen3 Technical Report",
     }
   },
   {
@@ -927,6 +920,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-12-01", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "xAI updated Grok with improved speed and capability",
     sources: {
+      github: ["xai-org/grok-prompts"],
       hackernews: ["Grok 4.1", "xAI Grok"],
       reddit: ["Grok 4.1"],
       openRouter: "x-ai/grok-4.1-fast",

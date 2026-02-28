@@ -85,7 +85,7 @@ const SEED_SIGNAL_MAP: Record<string, (e: EntitySeed, usage: number, attention: 
     ['reddit_signal', attention * 5 * (0.3 + rand())],
   ],
   capability: (_e, _u, _a, capability) => [
-    ['artificial_analysis_score', capability * (0.8 + rand() * 0.4)],
+    ['open_router_signal', capability * (0.8 + rand() * 0.4)],
   ],
   expert: (_e, _u, _a, _c, expert) => [
     ['semantic_scholar_citations', expert * 10 * (0.3 + rand())],
