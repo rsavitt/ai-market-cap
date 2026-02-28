@@ -684,6 +684,48 @@ export const entityRegistry: RegisteredEntity[] = [
     }
   },
   {
+    id: "claude-opus-4-6", name: "Claude Opus 4.6", category: "general_llm", company: "Anthropic",
+    release_date: "2025-10-01", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Anthropic most capable model for complex reasoning and coding",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      huggingface: null,
+      hackernews: ["Claude Opus", "Claude Opus 4"],
+      reddit: ["Claude Opus", "Claude Opus 4"],
+      artificialAnalysis: "claude-opus-4",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "claude-sonnet-4-6", name: "Claude Sonnet 4.6", category: "general_llm", company: "Anthropic",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API,Web,Mobile", open_source: 0,
+    description: "Fast and capable model balancing performance and cost",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      huggingface: null,
+      hackernews: ["Claude Sonnet 4.6", "Claude Sonnet"],
+      reddit: ["Claude Sonnet 4.6"],
+      artificialAnalysis: "claude-sonnet-4-6",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "claude-haiku-4-5", name: "Claude Haiku 4.5", category: "general_llm", company: "Anthropic",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Anthropic fastest and most affordable model",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      huggingface: null,
+      hackernews: ["Claude Haiku", "Claude Haiku 4"],
+      reddit: ["Claude Haiku"],
+      artificialAnalysis: "claude-haiku-4-5",
+      semanticScholar: null,
+    }
+  },
+  {
     id: "gemini-25-pro", name: "Gemini 2.5 Pro", category: "general_llm", company: "Google",
     release_date: "2025-03-25", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "Google thinking model with 1M token context",
@@ -750,6 +792,76 @@ export const entityRegistry: RegisteredEntity[] = [
       hackernews: ["o3-mini", "o3 mini"],
       reddit: ["o3-mini", "o3 mini"],
       artificialAnalysis: "o3-mini",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "gpt-5-2", name: "GPT-5.2", category: "general_llm", company: "OpenAI",
+    release_date: "2025-09-01", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "OpenAI most advanced model with major agentic coding improvements",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      huggingface: null,
+      hackernews: ["GPT-5", "GPT 5.2"],
+      reddit: ["GPT-5", "GPT 5.2"],
+      artificialAnalysis: "gpt-5-2",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "gemini-3-pro", name: "Gemini 3 Pro", category: "general_llm", company: "Google",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Google flagship frontier model for high-precision multimodal reasoning",
+    sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
+      github: ["google-gemini/generative-ai-python"],
+      huggingface: null,
+      hackernews: ["Gemini 3", "Gemini 3 Pro"],
+      reddit: ["Gemini 3", "Gemini 3 Pro"],
+      artificialAnalysis: "gemini-3-pro",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "deepseek-v3-2", name: "DeepSeek V3.2", category: "general_llm", company: "DeepSeek",
+    release_date: "2025-08-01", pricing_tier: "freemium", availability: "API,Web", open_source: 1,
+    description: "Efficient MoE model balancing reasoning and tool-use performance",
+    sources: {
+      pypi: null, npm: null,
+      github: ["deepseek-ai/DeepSeek-V3"],
+      huggingface: ["deepseek-ai/DeepSeek-V3"],
+      hackernews: ["DeepSeek V3.2", "DeepSeek-V3.2"],
+      reddit: ["DeepSeek V3.2"],
+      artificialAnalysis: "deepseek-v3-2",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "mistral-large-3", name: "Mistral Large 3", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-07-01", pricing_tier: "freemium", availability: "API,Web", open_source: 1,
+    description: "Sparse MoE with 41B active parameters under Apache 2.0",
+    sources: {
+      pypi: ["mistralai"], npm: ["@mistralai/mistralai"],
+      github: ["mistralai/mistral-inference"],
+      huggingface: null,
+      hackernews: ["Mistral Large 3", "Mistral AI"],
+      reddit: ["Mistral Large 3"],
+      artificialAnalysis: "mistral-large-3",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "grok-4", name: "Grok 4", category: "general_llm", company: "xAI",
+    release_date: "2025-07-01", pricing_tier: "paid", availability: "Web,API", open_source: 0,
+    description: "xAI latest model with strong agentic tool-calling capabilities",
+    sources: {
+      pypi: null, npm: null,
+      github: null,
+      huggingface: null,
+      hackernews: ["Grok 4", "xAI Grok 4"],
+      reddit: ["Grok 4", "xAI Grok"],
+      artificialAnalysis: "grok-4",
       semanticScholar: null,
     }
   },
