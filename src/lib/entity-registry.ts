@@ -165,6 +165,21 @@ export const entityRegistry: RegisteredEntity[] = [
     }
   },
 
+  {
+    id: "devin", name: "Devin", category: "coding", company: "Cognition",
+    release_date: "2025-03-12", pricing_tier: "paid", availability: "Web", open_source: 0,
+    description: "Autonomous AI software engineer",
+    sources: {
+      pypi: null, npm: null,
+      github: null,
+      huggingface: null,
+      hackernews: ["Devin AI", "Cognition Devin"],
+      reddit: ["Devin AI", "Cognition Devin"],
+      artificialAnalysis: null,
+      semanticScholar: null,
+    }
+  },
+
   // ── IMAGE ───────────────────────────────────────────
   {
     id: "midjourney-v6", name: "Midjourney v6.1", category: "image", company: "Midjourney",
@@ -419,6 +434,72 @@ export const entityRegistry: RegisteredEntity[] = [
     }
   },
 
+  // ── AUDIO ──────────────────────────────────────────
+  {
+    id: "elevenlabs", name: "ElevenLabs", category: "audio", company: "ElevenLabs",
+    release_date: "2024-01-01", pricing_tier: "freemium", availability: "Web,API", open_source: 0,
+    description: "Leading AI voice synthesis and cloning platform",
+    sources: {
+      pypi: ["elevenlabs"], npm: null,
+      github: ["elevenlabs/elevenlabs-python"],
+      huggingface: null,
+      hackernews: ["ElevenLabs"],
+      reddit: ["ElevenLabs"],
+      artificialAnalysis: null,
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "suno", name: "Suno", category: "audio", company: "Suno AI",
+    release_date: "2024-03-22", pricing_tier: "freemium", availability: "Web", open_source: 0,
+    description: "AI music generation from text prompts",
+    sources: {
+      pypi: null, npm: null, github: null, huggingface: null,
+      hackernews: ["Suno AI", "Suno music"],
+      reddit: ["Suno AI", "Suno music"],
+      artificialAnalysis: null,
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "udio", name: "Udio", category: "audio", company: "Udio",
+    release_date: "2024-04-10", pricing_tier: "freemium", availability: "Web", open_source: 0,
+    description: "AI music generation with high-fidelity audio",
+    sources: {
+      pypi: null, npm: null, github: null, huggingface: null,
+      hackernews: ["Udio"],
+      reddit: ["Udio"],
+      artificialAnalysis: null,
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "openai-whisper", name: "Whisper", category: "audio", company: "OpenAI",
+    release_date: "2023-11-06", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Open-source speech recognition model",
+    sources: {
+      pypi: ["openai-whisper"], npm: null,
+      github: ["openai/whisper"],
+      huggingface: ["openai/whisper-large-v3"],
+      hackernews: ["Whisper OpenAI", "Whisper speech"],
+      reddit: ["Whisper OpenAI"],
+      artificialAnalysis: null,
+      semanticScholar: "Robust Speech Recognition via Large-Scale Weak Supervision",
+    }
+  },
+  {
+    id: "notebooklm", name: "NotebookLM", category: "audio", company: "Google",
+    release_date: "2024-09-11", pricing_tier: "free", availability: "Web", open_source: 0,
+    description: "AI research assistant with audio overview podcasts",
+    sources: {
+      pypi: null, npm: null, github: null, huggingface: null,
+      hackernews: ["NotebookLM"],
+      reddit: ["NotebookLM"],
+      artificialAnalysis: null,
+      semanticScholar: null,
+    }
+  },
+
   // ── GENERAL LLMs ────────────────────────────────────
   {
     id: "gpt-4o", name: "GPT-4o", category: "general_llm", company: "OpenAI",
@@ -557,6 +638,118 @@ export const entityRegistry: RegisteredEntity[] = [
       hackernews: ["Command R+", "Cohere"],
       reddit: ["Command R+", "Cohere"],
       artificialAnalysis: "command-r-plus",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "gpt-4-5", name: "GPT-4.5", category: "general_llm", company: "OpenAI",
+    release_date: "2025-02-27", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "OpenAI largest and most capable model with improved EQ",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      huggingface: null,
+      hackernews: ["GPT-4.5"],
+      reddit: ["GPT-4.5", "GPT 4.5"],
+      artificialAnalysis: "gpt-4-5",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "claude-37-sonnet", name: "Claude 3.7 Sonnet", category: "general_llm", company: "Anthropic",
+    release_date: "2025-02-24", pricing_tier: "freemium", availability: "API,Web,Mobile", open_source: 0,
+    description: "Anthropic hybrid reasoning model with extended thinking",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      huggingface: null,
+      hackernews: ["Claude 3.7", "Claude 3.7 Sonnet"],
+      reddit: ["Claude 3.7 Sonnet", "Claude 3.7"],
+      artificialAnalysis: "claude-3-7-sonnet",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "claude-4-sonnet", name: "Claude Sonnet 4", category: "general_llm", company: "Anthropic",
+    release_date: "2025-05-22", pricing_tier: "freemium", availability: "API,Web,Mobile", open_source: 0,
+    description: "Anthropic latest Sonnet with improved coding and instruction following",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      huggingface: null,
+      hackernews: ["Claude Sonnet 4", "Claude 4 Sonnet"],
+      reddit: ["Claude Sonnet 4", "Claude 4"],
+      artificialAnalysis: "claude-sonnet-4",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "gemini-25-pro", name: "Gemini 2.5 Pro", category: "general_llm", company: "Google",
+    release_date: "2025-03-25", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Google thinking model with 1M token context",
+    sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
+      github: ["google-gemini/generative-ai-python"],
+      huggingface: null,
+      hackernews: ["Gemini 2.5 Pro", "Gemini 2.5"],
+      reddit: ["Gemini 2.5 Pro", "Gemini 2.5"],
+      artificialAnalysis: "gemini-2-5-pro",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "llama-4-scout", name: "Llama 4 Scout", category: "general_llm", company: "Meta",
+    release_date: "2025-04-05", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Meta 109B MoE model with 10M token context",
+    sources: {
+      pypi: ["transformers"], npm: null,
+      github: ["meta-llama/llama-models"],
+      huggingface: ["meta-llama/Llama-4-Scout-17B-16E-Instruct"],
+      hackernews: ["Llama 4", "Llama 4 Scout"],
+      reddit: ["Llama 4", "Llama 4 Scout"],
+      artificialAnalysis: "llama-4-scout",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "deepseek-r1", name: "DeepSeek R1", category: "general_llm", company: "DeepSeek",
+    release_date: "2025-01-20", pricing_tier: "freemium", availability: "API,Web", open_source: 1,
+    description: "Open-source reasoning model rivaling o1",
+    sources: {
+      pypi: null, npm: null,
+      github: ["deepseek-ai/DeepSeek-R1"],
+      huggingface: ["deepseek-ai/DeepSeek-R1"],
+      hackernews: ["DeepSeek R1", "DeepSeek-R1"],
+      reddit: ["DeepSeek R1", "DeepSeek-R1"],
+      artificialAnalysis: "deepseek-r1",
+      semanticScholar: "DeepSeek-R1",
+    }
+  },
+  {
+    id: "o3", name: "o3", category: "general_llm", company: "OpenAI",
+    release_date: "2025-04-16", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "OpenAI most capable reasoning model",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      huggingface: null,
+      hackernews: ["OpenAI o3", "o3 model"],
+      reddit: ["OpenAI o3", "o3 model"],
+      artificialAnalysis: "o3",
+      semanticScholar: null,
+    }
+  },
+  {
+    id: "o3-mini", name: "o3-mini", category: "general_llm", company: "OpenAI",
+    release_date: "2025-01-31", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Cost-efficient reasoning model from OpenAI",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      huggingface: null,
+      hackernews: ["o3-mini", "o3 mini"],
+      reddit: ["o3-mini", "o3 mini"],
+      artificialAnalysis: "o3-mini",
       semanticScholar: null,
     }
   },
