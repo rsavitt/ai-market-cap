@@ -7,6 +7,8 @@ interface Props {
     capability_score: number;
     expert_score: number;
     total_score: number;
+    confidence_lower?: number | null;
+    confidence_upper?: number | null;
   };
 }
 
@@ -26,6 +28,26 @@ export default function ScoreBreakdown({ scores }: Props) {
           {scores.total_score?.toFixed(1)}
         </div>
         <div className="text-xs text-gray-500 mt-1">Composite Score</div>
+        {scores.confidence_lower != null && scores.confidence_upper != null && (
+          <div className="mt-2">
+            <div className="relative h-1.5 w-48 mx-auto bg-[#1a2332] rounded-full overflow-hidden">
+              <div
+                className="absolute h-full rounded-full bg-gradient-to-r from-blue-500/40 to-purple-500/40"
+                style={{
+                  left: `${scores.confidence_lower}%`,
+                  width: `${scores.confidence_upper - scores.confidence_lower}%`,
+                }}
+              />
+              <div
+                className="absolute h-full w-0.5 bg-white/80 rounded-full"
+                style={{ left: `${scores.total_score}%` }}
+              />
+            </div>
+            <div className="text-[10px] text-gray-500 mt-1.5">
+              Confidence: {scores.confidence_lower.toFixed(1)} – {scores.confidence_upper.toFixed(1)}
+            </div>
+          </div>
+        )}
       </div>
       <div className="space-y-4">
         {SCORE_CONFIG.map((cfg) => {

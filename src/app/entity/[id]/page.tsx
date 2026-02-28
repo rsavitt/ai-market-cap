@@ -131,7 +131,7 @@ export default function EntityPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <ScoreBreakdown scores={{ usage_score: entity.usage_score, attention_score: entity.attention_score, capability_score: entity.capability_score, expert_score: entity.expert_score, total_score: entity.total_score }} />
+          <ScoreBreakdown scores={{ usage_score: entity.usage_score, attention_score: entity.attention_score, capability_score: entity.capability_score, expert_score: entity.expert_score, total_score: entity.total_score, confidence_lower: entity.confidence_lower, confidence_upper: entity.confidence_upper }} />
           {history?.length > 0 && <TrendChart history={history} />}
         </div>
         <div className="space-y-6">

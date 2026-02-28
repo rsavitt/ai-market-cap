@@ -92,9 +92,22 @@ export default function RankingTable({ entities, onSort, sortField, sortOrder }:
               </td>
               <td className="px-3 py-3 text-center">
                 <div className="flex items-center justify-center gap-2">
-                  <span className="font-bold text-white tabular-nums">{entity.total_score?.toFixed(1)}</span>
-                  <div className="w-16 h-1.5 bg-[#1a2332] rounded-full overflow-hidden hidden sm:block">
-                    <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400" style={{ width: `${entity.total_score}%` }} />
+                  <div>
+                    <span className="font-bold text-white tabular-nums">{entity.total_score?.toFixed(1)}</span>
+                    {entity.confidence_lower != null && entity.confidence_upper != null && (
+                      <div className="text-[9px] text-gray-600 tabular-nums leading-tight">
+                        {entity.confidence_lower.toFixed(1)}–{entity.confidence_upper.toFixed(1)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="w-16 h-1.5 bg-[#1a2332] rounded-full overflow-hidden hidden sm:block relative">
+                    {entity.confidence_lower != null && entity.confidence_upper != null && (
+                      <div
+                        className="absolute h-full rounded-full bg-blue-500/20"
+                        style={{ left: `${entity.confidence_lower}%`, width: `${entity.confidence_upper - entity.confidence_lower}%` }}
+                      />
+                    )}
+                    <div className="absolute h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400" style={{ width: `${entity.total_score}%` }} />
                   </div>
                 </div>
               </td>
