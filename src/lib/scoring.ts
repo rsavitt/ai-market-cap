@@ -129,8 +129,8 @@ function normalizeWithinCategory(
 
 /**
  * Combine multiple normalized signals with sub-weights into a dimension score.
- * Enforces 30% source cap: if any single signal exceeds 30% of the dimension weight,
- * clamp and redistribute.
+ * Enforces 30% source cap only when 3+ sources contribute for an entity.
+ * With 1-2 sources, signals use their full normalized weight.
  */
 function combineDimension(
   signals: { normalized: Map<string, number>; weight: number }[],
@@ -156,34 +156,44 @@ function combineDimension(
       continue;
     }
 
-    // Normalize weights and apply 30% cap
+    // Only apply the 30% source cap when 3+ sources contribute
+    const applyCap = contributions.length >= 3;
+
     let weightedSum = 0;
-    let cappedWeight = 0;
-    let uncappedWeight = 0;
-    const cappedContribs: { value: number; normalizedWeight: number; capped: boolean }[] = [];
 
-    for (const c of contributions) {
-      const normalizedWeight = c.weight / totalWeight;
-      const isCapped = normalizedWeight > SOURCE_CAP;
-      cappedContribs.push({
-        value: c.value,
-        normalizedWeight: isCapped ? SOURCE_CAP : normalizedWeight,
-        capped: isCapped,
-      });
-      if (isCapped) {
-        cappedWeight += normalizedWeight - SOURCE_CAP;
-      } else {
-        uncappedWeight += normalizedWeight;
+    if (!applyCap) {
+      // 1-2 sources: use full normalized weights
+      for (const c of contributions) {
+        weightedSum += c.value * (c.weight / totalWeight);
       }
-    }
+    } else {
+      // 3+ sources: apply cap and redistribute
+      let cappedWeight = 0;
+      let uncappedWeight = 0;
+      const cappedContribs: { value: number; normalizedWeight: number; capped: boolean }[] = [];
 
-    // Redistribute capped weight to uncapped signals
-    for (const c of cappedContribs) {
-      let finalWeight = c.normalizedWeight;
-      if (!c.capped && uncappedWeight > 0 && cappedWeight > 0) {
-        finalWeight += (c.normalizedWeight / uncappedWeight) * cappedWeight;
+      for (const c of contributions) {
+        const normalizedWeight = c.weight / totalWeight;
+        const isCapped = normalizedWeight > SOURCE_CAP;
+        cappedContribs.push({
+          value: c.value,
+          normalizedWeight: isCapped ? SOURCE_CAP : normalizedWeight,
+          capped: isCapped,
+        });
+        if (isCapped) {
+          cappedWeight += normalizedWeight - SOURCE_CAP;
+        } else {
+          uncappedWeight += normalizedWeight;
+        }
       }
-      weightedSum += c.value * finalWeight;
+
+      for (const c of cappedContribs) {
+        let finalWeight = c.normalizedWeight;
+        if (!c.capped && uncappedWeight > 0 && cappedWeight > 0) {
+          finalWeight += (c.normalizedWeight / uncappedWeight) * cappedWeight;
+        }
+        weightedSum += c.value * finalWeight;
+      }
     }
 
     result.set(id, Math.round(weightedSum * 100) / 100);
@@ -303,18 +313,37 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.redditSignal, weight: 0.45 },
   ], entityIds);
 
-  // Capability: OpenRouter (0.65) + HN expert signal (0.35)
+  // Capability: OpenRouter (1.0) — the only real capability signal
   const capabilityScores = combineDimension([
-    { normalized: normalizedSignals.openRouterSignal, weight: 0.65 },
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
+    { normalized: normalizedSignals.openRouterSignal, weight: 1.0 },
   ], entityIds);
 
-  // Expert: Semantic Scholar (0.45) + OpenAlex (0.25) + HN (0.30)
+  // Expert: Semantic Scholar (0.5) + OpenAlex (0.5)
   const expertScores = combineDimension([
-    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.45 },
-    { normalized: normalizedSignals.openAlexCitations, weight: 0.25 },
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.30 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.5 },
+    { normalized: normalizedSignals.openAlexCitations, weight: 0.5 },
   ], entityIds);
+
+  // ── Apply recency decay to attention and usage ──
+  // Older models shouldn't dominate just from accumulated metrics.
+  // recency_factor = max(0.5, 1 - (days_since_release / 730))
+  for (const id of entityIds) {
+    const entity = entityRegistry.find(e => e.id === id);
+    if (entity?.release_date) {
+      const daysSinceRelease = (Date.now() - new Date(entity.release_date).getTime()) / (1000 * 60 * 60 * 24);
+      const recencyFactor = Math.max(0.5, 1 - daysSinceRelease / 730);
+
+      const usage = usageScores.get(id);
+      if (usage !== undefined) {
+        usageScores.set(id, Math.round(usage * recencyFactor * 100) / 100);
+      }
+
+      const attention = attentionScores.get(id);
+      if (attention !== undefined) {
+        attentionScores.set(id, Math.round(attention * recencyFactor * 100) / 100);
+      }
+    }
+  }
 
   // Compute category medians for new entrant handling
   const categoryMedians: Record<string, number> = {};
