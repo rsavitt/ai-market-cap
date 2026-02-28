@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 interface HNSearchResponse {
   nbHits: number;
@@ -24,7 +25,7 @@ export async function collectHackerNews(): Promise<Map<string, number>> {
           numericFilters: `created_at_i>${weekAgo}`,
           hitsPerPage: '50',
         });
-        const res = await fetch(
+        const res = await fetchWithRetry(
           `https://hn.algolia.com/api/v1/search?${params}`,
           { signal: AbortSignal.timeout(10000) }
         );
@@ -38,6 +39,7 @@ export async function collectHackerNews(): Promise<Map<string, number>> {
       } catch {
         // Skip failed queries
       }
+      await delay(200);
     }
 
     // Combine hit count and points: points are the primary signal

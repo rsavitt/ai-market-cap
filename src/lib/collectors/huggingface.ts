@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 interface HFModel {
   downloads: number;
@@ -16,7 +17,7 @@ export async function collectHuggingFace(): Promise<Map<string, number>> {
 
     for (const modelId of entity.sources.huggingface) {
       try {
-        const res = await fetch(
+        const res = await fetchWithRetry(
           `https://huggingface.co/api/models/${modelId}`,
           { signal: AbortSignal.timeout(10000) }
         );
@@ -28,6 +29,7 @@ export async function collectHuggingFace(): Promise<Map<string, number>> {
       } catch {
         // Skip failed models
       }
+      await delay(200);
     }
 
     if (totalSignal > 0) {

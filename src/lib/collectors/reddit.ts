@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 interface RedditResponse {
   data: {
@@ -58,7 +59,7 @@ export async function collectReddit(): Promise<Map<string, number>> {
           t: 'week',
           limit: '25',
         });
-        const res = await fetch(
+        const res = await fetchWithRetry(
           `https://oauth.reddit.com/search?${params}`,
           {
             headers: {
@@ -78,6 +79,7 @@ export async function collectReddit(): Promise<Map<string, number>> {
       } catch {
         // Skip failed queries
       }
+      await delay(200);
     }
 
     const signal = totalScore + totalPosts * 5;

@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry } from './fetch-utils';
 
 interface OpenRouterModel {
   id: string;
@@ -40,7 +41,7 @@ export async function collectOpenRouterUsage(): Promise<Map<string, number>> {
     if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
     // Fetch models API to build model_id → canonical_slug map
-    const modelsRes = await fetch(
+    const modelsRes = await fetchWithRetry(
       'https://openrouter.ai/api/v1/models',
       { headers, signal: AbortSignal.timeout(15000) }
     );
@@ -61,7 +62,7 @@ export async function collectOpenRouterUsage(): Promise<Map<string, number>> {
     if (slugToEntityId.size === 0) return results;
 
     // Fetch rankings HTML
-    const rankingsRes = await fetch(
+    const rankingsRes = await fetchWithRetry(
       'https://openrouter.ai/rankings',
       { headers: { 'Accept': 'text/html' }, signal: AbortSignal.timeout(15000) }
     );
@@ -127,7 +128,7 @@ export async function collectOpenRouter(): Promise<Map<string, number>> {
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
-    const res = await fetch(
+    const res = await fetchWithRetry(
       'https://openrouter.ai/api/v1/models',
       { headers, signal: AbortSignal.timeout(15000) }
     );

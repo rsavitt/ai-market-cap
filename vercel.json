@@ -3,6 +3,22 @@
     {
       "path": "/api/collect",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/collect/group1",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/collect/group2",
+      "schedule": "3 6 * * *"
+    },
+    {
+      "path": "/api/collect/group3",
+      "schedule": "6 6 * * *"
+    },
+    {
+      "path": "/api/collect/score",
+      "schedule": "15 6 * * *"
     }
   ]
 }

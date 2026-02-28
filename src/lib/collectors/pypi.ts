@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 export async function collectPyPI(): Promise<Map<string, number>> {
   const entityRegistry = await getEntityRegistry();
@@ -18,7 +19,7 @@ export async function collectPyPI(): Promise<Map<string, number>> {
   // Fetch downloads for each unique package
   for (const [pkg, entityIds] of Array.from(packageToEntities.entries())) {
     try {
-      const res = await fetch(
+      const res = await fetchWithRetry(
         `https://pypistats.org/api/packages/${pkg}/recent?period=day`,
         { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(10000) }
       );
@@ -33,6 +34,7 @@ export async function collectPyPI(): Promise<Map<string, number>> {
     } catch {
       // Skip failed packages silently
     }
+    await delay(200);
   }
 
   return results;

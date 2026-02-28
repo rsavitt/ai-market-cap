@@ -19,6 +19,19 @@ interface CollectionResult {
   durationMs: number;
 }
 
+export interface GroupResult {
+  date: string;
+  sources: Record<string, { count: number; error?: string }>;
+  durationMs: number;
+}
+
+export interface ScoringResult {
+  date: string;
+  entitiesUpdated: number;
+  anomalies: string[];
+  durationMs: number;
+}
+
 async function safeCollect<T>(
   name: string,
   fn: () => Promise<T>,
@@ -37,22 +50,9 @@ async function safeCollect<T>(
 }
 
 /**
- * Write all raw signal values to the raw_signals table for historical tracking.
+ * Write raw signal values to the raw_signals table for historical tracking.
  */
-async function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, number>, today: string): Promise<void> {
-  const signalEntries: [string, Map<string, number>][] = [
-    ['pypi_downloads', raw.pypiDownloads],
-    ['npm_downloads', raw.npmDownloads],
-    ['huggingface_signal', raw.huggingfaceSignal],
-    ['github_stars', githubAbsolute],
-    ['github_stars_velocity', raw.githubStars],
-    ['hackernews_signal', raw.hackernewsSignal],
-    ['reddit_signal', raw.redditSignal],
-    ['open_router_signal', raw.openRouterSignal],
-    ['open_router_usage', raw.openRouterUsage],
-    ['semantic_scholar_citations', raw.semanticScholarCitations],
-  ];
-
+async function storeRawSignals(signalEntries: [string, Map<string, number>][], today: string): Promise<void> {
   const db = await ensureDb();
   const stmts: { sql: string; args: any[] }[] = [];
 
@@ -89,7 +89,6 @@ async function writeProvenance(
     const prev = previousScores.get(entityId);
     const signalContributions: Record<string, number> = {};
 
-    // Record which signals contributed
     const signalChecks: [string, Map<string, number>][] = [
       ['pypi_downloads', raw.pypiDownloads],
       ['npm_downloads', raw.npmDownloads],
@@ -121,27 +120,43 @@ async function writeProvenance(
   }
 }
 
-export async function runCollection(): Promise<CollectionResult> {
+/**
+ * Group 1: PyPI + NPM + HackerNews
+ * No auth required, generous rate limits.
+ */
+export async function runGroup1(): Promise<GroupResult> {
   const start = Date.now();
   const today = new Date().toISOString().split('T')[0];
   const sources: Record<string, { count: number; error?: string }> = {};
-  const anomalies: string[] = [];
 
-  // Ensure DB is initialized
   await ensureDb();
 
-  // Load entity registry from DB
-  const entityRegistry = await getEntityRegistry();
-
-  // Run collectors in parallel groups to respect rate limits
-  // Group 1: No auth required, generous rate limits
   const [pypi, npm, hn] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
   ]);
 
-  // Group 2: May need auth or have stricter limits
+  await storeRawSignals([
+    ['pypi_downloads', pypi ?? new Map()],
+    ['npm_downloads', npm ?? new Map()],
+    ['hackernews_signal', hn ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 2: HuggingFace + GitHub + OpenRouter
+ * May need auth or have stricter limits.
+ */
+export async function runGroup2(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
   const [hf, githubResult, or, orUsage] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
@@ -149,36 +164,103 @@ export async function runCollection(): Promise<CollectionResult> {
     safeCollect('openRouterUsage', collectOpenRouterUsage, sources),
   ]);
 
-  // Group 3: Rate-limited APIs (sequential within the collector)
+  const githubVelocity = githubResult?.velocity ?? new Map<string, number>();
+  const githubAbsolute = githubResult?.absolute ?? new Map<string, number>();
+
+  await storeRawSignals([
+    ['huggingface_signal', hf ?? new Map()],
+    ['github_stars', githubAbsolute],
+    ['github_stars_velocity', githubVelocity],
+    ['open_router_signal', or ?? new Map()],
+    ['open_router_usage', orUsage ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3: Reddit + Semantic Scholar
+ * Rate-limited APIs.
+ */
+export async function runGroup3(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
   const [reddit, ss] = await Promise.all([
     safeCollect('reddit', collectReddit, sources),
     safeCollect('semanticScholar', collectSemanticScholar, sources),
   ]);
 
-  // Extract GitHub velocity and absolute values
-  const githubVelocity = githubResult?.velocity ?? new Map<string, number>();
-  const githubAbsolute = githubResult?.absolute ?? new Map<string, number>();
+  await storeRawSignals([
+    ['reddit_signal', reddit ?? new Map()],
+    ['semantic_scholar_citations', ss ?? new Map()],
+  ], today);
 
-  // Assemble raw signals (using velocity for scoring)
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Scoring: read raw signals from DB, compute scores, detect anomalies, write results.
+ * Runs after all collector groups have finished.
+ */
+export async function runScoring(): Promise<ScoringResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const anomalies: string[] = [];
+
+  await ensureDb();
+  const entityRegistry = await getEntityRegistry();
+
+  // Read today's raw signals from DB to assemble RawSignals
+  const db = await ensureDb();
   const raw: RawSignals = {
-    pypiDownloads: pypi ?? new Map(),
-    npmDownloads: npm ?? new Map(),
-    huggingfaceSignal: hf ?? new Map(),
-    openRouterUsage: orUsage ?? new Map(),
-    githubStars: githubVelocity,
-    hackernewsSignal: hn ?? new Map(),
-    redditSignal: reddit ?? new Map(),
-    openRouterSignal: or ?? new Map(),
-    semanticScholarCitations: ss ?? new Map(),
+    pypiDownloads: new Map(),
+    npmDownloads: new Map(),
+    huggingfaceSignal: new Map(),
+    openRouterUsage: new Map(),
+    githubStars: new Map(),
+    hackernewsSignal: new Map(),
+    redditSignal: new Map(),
+    openRouterSignal: new Map(),
+    semanticScholarCitations: new Map(),
   };
 
-  // Store all raw signals for historical baselines
-  await storeRawSignals(raw, githubAbsolute, today);
+  const signalMapping: [string, keyof RawSignals][] = [
+    ['pypi_downloads', 'pypiDownloads'],
+    ['npm_downloads', 'npmDownloads'],
+    ['huggingface_signal', 'huggingfaceSignal'],
+    ['github_stars_velocity', 'githubStars'],
+    ['hackernews_signal', 'hackernewsSignal'],
+    ['reddit_signal', 'redditSignal'],
+    ['open_router_signal', 'openRouterSignal'],
+    ['open_router_usage', 'openRouterUsage'],
+    ['semantic_scholar_citations', 'semanticScholarCitations'],
+  ];
+
+  const rows = await db.execute({
+    sql: `SELECT entity_id, signal_name, raw_value FROM raw_signals WHERE date = ?`,
+    args: [today],
+  });
+
+  for (const row of rows.rows) {
+    const entityId = row.entity_id as string;
+    const signalName = row.signal_name as string;
+    const value = row.raw_value as number;
+    for (const [dbName, rawKey] of signalMapping) {
+      if (signalName === dbName) {
+        raw[rawKey].set(entityId, value);
+        break;
+      }
+    }
+  }
 
   // Compute scores
   const scores = await computeScores(raw);
 
-  // Anomaly detection (sequential — each call awaits DB)
+  // Anomaly detection
   const scoreEntries = Array.from(scores.entries());
   for (const [entityId, score] of scoreEntries) {
     const anomalyResult = await detectVelocityAnomaly(entityId, score.total_score);
@@ -191,8 +273,6 @@ export async function runCollection(): Promise<CollectionResult> {
   await writeProvenance(scores, raw);
 
   // Ensure entities exist in DB and write scores
-  const db = await ensureDb();
-
   const entityStmts: { sql: string; args: any[] }[] = [];
   const scoreStmts: { sql: string; args: any[] }[] = [];
   let entitiesUpdated = 0;
@@ -222,11 +302,33 @@ export async function runCollection(): Promise<CollectionResult> {
     console.log(`[anomaly] ${anomalies.length} anomalies detected:`, anomalies);
   }
 
+  return { date: today, entitiesUpdated, anomalies, durationMs: Date.now() - start };
+}
+
+/**
+ * Full collection: runs all groups sequentially then scores.
+ * Convenience for local dev and the existing /api/collect endpoint.
+ */
+export async function runCollection(): Promise<CollectionResult> {
+  const start = Date.now();
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  const g1 = await runGroup1();
+  Object.assign(sources, g1.sources);
+
+  const g2 = await runGroup2();
+  Object.assign(sources, g2.sources);
+
+  const g3 = await runGroup3();
+  Object.assign(sources, g3.sources);
+
+  const scoring = await runScoring();
+
   return {
-    date: today,
-    entitiesUpdated,
+    date: scoring.date,
+    entitiesUpdated: scoring.entitiesUpdated,
     sources,
-    anomalies,
+    anomalies: scoring.anomalies,
     durationMs: Date.now() - start,
   };
 }

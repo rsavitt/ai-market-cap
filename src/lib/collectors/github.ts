@@ -1,5 +1,6 @@
 import { getEntityRegistry } from '../entity-registry';
 import { getRawSignalValue } from '../db';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 interface GitHubRepo {
   stargazers_count: number;
@@ -32,7 +33,7 @@ export async function collectGitHub(): Promise<{ velocity: Map<string, number>; 
 
     for (const repo of entity.sources.github) {
       try {
-        const res = await fetch(
+        const res = await fetchWithRetry(
           `https://api.github.com/repos/${repo}`,
           { headers, signal: AbortSignal.timeout(10000) }
         );
@@ -43,6 +44,7 @@ export async function collectGitHub(): Promise<{ velocity: Map<string, number>; 
       } catch {
         // Skip failed repos
       }
+      await delay(200);
     }
 
     if (totalStars > 0) {

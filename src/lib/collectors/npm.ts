@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { fetchWithRetry, delay } from './fetch-utils';
 
 export async function collectNpm(): Promise<Map<string, number>> {
   const entityRegistry = await getEntityRegistry();
@@ -17,7 +18,7 @@ export async function collectNpm(): Promise<Map<string, number>> {
   // npm API: GET /downloads/point/last-day/{package}
   for (const [pkg, entityIds] of Array.from(packageToEntities.entries())) {
     try {
-      const res = await fetch(
+      const res = await fetchWithRetry(
         `https://api.npmjs.org/downloads/point/last-day/${encodeURIComponent(pkg)}`,
         { signal: AbortSignal.timeout(10000) }
       );
@@ -32,6 +33,7 @@ export async function collectNpm(): Promise<Map<string, number>> {
     } catch {
       // Skip failed packages
     }
+    await delay(200);
   }
 
   return results;
