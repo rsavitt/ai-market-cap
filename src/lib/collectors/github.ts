@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 import { getRawSignalValue } from '../db';
 
 interface GitHubRepo {
@@ -13,6 +13,7 @@ interface GitHubRepo {
  * On first run (no history), falls back to absolute count.
  */
 export async function collectGitHub(): Promise<{ velocity: Map<string, number>; absolute: Map<string, number> }> {
+  const entityRegistry = await getEntityRegistry();
   const velocity = new Map<string, number>();
   const absolute = new Map<string, number>();
   const token = process.env.GITHUB_TOKEN;

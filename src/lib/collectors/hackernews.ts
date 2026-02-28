@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 interface HNSearchResponse {
   nbHits: number;
@@ -6,6 +6,7 @@ interface HNSearchResponse {
 }
 
 export async function collectHackerNews(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
 
   // Search last 7 days

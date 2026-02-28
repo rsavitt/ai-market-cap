@@ -89,7 +89,9 @@ async function migrateSchema(db: Client): Promise<void> {
   const result = await db.execute('SELECT MAX(version) as v FROM _migrations');
   const version = (result.rows[0]?.v as number) ?? 0;
 
-  if (version < 1) {
+  if (version < 2) {
+    // Ensure v1 tables exist first
+    if (version < 1) {
     await db.batch([
       {
         sql: `CREATE TABLE IF NOT EXISTS entities (
@@ -167,6 +169,33 @@ async function migrateSchema(db: Client): Promise<void> {
       },
       {
         sql: `INSERT INTO _migrations (version) VALUES (1)`,
+        args: [],
+      },
+    ], 'write');
+    }
+
+    // v2: entity_sources table
+    await db.batch([
+      {
+        sql: `CREATE TABLE IF NOT EXISTS entity_sources (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+          source_type TEXT NOT NULL,
+          source_value TEXT NOT NULL,
+          UNIQUE(entity_id, source_type, source_value)
+        )`,
+        args: [],
+      },
+      {
+        sql: `CREATE INDEX IF NOT EXISTS idx_es_entity ON entity_sources(entity_id)`,
+        args: [],
+      },
+      {
+        sql: `CREATE INDEX IF NOT EXISTS idx_es_type_value ON entity_sources(source_type, source_value)`,
+        args: [],
+      },
+      {
+        sql: `INSERT INTO _migrations (version) VALUES (2)`,
         args: [],
       },
     ], 'write');
@@ -388,4 +417,91 @@ export async function getLatestScores(): Promise<ScoredEntity[]> {
   }));
 
   return sorted;
+}
+
+// ── Entity Sources helpers ──
+
+export interface EntitySourceRow {
+  entity_id: string;
+  source_type: string;
+  source_value: string;
+}
+
+export async function getEntitySources(entityId: string): Promise<EntitySourceRow[]> {
+  const db = await ensureDb();
+  const result = await db.execute({
+    sql: 'SELECT entity_id, source_type, source_value FROM entity_sources WHERE entity_id = ?',
+    args: [entityId],
+  });
+  return result.rows as unknown as EntitySourceRow[];
+}
+
+export async function getAllEntitySources(): Promise<EntitySourceRow[]> {
+  const db = await ensureDb();
+  const result = await db.execute('SELECT entity_id, source_type, source_value FROM entity_sources ORDER BY entity_id, source_type');
+  return result.rows as unknown as EntitySourceRow[];
+}
+
+export async function setEntitySources(entityId: string, sources: { source_type: string; source_value: string }[]): Promise<void> {
+  const db = await ensureDb();
+  const stmts: { sql: string; args: any[] }[] = [
+    { sql: 'DELETE FROM entity_sources WHERE entity_id = ?', args: [entityId] },
+  ];
+  for (const s of sources) {
+    stmts.push({
+      sql: `INSERT INTO entity_sources (entity_id, source_type, source_value) VALUES (?, ?, ?)`,
+      args: [entityId, s.source_type, s.source_value],
+    });
+  }
+  await db.batch(stmts, 'write');
+}
+
+export async function insertEntity(entity: Omit<Entity, 'logo_url'> & { logo_url?: string }): Promise<void> {
+  const db = await ensureDb();
+  await db.execute({
+    sql: `INSERT INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [entity.id, entity.name, entity.category, entity.company, entity.release_date, entity.pricing_tier, entity.availability, entity.open_source, entity.description, entity.logo_url ?? ''],
+  });
+}
+
+export async function updateEntity(id: string, fields: Partial<Omit<Entity, 'id'>>): Promise<void> {
+  const db = await ensureDb();
+  const setClauses: string[] = [];
+  const args: any[] = [];
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined) {
+      setClauses.push(`${key} = ?`);
+      args.push(value);
+    }
+  }
+  if (setClauses.length === 0) return;
+  args.push(id);
+  await db.execute({
+    sql: `UPDATE entities SET ${setClauses.join(', ')} WHERE id = ?`,
+    args,
+  });
+}
+
+export async function deleteEntity(id: string): Promise<void> {
+  const db = await ensureDb();
+  await db.execute({ sql: 'DELETE FROM entities WHERE id = ?', args: [id] });
+}
+
+export async function getAllEntitiesWithSources(): Promise<(Entity & { sources: EntitySourceRow[] })[]> {
+  const [entities, sources] = await Promise.all([
+    getAllEntities(),
+    getAllEntitySources(),
+  ]);
+
+  const sourcesByEntity = new Map<string, EntitySourceRow[]>();
+  for (const s of sources) {
+    if (!sourcesByEntity.has(s.entity_id)) sourcesByEntity.set(s.entity_id, []);
+    sourcesByEntity.get(s.entity_id)!.push(s);
+  }
+
+  return entities.map(e => ({
+    ...e,
+    sources: sourcesByEntity.get(e.id) ?? [],
+  }));
 }

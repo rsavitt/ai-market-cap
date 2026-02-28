@@ -1,4 +1,4 @@
-import { getAllEntityIds, entityRegistry } from './entity-registry';
+import { getEntityRegistry, getAllEntityIds, type RegisteredEntity } from './entity-registry';
 import { get90DayBaselines } from './db';
 
 export interface RawSignals {
@@ -64,6 +64,7 @@ function normalizeWithinCategory(
   signalName: string,
   category: string,
   baselines: Map<string, { min: number; max: number }>,
+  entityRegistry: RegisteredEntity[],
 ): Map<string, number> {
   const result = new Map<string, number>();
   const baseline = baselines.get(signalName);
@@ -157,7 +158,7 @@ function combineDimension(
 /**
  * Check if an entity is a new entrant (release_date < 14 days ago).
  */
-function isNewEntrant(entityId: string): boolean {
+function isNewEntrant(entityId: string, entityRegistry: RegisteredEntity[]): boolean {
   const entity = entityRegistry.find(e => e.id === entityId);
   if (!entity?.release_date) return false;
   const releaseDate = new Date(entity.release_date);
@@ -192,7 +193,8 @@ function calculateConfidence(entityId: string, raw: RawSignals): { confidence: n
 }
 
 export async function computeScores(raw: RawSignals): Promise<Map<string, EntityScores>> {
-  const entityIds = getAllEntityIds();
+  const entityRegistry = await getEntityRegistry();
+  const entityIds = await getAllEntityIds();
   const scores = new Map<string, EntityScores>();
 
   // Group entities by category
@@ -235,6 +237,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
         signalName,
         category,
         baselines,
+        entityRegistry,
       );
       categoryNormalized.forEach((val, id) => {
         normalizedSignals[signalName].set(id, val);
@@ -275,7 +278,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   for (const [category, catIds] of Object.entries(categoriesMap)) {
     const totals: number[] = [];
     for (const id of catIds) {
-      if (!isNewEntrant(id)) {
+      if (!isNewEntrant(id, entityRegistry)) {
         const usage = usageScores.get(id) ?? 5;
         const attention = attentionScores.get(id) ?? 5;
         const capability = capabilityScores.get(id) ?? 5;
@@ -298,7 +301,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     let total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
 
     // New entrants start at category median
-    if (isNewEntrant(id) && entity) {
+    if (isNewEntrant(id, entityRegistry) && entity) {
       total = categoryMedians[entity.category] ?? total;
     }
 

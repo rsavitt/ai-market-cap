@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 interface HFModel {
   downloads: number;
@@ -6,6 +6,7 @@ interface HFModel {
 }
 
 export async function collectHuggingFace(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
 
   for (const entity of entityRegistry) {

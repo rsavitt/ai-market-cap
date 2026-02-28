@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 interface AAModel {
   model_id: string;
@@ -8,6 +8,7 @@ interface AAModel {
 }
 
 export async function collectArtificialAnalysis(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_KEY;
 

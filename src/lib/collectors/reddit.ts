@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 interface RedditResponse {
   data: {
@@ -40,6 +40,7 @@ async function getRedditToken(): Promise<string | null> {
 }
 
 export async function collectReddit(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
 
   const token = await getRedditToken();

@@ -1,4 +1,4 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 interface S2SearchResponse {
   total: number;
@@ -6,6 +6,7 @@ interface S2SearchResponse {
 }
 
 export async function collectSemanticScholar(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
 
   for (const entity of entityRegistry) {

@@ -1,5 +1,5 @@
 import { ensureDb, getPreviousDayScores } from './db';
-import { entityRegistry } from './entity-registry';
+import { getEntityRegistry } from './entity-registry';
 import { computeScores, type RawSignals } from './scoring';
 import { collectPyPI } from './collectors/pypi';
 import { collectNpm } from './collectors/npm';
@@ -127,6 +127,9 @@ export async function runCollection(): Promise<CollectionResult> {
 
   // Ensure DB is initialized
   await ensureDb();
+
+  // Load entity registry from DB
+  const entityRegistry = await getEntityRegistry();
 
   // Run collectors in parallel groups to respect rate limits
   // Group 1: No auth required, generous rate limits

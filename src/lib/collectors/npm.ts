@@ -1,6 +1,7 @@
-import { entityRegistry } from '../entity-registry';
+import { getEntityRegistry } from '../entity-registry';
 
 export async function collectNpm(): Promise<Map<string, number>> {
+  const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
   const packageToEntities = new Map<string, string[]>();
 
