@@ -61,7 +61,7 @@ async function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, numb
       stmts.push({
         sql: `INSERT INTO raw_signals (entity_id, date, signal_name, raw_value)
               VALUES (?, ?, ?, ?)
-              ON CONFLICT(entity_id, date, signal_name) DO UPDATE SET raw_value = excluded.raw_value`,
+              ON CONFLICT(entity_id, date, signal_name) DO UPDATE SET raw_value = MAX(raw_value, excluded.raw_value)`,
         args: [entityId, today, signalName, value],
       });
     });
@@ -209,14 +209,7 @@ export async function runCollection(): Promise<CollectionResult> {
       scoreStmts.push({
         sql: `INSERT INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-              ON CONFLICT(entity_id, date) DO UPDATE SET
-                usage_score = excluded.usage_score,
-                attention_score = excluded.attention_score,
-                capability_score = excluded.capability_score,
-                expert_score = excluded.expert_score,
-                total_score = excluded.total_score,
-                confidence_lower = excluded.confidence_lower,
-                confidence_upper = excluded.confidence_upper`,
+              ON CONFLICT(entity_id, date) DO NOTHING`,
         args: [entity.id, today, s.usage_score, s.attention_score, s.capability_score, s.expert_score, s.total_score, s.confidence_lower, s.confidence_upper],
       });
       entitiesUpdated++;
