@@ -9,7 +9,19 @@ import { collectHackerNews } from './collectors/hackernews';
 import { collectReddit } from './collectors/reddit';
 import { collectOpenRouter, collectOpenRouterUsage } from './collectors/open-router';
 import { collectSemanticScholar } from './collectors/semantic-scholar';
+import { collectOpenAlex } from './collectors/openalex';
 import { detectVelocityAnomaly } from './anomaly';
+
+/**
+ * Merge two Maps, keeping the higher value per key.
+ */
+function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
+  const merged = new Map(a);
+  b.forEach((value, key) => {
+    merged.set(key, Math.max(merged.get(key) ?? 0, value));
+  });
+  return merged;
+}
 
 interface CollectionResult {
   date: string;
@@ -99,6 +111,7 @@ async function writeProvenance(
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
+      ['open_alex_citations', raw.openAlexCitations],
     ];
 
     for (const [name, map] of signalChecks) {
@@ -189,14 +202,20 @@ export async function runGroup3(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [reddit, ss] = await Promise.all([
+  const [reddit, ss, oa] = await Promise.all([
     safeCollect('reddit', collectReddit, sources),
     safeCollect('semanticScholar', collectSemanticScholar, sources),
+    safeCollect('openAlex', collectOpenAlex, sources),
   ]);
+
+  const ssMap = ss ?? new Map<string, number>();
+  const oaMap = oa ?? new Map<string, number>();
+  const mergedCitations = mergeMapsMax(ssMap, oaMap);
 
   await storeRawSignals([
     ['reddit_signal', reddit ?? new Map()],
-    ['semantic_scholar_citations', ss ?? new Map()],
+    ['semantic_scholar_citations', mergedCitations],
+    ['open_alex_citations', oaMap],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -226,6 +245,7 @@ export async function runScoring(): Promise<ScoringResult> {
     redditSignal: new Map(),
     openRouterSignal: new Map(),
     semanticScholarCitations: new Map(),
+    openAlexCitations: new Map(),
   };
 
   const signalMapping: [string, keyof RawSignals][] = [
@@ -238,6 +258,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['open_router_signal', 'openRouterSignal'],
     ['open_router_usage', 'openRouterUsage'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
+    ['open_alex_citations', 'openAlexCitations'],
   ];
 
   const rows = await db.execute({

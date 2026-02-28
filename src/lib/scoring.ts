@@ -15,6 +15,7 @@ export interface RawSignals {
   openRouterSignal: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
+  openAlexCitations: Map<string, number>;
 }
 
 export interface EntityScores {
