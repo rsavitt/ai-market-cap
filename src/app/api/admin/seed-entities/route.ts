@@ -710,7 +710,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek R1", "DeepSeek-R1"],
       reddit: ["DeepSeek R1", "DeepSeek-R1"],
       openRouter: "deepseek/deepseek-r1",
-      groq: "deepseek-r1-distill-llama-70b",
       semanticScholar: "DeepSeek-R1",
     }
   },
