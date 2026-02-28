@@ -11,8 +11,10 @@ export interface RawSignals {
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
+  smolaiSignal: Map<string, number>;
   // capability signals
   openRouterSignal: Map<string, number>;
+  groqSignal: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
   openAlexCitations: Map<string, number>;
@@ -32,8 +34,9 @@ export interface EntityScores {
 // Signal-to-dimension mapping for counting available signals per entity
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'openRouterUsage', 'githubStars',
-  'hackernewsSignal', 'redditSignal',
+  'hackernewsSignal', 'redditSignal', 'smolaiSignal',
   'openRouterSignal',
+  'groqSignal',
   'semanticScholarCitations',
   'openAlexCitations',
 ] as const;
@@ -220,8 +223,8 @@ function isNewEntrant(entityId: string, entityRegistry: RegisteredEntity[]): boo
 function calculateConfidence(entityId: string, raw: RawSignals): { confidence: number; lower: number; upper: number } {
   const signalMaps: Map<string, number>[] = [
     raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.openRouterUsage, raw.githubStars,
-    raw.hackernewsSignal, raw.redditSignal,
-    raw.openRouterSignal,
+    raw.hackernewsSignal, raw.redditSignal, raw.smolaiSignal,
+    raw.openRouterSignal, raw.groqSignal,
     raw.semanticScholarCitations,
     raw.openAlexCitations,
   ];
@@ -261,7 +264,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
+    smolaiSignal: new Map(),
     openRouterSignal: new Map(),
+    groqSignal: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -274,7 +279,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: raw.githubStars,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
+    smolaiSignal: raw.smolaiSignal,
     openRouterSignal: raw.openRouterSignal,
+    groqSignal: raw.groqSignal,
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
   };
@@ -307,15 +314,17 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.githubStars, weight: 0.10 },
   ], entityIds);
 
-  // Attention: HackerNews (0.55) + Reddit (0.45)
+  // Attention: HackerNews (0.45) + Reddit (0.35) + SmolAI (0.20)
   const attentionScores = combineDimension([
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.55 },
-    { normalized: normalizedSignals.redditSignal, weight: 0.45 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.45 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.35 },
+    { normalized: normalizedSignals.smolaiSignal, weight: 0.20 },
   ], entityIds);
 
-  // Capability: OpenRouter (1.0) — the only real capability signal
+  // Capability: OpenRouter (0.6) + Groq (0.4)
   const capabilityScores = combineDimension([
-    { normalized: normalizedSignals.openRouterSignal, weight: 1.0 },
+    { normalized: normalizedSignals.openRouterSignal, weight: 0.6 },
+    { normalized: normalizedSignals.groqSignal, weight: 0.4 },
   ], entityIds);
 
   // Expert: Semantic Scholar (0.5) + OpenAlex (0.5)

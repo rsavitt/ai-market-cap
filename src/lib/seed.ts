@@ -83,6 +83,7 @@ const SEED_SIGNAL_MAP: Record<string, (e: EntitySeed, usage: number, attention: 
   attention: (_e, _u, attention) => [
     ['hackernews_signal', attention * 2 * (0.3 + rand())],
     ['reddit_signal', attention * 5 * (0.3 + rand())],
+    ['smolai_signal', attention * 1.5 * (0.2 + rand())],
   ],
   capability: (_e, _u, _a, capability) => [
     ['open_router_signal', capability * (0.8 + rand() * 0.4)],

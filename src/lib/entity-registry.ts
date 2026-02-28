@@ -9,6 +9,8 @@ export interface EntitySources {
   reddit: string[];
   openRouter: string | null;
   semanticScholar: string | null;
+  groq: string | null;
+  smolai: string[];
 }
 
 export interface RegisteredEntity {
@@ -37,6 +39,8 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     reddit: [],
     openRouter: null,
     semanticScholar: null,
+    groq: null,
+    smolai: [],
   };
 
   for (const row of rows) {
@@ -68,6 +72,12 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'semanticScholar':
         sources.semanticScholar = row.source_value;
+        break;
+      case 'groq':
+        sources.groq = row.source_value;
+        break;
+      case 'smolai':
+        sources.smolai.push(row.source_value);
         break;
     }
   }

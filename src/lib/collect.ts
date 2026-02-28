@@ -10,6 +10,8 @@ import { collectReddit } from './collectors/reddit';
 import { collectOpenRouter, collectOpenRouterUsage } from './collectors/open-router';
 import { collectSemanticScholar } from './collectors/semantic-scholar';
 import { collectOpenAlex } from './collectors/openalex';
+import { collectGroq } from './collectors/groq';
+import { collectSmolAI } from './collectors/smolai';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -108,8 +110,10 @@ async function writeProvenance(
       ['github_stars', raw.githubStars],
       ['hackernews_signal', raw.hackernewsSignal],
       ['reddit_signal', raw.redditSignal],
+      ['smolai_signal', raw.smolaiSignal],
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
+      ['groq_signal', raw.groqSignal],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
     ];
@@ -144,16 +148,18 @@ export async function runGroup1(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [pypi, npm, hn] = await Promise.all([
+  const [pypi, npm, hn, smolai] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
+    safeCollect('smolai', collectSmolAI, sources),
   ]);
 
   await storeRawSignals([
     ['pypi_downloads', pypi ?? new Map()],
     ['npm_downloads', npm ?? new Map()],
     ['hackernews_signal', hn ?? new Map()],
+    ['smolai_signal', smolai ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -170,11 +176,12 @@ export async function runGroup2(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [hf, githubResult, or, orUsage] = await Promise.all([
+  const [hf, githubResult, or, orUsage, groq] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
     safeCollect('openRouter', collectOpenRouter, sources),
     safeCollect('openRouterUsage', collectOpenRouterUsage, sources),
+    safeCollect('groq', collectGroq, sources),
   ]);
 
   const githubVelocity = githubResult?.velocity ?? new Map<string, number>();
@@ -186,6 +193,7 @@ export async function runGroup2(): Promise<GroupResult> {
     ['github_stars_velocity', githubVelocity],
     ['open_router_signal', or ?? new Map()],
     ['open_router_usage', orUsage ?? new Map()],
+    ['groq_signal', groq ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -243,7 +251,9 @@ export async function runScoring(): Promise<ScoringResult> {
     githubStars: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
+    smolaiSignal: new Map(),
     openRouterSignal: new Map(),
+    groqSignal: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -255,8 +265,10 @@ export async function runScoring(): Promise<ScoringResult> {
     ['github_stars_velocity', 'githubStars'],
     ['hackernews_signal', 'hackernewsSignal'],
     ['reddit_signal', 'redditSignal'],
+    ['smolai_signal', 'smolaiSignal'],
     ['open_router_signal', 'openRouterSignal'],
     ['open_router_usage', 'openRouterUsage'],
+    ['groq_signal', 'groqSignal'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
     ['open_alex_citations', 'openAlexCitations'],
   ];
