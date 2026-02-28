@@ -516,6 +516,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Llama 3.3", "Llama 3"],
       reddit: ["Llama 3.3", "Llama 3"],
       openRouter: "meta-llama/llama-3.3-70b-instruct",
+      groq: "llama-3.3-70b-versatile",
       semanticScholar: "The Llama 3 Herd of Models",
     }
   },
@@ -693,6 +694,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Llama 4", "Llama 4 Scout"],
       reddit: ["Llama 4", "Llama 4 Scout"],
       openRouter: "meta-llama/llama-4-scout",
+      groq: "meta-llama/llama-4-scout-17b-16e-instruct",
       semanticScholar: "The Llama 3 Herd of Models",
     }
   },
@@ -917,6 +919,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-OSS", "GPT OSS 120B"],
       reddit: ["GPT-OSS", "GPT OSS"],
       openRouter: "openai/gpt-oss-120b",
+      groq: "openai/gpt-oss-120b",
     }
   },
   {
@@ -986,6 +989,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Kimi K2", "Moonshot AI"],
       reddit: ["Kimi K2", "Moonshot"],
       openRouter: "moonshotai/kimi-k2.5",
+      groq: "moonshotai/kimi-k2-instruct-0905",
       semanticScholar: "Kimi K2: Open Agentic Intelligence",
     }
   },
