@@ -397,6 +397,20 @@ const SEED_ENTITIES: SeedEntity[] = [
 
   // ── GENERAL LLMs ──
   {
+    id: "gpt-4o-mini", name: "GPT-4o Mini", category: "general_llm", company: "OpenAI",
+    release_date: "2024-07-18", pricing_tier: "freemium", availability: "API,Web,Mobile", open_source: 0,
+    description: "Small, fast, affordable multimodal model for lightweight tasks",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT-4o mini", "GPT-4o-mini"],
+      reddit: ["GPT-4o mini", "GPT-4o-mini"],
+      artificialAnalysis: "gpt-4o-mini",
+      openRouter: "openai/gpt-4o-mini",
+      semanticScholar: "GPT-4o mini system card",
+    }
+  },
+  {
     id: "gpt-4o", name: "GPT-4o", category: "general_llm", company: "OpenAI",
     release_date: "2024-05-13", pricing_tier: "freemium", availability: "API,Web,Mobile", open_source: 0,
     description: "OpenAI flagship multimodal model",
@@ -731,6 +745,191 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Grok 4", "xAI Grok"],
       artificialAnalysis: "grok-4",
       openRouter: "x-ai/grok-4",
+    }
+  },
+  {
+    id: "gemini-3-flash", name: "Gemini 3 Flash", category: "general_llm", company: "Google",
+    release_date: "2025-12-17", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Google fast and efficient Gemini 3 model for high-throughput tasks",
+    sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
+      github: ["google-gemini/generative-ai-python"],
+      hackernews: ["Gemini 3 Flash", "Gemini Flash"],
+      reddit: ["Gemini 3 Flash"],
+      openRouter: "google/gemini-3-flash-preview",
+    }
+  },
+  {
+    id: "gemini-25-flash", name: "Gemini 2.5 Flash", category: "general_llm", company: "Google",
+    release_date: "2025-09-01", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Google fast thinking model balancing speed and capability",
+    sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
+      github: ["google-gemini/generative-ai-python"],
+      hackernews: ["Gemini 2.5 Flash"],
+      reddit: ["Gemini 2.5 Flash"],
+      artificialAnalysis: "gemini-2-5-flash",
+      openRouter: "google/gemini-2.5-flash",
+    }
+  },
+  {
+    id: "gemini-31-pro", name: "Gemini 3.1 Pro", category: "general_llm", company: "Google",
+    release_date: "2026-02-19", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Google latest frontier model with improved reasoning and tool use",
+    sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
+      github: ["google-gemini/generative-ai-python"],
+      hackernews: ["Gemini 3.1", "Gemini 3.1 Pro"],
+      reddit: ["Gemini 3.1 Pro"],
+      openRouter: "google/gemini-3.1-pro-preview",
+    }
+  },
+  {
+    id: "claude-45-sonnet", name: "Claude Sonnet 4.5", category: "general_llm", company: "Anthropic",
+    release_date: "2025-09-29", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Anthropic balanced model with strong reasoning and coding",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      hackernews: ["Claude 4.5 Sonnet", "Claude Sonnet 4.5"],
+      reddit: ["Claude 4.5 Sonnet", "Claude Sonnet 4.5"],
+      openRouter: "anthropic/claude-sonnet-4.5",
+    }
+  },
+  {
+    id: "claude-45-opus", name: "Claude Opus 4.5", category: "general_llm", company: "Anthropic",
+    release_date: "2025-11-24", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Anthropic previous-gen flagship for complex analysis",
+    sources: {
+      pypi: ["anthropic"], npm: ["@anthropic-ai/sdk"],
+      github: ["anthropics/anthropic-sdk-python", "anthropics/anthropic-sdk-typescript"],
+      hackernews: ["Claude 4.5 Opus", "Claude Opus 4.5"],
+      reddit: ["Claude 4.5 Opus", "Claude Opus 4.5"],
+      openRouter: "anthropic/claude-opus-4.5",
+    }
+  },
+  {
+    id: "gpt-5-mini", name: "GPT-5 Mini", category: "general_llm", company: "OpenAI",
+    release_date: "2025-08-07", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Compact GPT-5 variant balancing capability and cost",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      hackernews: ["GPT-5 mini", "GPT-5-mini"],
+      reddit: ["GPT-5 mini"],
+      openRouter: "openai/gpt-5-mini",
+    }
+  },
+  {
+    id: "gpt-5-nano", name: "GPT-5 Nano", category: "general_llm", company: "OpenAI",
+    release_date: "2025-08-07", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Smallest GPT-5 model for lightweight and embedded use",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      hackernews: ["GPT-5 nano"],
+      reddit: ["GPT-5 nano"],
+      openRouter: "openai/gpt-5-nano",
+    }
+  },
+  {
+    id: "gpt-oss-120b", name: "GPT-OSS 120B", category: "general_llm", company: "OpenAI",
+    release_date: "2025-11-01", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "OpenAI first open-weight model at 120B parameters",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      huggingface: ["openai/gpt-oss-120b"],
+      hackernews: ["GPT-OSS", "GPT OSS 120B"],
+      reddit: ["GPT-OSS", "GPT OSS"],
+      openRouter: "openai/gpt-oss-120b",
+    }
+  },
+  {
+    id: "gpt-41", name: "GPT-4.1", category: "general_llm", company: "OpenAI",
+    release_date: "2025-04-14", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Optimized GPT-4 variant with improved coding and instruction following",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      hackernews: ["GPT-4.1"],
+      reddit: ["GPT-4.1", "GPT 4.1"],
+      artificialAnalysis: "gpt-4-1",
+      openRouter: "openai/gpt-4.1",
+    }
+  },
+  {
+    id: "gpt-41-mini", name: "GPT-4.1 Mini", category: "general_llm", company: "OpenAI",
+    release_date: "2025-04-14", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Compact GPT-4.1 for fast affordable tasks",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      hackernews: ["GPT-4.1 mini"],
+      reddit: ["GPT-4.1 mini"],
+      openRouter: "openai/gpt-4.1-mini",
+    }
+  },
+  {
+    id: "minimax-m25", name: "MiniMax M2.5", category: "general_llm", company: "MiniMax",
+    release_date: "2026-02-11", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "MiniMax latest frontier model with massive API usage",
+    sources: {
+      hackernews: ["MiniMax", "MiniMax M2"],
+      reddit: ["MiniMax AI", "MiniMax M2"],
+      openRouter: "minimax/minimax-m2.5",
+    }
+  },
+  {
+    id: "glm-5", name: "GLM-5", category: "general_llm", company: "Zhipu AI",
+    release_date: "2026-02-11", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Zhipu AI flagship bilingual model",
+    sources: {
+      hackernews: ["GLM-5", "Zhipu AI"],
+      reddit: ["GLM-5", "Zhipu"],
+      openRouter: "z-ai/glm-5",
+    }
+  },
+  {
+    id: "kimi-k25", name: "Kimi K2.5", category: "general_llm", company: "Moonshot AI",
+    release_date: "2026-01-27", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Moonshot AI latest model with strong reasoning capabilities",
+    sources: {
+      hackernews: ["Kimi K2", "Moonshot AI"],
+      reddit: ["Kimi K2", "Moonshot"],
+      openRouter: "moonshotai/kimi-k2.5",
+    }
+  },
+  {
+    id: "step-35-flash", name: "Step 3.5 Flash", category: "general_llm", company: "StepFun",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "StepFun fast inference model with strong multilingual capabilities",
+    sources: {
+      hackernews: ["StepFun", "Step Flash"],
+      reddit: ["StepFun"],
+      openRouter: "stepfun/step-3.5-flash",
+    }
+  },
+  {
+    id: "qwen3-235b", name: "Qwen 3 235B", category: "general_llm", company: "Alibaba",
+    release_date: "2025-07-25", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Alibaba largest open-weight MoE model with 22B active parameters",
+    sources: {
+      github: ["QwenLM/Qwen3"],
+      huggingface: ["Qwen/Qwen3-235B-A22B"],
+      hackernews: ["Qwen 3", "Qwen3"],
+      reddit: ["Qwen 3", "Qwen3"],
+      openRouter: "qwen/qwen3-235b-a22b",
+    }
+  },
+  {
+    id: "grok-41", name: "Grok 4.1", category: "general_llm", company: "xAI",
+    release_date: "2025-12-01", pricing_tier: "paid", availability: "Web,API", open_source: 0,
+    description: "xAI updated Grok with improved speed and capability",
+    sources: {
+      hackernews: ["Grok 4.1", "xAI Grok"],
+      reddit: ["Grok 4.1"],
+      openRouter: "x-ai/grok-4.1-fast",
     }
   },
 ];
