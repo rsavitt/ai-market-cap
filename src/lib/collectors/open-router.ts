@@ -2,6 +2,7 @@ import { getEntityRegistry } from '../entity-registry';
 
 interface OpenRouterModel {
   id: string;
+  canonical_slug?: string;
   context_length?: number;
   pricing?: {
     prompt?: string;
@@ -46,13 +47,14 @@ export async function collectOpenRouterUsage(): Promise<Map<string, number>> {
     if (!modelsRes.ok) return results;
 
     const modelsBody = await modelsRes.json() as { data: OpenRouterModel[] };
-    // canonical_slug is typically the same as model id for OpenRouter
+    // Map canonical_slug → entity ID (canonical_slug matches model_permaslug in rankings)
+    // Some models have canonical_slug === id, others have dated canonical_slugs
     const slugToEntityId = new Map<string, string>();
     for (const model of modelsBody.data) {
       const entityId = orIdToEntity.get(model.id);
       if (entityId) {
-        // Use model.id as the canonical_slug (matches model_permaslug in rankings)
-        slugToEntityId.set(model.id, entityId);
+        const slug = model.canonical_slug ?? model.id;
+        slugToEntityId.set(slug, entityId);
       }
     }
 
