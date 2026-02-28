@@ -70,6 +70,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-4o coding", "GPT-4o code"],
       reddit: ["GPT-4o coding", "GPT-4o code"],
       artificialAnalysis: "gpt-4o",
+      openRouter: "openai/gpt-4o",
       semanticScholar: "GPT-4o system card",
     }
   },
@@ -405,6 +406,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-4o", "GPT4o"],
       reddit: ["GPT-4o", "GPT4o"],
       artificialAnalysis: "gpt-4o",
+      openRouter: "openai/gpt-4o",
       semanticScholar: "GPT-4o system card",
     }
   },
@@ -418,6 +420,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude 3.5 Sonnet", "Claude Sonnet"],
       reddit: ["Claude 3.5 Sonnet", "Claude Sonnet"],
       artificialAnalysis: "claude-3-5-sonnet",
+      openRouter: "anthropic/claude-3.5-sonnet",
       semanticScholar: "The Claude 3 Model Family",
     }
   },
@@ -431,6 +434,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Gemini 2.0 Flash", "Gemini Flash"],
       reddit: ["Gemini 2.0 Flash", "Gemini Flash"],
       artificialAnalysis: "gemini-2-0-flash",
+      openRouter: "google/gemini-2.0-flash-001",
       semanticScholar: "Gemini: A Family of Highly Capable Multimodal Models",
     }
   },
@@ -444,6 +448,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["DeepSeek V3", "DeepSeek-V3"],
       reddit: ["DeepSeek V3", "DeepSeek-V3"],
       artificialAnalysis: "deepseek-v3",
+      openRouter: "deepseek/deepseek-chat",
       semanticScholar: "DeepSeek-V3 Technical Report",
     }
   },
@@ -458,6 +463,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Llama 3.3", "Llama 3"],
       reddit: ["Llama 3.3", "Llama 3"],
       artificialAnalysis: "llama-3-3-70b",
+      openRouter: "meta-llama/llama-3.3-70b-instruct",
       semanticScholar: "The Llama 3 Herd of Models",
     }
   },
@@ -469,6 +475,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Grok 3", "Grok xAI"],
       reddit: ["Grok 3", "xAI Grok"],
       artificialAnalysis: "grok-3",
+      openRouter: "x-ai/grok-3",
     }
   },
   {
@@ -481,6 +488,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Mistral Large", "Mistral AI"],
       reddit: ["Mistral Large", "Mistral AI"],
       artificialAnalysis: "mistral-large-2",
+      openRouter: "mistralai/mistral-large",
     }
   },
   {
@@ -493,6 +501,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Qwen 2.5", "Qwen"],
       reddit: ["Qwen 2.5", "Qwen"],
       artificialAnalysis: "qwen-2-5-72b",
+      openRouter: "qwen/qwen-2.5-72b-instruct",
       semanticScholar: "Qwen2 Technical Report",
     }
   },
@@ -514,6 +523,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Command R+", "Cohere"],
       reddit: ["Command R+", "Cohere"],
       artificialAnalysis: "command-r-plus",
+      openRouter: "cohere/command-r-plus",
     }
   },
   {
@@ -526,6 +536,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-4.5"],
       reddit: ["GPT-4.5", "GPT 4.5"],
       artificialAnalysis: "gpt-4-5",
+      openRouter: "openai/gpt-4.5-preview",
     }
   },
   {
@@ -538,6 +549,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude 3.7", "Claude 3.7 Sonnet"],
       reddit: ["Claude 3.7 Sonnet", "Claude 3.7"],
       artificialAnalysis: "claude-3-7-sonnet",
+      openRouter: "anthropic/claude-3.7-sonnet",
     }
   },
   {
@@ -550,6 +562,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Sonnet 4", "Claude 4 Sonnet"],
       reddit: ["Claude Sonnet 4", "Claude 4"],
       artificialAnalysis: "claude-sonnet-4",
+      openRouter: "anthropic/claude-sonnet-4",
     }
   },
   {
@@ -562,6 +575,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Opus", "Claude Opus 4"],
       reddit: ["Claude Opus", "Claude Opus 4"],
       artificialAnalysis: "claude-opus-4",
+      openRouter: "anthropic/claude-opus-4",
     }
   },
   {
@@ -574,6 +588,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Sonnet 4.6", "Claude Sonnet"],
       reddit: ["Claude Sonnet 4.6"],
       artificialAnalysis: "claude-sonnet-4-6",
+      openRouter: "anthropic/claude-sonnet-4-6",
     }
   },
   {
@@ -586,6 +601,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Claude Haiku", "Claude Haiku 4"],
       reddit: ["Claude Haiku"],
       artificialAnalysis: "claude-haiku-4-5",
+      openRouter: "anthropic/claude-haiku-4-5",
     }
   },
   {
@@ -598,6 +614,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Gemini 2.5 Pro", "Gemini 2.5"],
       reddit: ["Gemini 2.5 Pro", "Gemini 2.5"],
       artificialAnalysis: "gemini-2-5-pro",
+      openRouter: "google/gemini-2.5-pro-preview-03-25",
     }
   },
   {
@@ -611,6 +628,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Llama 4", "Llama 4 Scout"],
       reddit: ["Llama 4", "Llama 4 Scout"],
       artificialAnalysis: "llama-4-scout",
+      openRouter: "meta-llama/llama-4-scout",
     }
   },
   {
@@ -623,6 +641,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["DeepSeek R1", "DeepSeek-R1"],
       reddit: ["DeepSeek R1", "DeepSeek-R1"],
       artificialAnalysis: "deepseek-r1",
+      openRouter: "deepseek/deepseek-r1",
       semanticScholar: "DeepSeek-R1",
     }
   },
@@ -636,6 +655,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["OpenAI o3", "o3 model"],
       reddit: ["OpenAI o3", "o3 model"],
       artificialAnalysis: "o3",
+      openRouter: "openai/o3",
     }
   },
   {
@@ -648,6 +668,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["o3-mini", "o3 mini"],
       reddit: ["o3-mini", "o3 mini"],
       artificialAnalysis: "o3-mini",
+      openRouter: "openai/o3-mini",
     }
   },
   {
@@ -660,6 +681,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["GPT-5", "GPT 5.2"],
       reddit: ["GPT-5", "GPT 5.2"],
       artificialAnalysis: "gpt-5-2",
+      openRouter: "openai/gpt-5.2",
     }
   },
   {
@@ -672,6 +694,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Gemini 3", "Gemini 3 Pro"],
       reddit: ["Gemini 3", "Gemini 3 Pro"],
       artificialAnalysis: "gemini-3-pro",
+      openRouter: "google/gemini-3-pro",
     }
   },
   {
@@ -684,6 +707,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["DeepSeek V3.2", "DeepSeek-V3.2"],
       reddit: ["DeepSeek V3.2"],
       artificialAnalysis: "deepseek-v3-2",
+      openRouter: "deepseek/deepseek-chat-v3-0324",
     }
   },
   {
@@ -696,6 +720,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Mistral Large 3", "Mistral AI"],
       reddit: ["Mistral Large 3"],
       artificialAnalysis: "mistral-large-3",
+      openRouter: "mistralai/mistral-large-3",
     }
   },
   {
@@ -706,6 +731,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Grok 4", "xAI Grok 4"],
       reddit: ["Grok 4", "xAI Grok"],
       artificialAnalysis: "grok-4",
+      openRouter: "x-ai/grok-4",
     }
   },
 ];

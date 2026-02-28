@@ -8,6 +8,7 @@ import { collectGitHub } from './collectors/github';
 import { collectHackerNews } from './collectors/hackernews';
 import { collectReddit } from './collectors/reddit';
 import { collectArtificialAnalysis } from './collectors/artificial-analysis';
+import { collectOpenRouter } from './collectors/open-router';
 import { collectSemanticScholar } from './collectors/semantic-scholar';
 import { detectVelocityAnomaly } from './anomaly';
 
@@ -49,6 +50,7 @@ async function storeRawSignals(raw: RawSignals, githubAbsolute: Map<string, numb
     ['hackernews_signal', raw.hackernewsSignal],
     ['reddit_signal', raw.redditSignal],
     ['artificial_analysis_score', raw.artificialAnalysisScore],
+    ['open_router_signal', raw.openRouterSignal],
     ['semantic_scholar_citations', raw.semanticScholarCitations],
   ];
 
@@ -97,6 +99,7 @@ async function writeProvenance(
       ['hackernews_signal', raw.hackernewsSignal],
       ['reddit_signal', raw.redditSignal],
       ['artificial_analysis_score', raw.artificialAnalysisScore],
+      ['open_router_signal', raw.openRouterSignal],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
     ];
 
@@ -140,10 +143,11 @@ export async function runCollection(): Promise<CollectionResult> {
   ]);
 
   // Group 2: May need auth or have stricter limits
-  const [hf, githubResult, aa] = await Promise.all([
+  const [hf, githubResult, aa, or] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
     safeCollect('artificialAnalysis', collectArtificialAnalysis, sources),
+    safeCollect('openRouter', collectOpenRouter, sources),
   ]);
 
   // Group 3: Rate-limited APIs (sequential within the collector)
@@ -165,6 +169,7 @@ export async function runCollection(): Promise<CollectionResult> {
     hackernewsSignal: hn ?? new Map(),
     redditSignal: reddit ?? new Map(),
     artificialAnalysisScore: aa ?? new Map(),
+    openRouterSignal: or ?? new Map(),
     semanticScholarCitations: ss ?? new Map(),
   };
 
