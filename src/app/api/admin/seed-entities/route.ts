@@ -419,6 +419,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Whisper OpenAI", "Whisper speech"],
       smolai: ["Whisper OpenAI", "Whisper speech"],
       reddit: ["Whisper OpenAI"],
+      groq: "whisper-large-v3",
       semanticScholar: "Robust Speech Recognition via Large-Scale Weak Supervision",
     }
   },
@@ -709,6 +710,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek R1", "DeepSeek-R1"],
       reddit: ["DeepSeek R1", "DeepSeek-R1"],
       openRouter: "deepseek/deepseek-r1",
+      groq: "deepseek-r1-distill-llama-70b",
       semanticScholar: "DeepSeek-R1",
     }
   },
@@ -1030,6 +1032,66 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Grok 4.1", "xAI Grok"],
       reddit: ["Grok 4.1"],
       openRouter: "x-ai/grok-4.1-fast",
+    }
+  },
+  {
+    id: "gpt-oss-20b", name: "GPT-OSS 20B", category: "general_llm", company: "OpenAI",
+    release_date: "2025-11-01", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "OpenAI compact open-weight model at 20B parameters",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python"],
+      hackernews: ["GPT-OSS 20B", "GPT-OSS"],
+      smolai: ["GPT-OSS 20B"],
+      reddit: ["GPT-OSS 20B", "GPT OSS"],
+      groq: "openai/gpt-oss-20b",
+    }
+  },
+  {
+    id: "llama-31-8b", name: "Llama 3.1 8B", category: "general_llm", company: "Meta",
+    release_date: "2024-07-23", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Meta compact open-weight LLM for efficient inference",
+    sources: {
+      pypi: ["transformers"],
+      github: ["meta-llama/llama3"],
+      huggingface: ["meta-llama/Llama-3.1-8B-Instruct"],
+      hackernews: ["Llama 3.1", "Llama 3.1 8B"],
+      smolai: ["Llama 3.1", "Llama 3.1 8B"],
+      reddit: ["Llama 3.1 8B", "Llama 3.1"],
+      openRouter: "meta-llama/llama-3.1-8b-instruct",
+      groq: "llama-3.1-8b-instant",
+      semanticScholar: "The Llama 3 Herd of Models",
+    }
+  },
+  {
+    id: "llama-4-maverick", name: "Llama 4 Maverick", category: "general_llm", company: "Meta",
+    release_date: "2025-04-05", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Meta 400B MoE model with 128 experts for frontier performance",
+    sources: {
+      pypi: ["transformers"],
+      github: ["meta-llama/llama-models"],
+      huggingface: ["meta-llama/Llama-4-Maverick-17B-128E-Instruct"],
+      hackernews: ["Llama 4 Maverick", "Llama 4"],
+      smolai: ["Llama 4 Maverick", "Llama 4"],
+      reddit: ["Llama 4 Maverick", "Llama 4"],
+      openRouter: "meta-llama/llama-4-maverick",
+      groq: "meta-llama/llama-4-maverick-17b-128e-instruct",
+      semanticScholar: "The Llama 3 Herd of Models",
+    }
+  },
+  {
+    id: "qwen3-32b", name: "Qwen 3 32B", category: "general_llm", company: "Alibaba",
+    release_date: "2025-07-25", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Alibaba mid-size open-weight model with strong reasoning",
+    sources: {
+      github: ["QwenLM/Qwen3"],
+      huggingface: ["Qwen/Qwen3-32B"],
+      hackernews: ["Qwen 3 32B", "Qwen3"],
+      smolai: ["Qwen 3 32B", "Qwen3"],
+      reddit: ["Qwen 3 32B", "Qwen3"],
+      openRouter: "qwen/qwen3-32b",
+      groq: "qwen/qwen3-32b",
+      semanticScholar: "Qwen3 Technical Report",
     }
   },
 ];
