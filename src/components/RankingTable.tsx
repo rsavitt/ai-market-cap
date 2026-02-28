@@ -3,12 +3,13 @@ import { useRouter } from "next/navigation";
 import { TrendingUp, TrendingDown, ChevronUp, ChevronDown } from "lucide-react";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  coding: "Coding", image: "Image", video: "Video", general_llm: "LLM",
+  coding: "Coding", image: "Image", video: "Video", audio: "Audio", general_llm: "LLM",
 };
 const CATEGORY_COLORS: Record<string, string> = {
   coding: "bg-blue-500/20 text-blue-400",
   image: "bg-purple-500/20 text-purple-400",
   video: "bg-pink-500/20 text-pink-400",
+  audio: "bg-orange-500/20 text-orange-400",
   general_llm: "bg-emerald-500/20 text-emerald-400",
 };
 

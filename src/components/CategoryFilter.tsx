@@ -4,6 +4,7 @@ const LABELS: Record<string, string> = {
   coding: "Coding",
   image: "Image Gen",
   video: "Video Gen",
+  audio: "Audio",
   general_llm: "General LLMs",
 };
 

@@ -9,12 +9,13 @@ import MomentumGraph from "@/components/MomentumGraph";
 import ComparisonToggle from "@/components/ComparisonToggle";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  coding: "Coding", image: "Image Gen", video: "Video Gen", general_llm: "General LLMs",
+  coding: "Coding", image: "Image Gen", video: "Video Gen", audio: "Audio", general_llm: "General LLMs",
 };
 const CATEGORY_COLORS: Record<string, string> = {
   coding: "bg-blue-500/20 text-blue-400",
   image: "bg-purple-500/20 text-purple-400",
   video: "bg-pink-500/20 text-pink-400",
+  audio: "bg-orange-500/20 text-orange-400",
   general_llm: "bg-emerald-500/20 text-emerald-400",
 };
 

@@ -71,7 +71,7 @@ export default function HomePage() {
   }
 
   const CATEGORY_LABELS: Record<string, string> = {
-    coding: "Coding", image: "Image Gen", video: "Video Gen", general_llm: "General LLMs",
+    coding: "Coding", image: "Image Gen", video: "Video Gen", audio: "Audio", general_llm: "General LLMs",
   };
 
   return (
