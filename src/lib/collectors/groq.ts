@@ -56,11 +56,13 @@ export async function collectGroq(): Promise<Map<string, number>> {
       const maxCompletionTokens = model.max_completion_tokens ?? 0;
       const outputScore = Math.min(maxCompletionTokens / MAX_COMPLETION_TOKENS, 1) * 100;
 
-      const score = contextScore * 0.5 + outputScore * 0.5;
+      // For non-LLM models (e.g. Whisper) that lack these fields,
+      // assign a baseline presence score since they're hosted on Groq
+      const score = contextLength === 0 && maxCompletionTokens === 0
+        ? 25
+        : contextScore * 0.5 + outputScore * 0.5;
 
-      if (score > 0) {
-        results.set(entityId, Math.round(score * 100) / 100);
-      }
+      results.set(entityId, Math.round(score * 100) / 100);
     }
   } catch {
     // API unavailable — return empty
