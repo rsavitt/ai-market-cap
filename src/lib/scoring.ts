@@ -12,7 +12,6 @@ export interface RawSignals {
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
   // capability signals
-  artificialAnalysisScore: Map<string, number>;
   openRouterSignal: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
@@ -33,7 +32,7 @@ export interface EntityScores {
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'openRouterUsage', 'githubStars',
   'hackernewsSignal', 'redditSignal',
-  'artificialAnalysisScore', 'openRouterSignal',
+  'openRouterSignal',
   'semanticScholarCitations',
 ] as const;
 
@@ -176,7 +175,7 @@ function calculateConfidence(entityId: string, raw: RawSignals): { confidence: n
   const signalMaps: Map<string, number>[] = [
     raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.openRouterUsage, raw.githubStars,
     raw.hackernewsSignal, raw.redditSignal,
-    raw.artificialAnalysisScore, raw.openRouterSignal,
+    raw.openRouterSignal,
     raw.semanticScholarCitations,
   ];
 
@@ -215,7 +214,6 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
-    artificialAnalysisScore: new Map(),
     openRouterSignal: new Map(),
     semanticScholarCitations: new Map(),
   };
@@ -228,7 +226,6 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: raw.githubStars,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
-    artificialAnalysisScore: raw.artificialAnalysisScore,
     openRouterSignal: raw.openRouterSignal,
     semanticScholarCitations: raw.semanticScholarCitations,
   };
@@ -267,18 +264,16 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.redditSignal, weight: 0.45 },
   ], entityIds);
 
-  // Capability: Artificial Analysis (0.50) + OpenRouter (0.30) + HN expert signal (0.20)
+  // Capability: OpenRouter (0.65) + HN expert signal (0.35)
   const capabilityScores = combineDimension([
-    { normalized: normalizedSignals.artificialAnalysisScore, weight: 0.50 },
-    { normalized: normalizedSignals.openRouterSignal, weight: 0.30 },
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.20 },
+    { normalized: normalizedSignals.openRouterSignal, weight: 0.65 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
   ], entityIds);
 
-  // Expert: Semantic Scholar (0.50) + Artificial Analysis (0.30) + HN (0.20)
+  // Expert: Semantic Scholar (0.65) + HN (0.35)
   const expertScores = combineDimension([
-    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.50 },
-    { normalized: normalizedSignals.artificialAnalysisScore, weight: 0.30 },
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.20 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.65 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
   ], entityIds);
 
   // Compute category medians for new entrant handling
