@@ -209,6 +209,36 @@ async function migrateSchema(db: Client): Promise<void> {
       },
     ], 'write');
   }
+
+  if (version < 3) {
+    await db.batch([
+      {
+        sql: `CREATE TABLE IF NOT EXISTS score_snapshots (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          run_id TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT (datetime('now')),
+          entity_id TEXT NOT NULL,
+          date TEXT NOT NULL,
+          usage_score REAL,
+          attention_score REAL,
+          capability_score REAL,
+          expert_score REAL,
+          total_score REAL,
+          confidence_lower REAL,
+          confidence_upper REAL
+        )`,
+        args: [],
+      },
+      {
+        sql: `CREATE INDEX IF NOT EXISTS idx_ss_run ON score_snapshots(run_id)`,
+        args: [],
+      },
+      {
+        sql: `INSERT INTO _migrations (version) VALUES (3)`,
+        args: [],
+      },
+    ], 'write');
+  }
 }
 
 let migrated = false;

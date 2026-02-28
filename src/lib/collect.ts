@@ -293,6 +293,23 @@ export async function runScoring(): Promise<ScoringResult> {
   // Write provenance records
   await writeProvenance(scores, raw);
 
+  // Snapshot existing scores before overwriting
+  const runId = `${today}_${Date.now()}`;
+  const existing = await db.execute({
+    sql: `SELECT entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper
+          FROM daily_scores WHERE date = ?`,
+    args: [today],
+  });
+  if (existing.rows.length > 0) {
+    const snapStmts = existing.rows.map(row => ({
+      sql: `INSERT INTO score_snapshots (run_id, entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [runId, row.entity_id, row.date, row.usage_score, row.attention_score, row.capability_score, row.expert_score, row.total_score, row.confidence_lower, row.confidence_upper],
+    }));
+    await db.batch(snapStmts, 'write');
+    console.log(`[scoring] Snapshot ${runId}: backed up ${existing.rows.length} scores`);
+  }
+
   // Ensure entities exist in DB and write scores
   const entityStmts: { sql: string; args: any[] }[] = [];
   const scoreStmts: { sql: string; args: any[] }[] = [];
@@ -310,7 +327,14 @@ export async function runScoring(): Promise<ScoringResult> {
       scoreStmts.push({
         sql: `INSERT INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-              ON CONFLICT(entity_id, date) DO NOTHING`,
+              ON CONFLICT(entity_id, date) DO UPDATE SET
+                usage_score = excluded.usage_score,
+                attention_score = excluded.attention_score,
+                capability_score = excluded.capability_score,
+                expert_score = excluded.expert_score,
+                total_score = excluded.total_score,
+                confidence_lower = excluded.confidence_lower,
+                confidence_upper = excluded.confidence_upper`,
         args: [entity.id, today, s.usage_score, s.attention_score, s.capability_score, s.expert_score, s.total_score, s.confidence_lower, s.confidence_upper],
       });
       entitiesUpdated++;
@@ -324,6 +348,56 @@ export async function runScoring(): Promise<ScoringResult> {
   }
 
   return { date: today, entitiesUpdated, anomalies, durationMs: Date.now() - start };
+}
+
+/**
+ * List available score snapshots, most recent first.
+ */
+export async function listScoreSnapshots(): Promise<{ run_id: string; created_at: string; count: number }[]> {
+  const db = await ensureDb();
+  const result = await db.execute(
+    `SELECT run_id, MIN(created_at) as created_at, COUNT(*) as cnt
+     FROM score_snapshots GROUP BY run_id ORDER BY created_at DESC LIMIT 20`
+  );
+  return result.rows.map(row => ({
+    run_id: row.run_id as string,
+    created_at: row.created_at as string,
+    count: row.cnt as number,
+  }));
+}
+
+/**
+ * Restore scores from a snapshot, overwriting current daily_scores for that date.
+ */
+export async function restoreScoreSnapshot(runId: string): Promise<{ restored: number }> {
+  const db = await ensureDb();
+  const rows = await db.execute({
+    sql: `SELECT entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper
+          FROM score_snapshots WHERE run_id = ?`,
+    args: [runId],
+  });
+
+  if (rows.rows.length === 0) {
+    throw new Error(`Snapshot ${runId} not found`);
+  }
+
+  const stmts = rows.rows.map(row => ({
+    sql: `INSERT INTO daily_scores (entity_id, date, usage_score, attention_score, capability_score, expert_score, total_score, confidence_lower, confidence_upper)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(entity_id, date) DO UPDATE SET
+            usage_score = excluded.usage_score,
+            attention_score = excluded.attention_score,
+            capability_score = excluded.capability_score,
+            expert_score = excluded.expert_score,
+            total_score = excluded.total_score,
+            confidence_lower = excluded.confidence_lower,
+            confidence_upper = excluded.confidence_upper`,
+    args: [row.entity_id, row.date, row.usage_score, row.attention_score, row.capability_score, row.expert_score, row.total_score, row.confidence_lower, row.confidence_upper],
+  }));
+
+  await db.batch(stmts, 'write');
+  console.log(`[scoring] Restored snapshot ${runId}: ${rows.rows.length} scores`);
+  return { restored: rows.rows.length };
 }
 
 /**
