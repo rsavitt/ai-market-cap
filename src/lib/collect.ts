@@ -22,6 +22,8 @@ import { collectOllama } from './collectors/ollama';
 import { collectStackOverflow } from './collectors/stackoverflow';
 import { collectArxiv } from './collectors/arxiv';
 import { collectManifoldMarkets } from './collectors/manifold-markets';
+import { collectWikipediaPageviews } from './collectors/wikipedia-pageviews';
+import { collectDockerHub } from './collectors/docker-hub';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -139,11 +141,13 @@ async function writeProvenance(
       ['smolai_signal', raw.smolaiSignal],
       ['google_trends_signal', raw.googleTrendsSignal],
       ['stackoverflow_signal', raw.stackoverflowSignal],
+      ['wikipedia_pageviews', raw.wikipediaPageviews],
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
       ['openwebui_usage', raw.openWebUIUsage],
       ['cloudflare_radar', raw.cloudflareRadar],
       ['ollama_signal', raw.ollamaSignal],
+      ['docker_hub_pulls', raw.dockerHubPulls],
       ['groq_signal', raw.groqSignal],
       ['aa_llm_intelligence', raw.aaLlmIntelligence],
       ['aa_image_arena', raw.aaImageArena],
@@ -186,7 +190,7 @@ export async function runGroup1(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [pypi, npm, hn, smolai, googleTrends, cfRadar, ollama, stackoverflow] = await Promise.all([
+  const [pypi, npm, hn, smolai, googleTrends, cfRadar, ollama, stackoverflow, wiki, docker] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
@@ -195,6 +199,8 @@ export async function runGroup1(): Promise<GroupResult> {
     safeCollect('cloudflareRadar', collectCloudflareRadar, sources),
     safeCollect('ollama', collectOllama, sources),
     safeCollect('stackoverflow', collectStackOverflow, sources),
+    safeCollect('wikipediaPageviews', collectWikipediaPageviews, sources),
+    safeCollect('dockerHub', collectDockerHub, sources),
   ]);
 
   await storeRawSignals([
@@ -206,6 +212,8 @@ export async function runGroup1(): Promise<GroupResult> {
     ['cloudflare_radar', cfRadar ?? new Map()],
     ['ollama_signal', ollama ?? new Map()],
     ['stackoverflow_signal', stackoverflow ?? new Map()],
+    ['wikipedia_pageviews', wiki ?? new Map()],
+    ['docker_hub_pulls', docker ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -499,11 +507,13 @@ export async function runScoring(): Promise<ScoringResult> {
     githubForks: new Map(),
     githubClones: new Map(),
     githubViews: new Map(),
+    dockerHubPulls: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
     googleTrendsSignal: new Map(),
     stackoverflowSignal: new Map(),
+    wikipediaPageviews: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
     aaLlmIntelligence: new Map(),
@@ -527,6 +537,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['openwebui_usage', 'openWebUIUsage'],
     ['cloudflare_radar', 'cloudflareRadar'],
     ['ollama_signal', 'ollamaSignal'],
+    ['docker_hub_pulls', 'dockerHubPulls'],
     ['github_stars_velocity', 'githubStars'],
     ['github_forks', 'githubForks'],
     ['github_clones', 'githubClones'],
@@ -536,6 +547,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['smolai_signal', 'smolaiSignal'],
     ['google_trends_signal', 'googleTrendsSignal'],
     ['stackoverflow_signal', 'stackoverflowSignal'],
+    ['wikipedia_pageviews', 'wikipediaPageviews'],
     ['open_router_signal', 'openRouterSignal'],
     ['open_router_usage', 'openRouterUsage'],
     ['groq_signal', 'groqSignal'],

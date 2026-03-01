@@ -42,6 +42,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["github-copilot", "copilot"],
       arxiv: ["GitHub Copilot","Copilot"],
       manifoldMarkets: ["GitHub Copilot"],
+      wikipedia: "GitHub_Copilot",
     }
   },
   {
@@ -181,6 +182,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Midjourney"],
       cloudflareRadar: "midjourney.com",
       stackoverflow: ["midjourney"],
+      wikipedia: "Midjourney",
     }
   },
   {
@@ -194,6 +196,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["DALL-E 3", "DALLE 3"],
       semanticScholar: ["DALL-E 3 improving image generation with better captions"],
       stackoverflow: ["dall-e", "dalle"],
+      wikipedia: "DALL-E",
     }
   },
   {
@@ -224,6 +227,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Scaling rectified flow transformers for high-resolution image synthesis"],
       cloudflareRadar: "stability.ai",
       stackoverflow: ["stable-diffusion"],
+      wikipedia: "Stable_Diffusion",
     }
   },
   {
@@ -310,6 +314,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Video generation models as world simulators"],
       cloudflareRadar: "sora.com",
       stackoverflow: ["sora", "openai-sora"],
+      wikipedia: "Sora_(text-to-video_model)",
     }
   },
   {
@@ -434,6 +439,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["ElevenLabs"],
       cloudflareRadar: "elevenlabs.io",
       stackoverflow: ["elevenlabs"],
+      wikipedia: "ElevenLabs",
     }
   },
   {
@@ -446,6 +452,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Suno AI", "Suno music"],
       cloudflareRadar: "suno.com",
       stackoverflow: ["suno-ai"],
+      wikipedia: "Suno_AI",
     }
   },
   {
@@ -474,6 +481,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       groq: "whisper-large-v3",
       semanticScholar: ["Robust Speech Recognition via Large-Scale Weak Supervision"],
       stackoverflow: ["whisper", "openai-whisper"],
+      wikipedia: "Whisper_(speech_recognition_system)",
     }
   },
   {
@@ -507,6 +515,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["gpt-4o-mini", "openai-api"],
       arxiv: ["GPT-4o","GPT-4o mini"],
       manifoldMarkets: ["GPT-4o mini"],
+      wikipedia: "GPT-4o",
     }
   },
   {
@@ -526,6 +535,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["gpt-4o", "openai-api"],
       arxiv: ["GPT-4o"],
       manifoldMarkets: ["GPT-4o"],
+      wikipedia: "GPT-4o",
     }
   },
   {
@@ -545,6 +555,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["claude", "anthropic"],
       arxiv: ["Claude 3.5 Sonnet","Claude"],
       manifoldMarkets: ["Claude 3.5 Sonnet"],
+      wikipedia: "Claude_(language_model)",
     }
   },
   {
@@ -563,6 +574,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["gemini-api", "google-gemini"],
       arxiv: ["Gemini 2.0 Flash","Gemini Flash"],
       manifoldMarkets: ["Gemini Flash"],
+      wikipedia: "Gemini_(language_model)",
     }
   },
   {
@@ -584,6 +596,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["deepseek"],
       arxiv: ["DeepSeek-V3","DeepSeek V3"],
       manifoldMarkets: ["DeepSeek V3"],
+      wikipedia: "DeepSeek",
     }
   },
   {
@@ -606,6 +619,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["llama", "meta-llama"],
       arxiv: ["Llama 3.3","Llama 3"],
       manifoldMarkets: ["Llama 3.3"],
+      wikipedia: "Llama_(language_model)",
     }
   },
   {
@@ -644,6 +658,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["mistral", "mistral-ai"],
       arxiv: ["Mistral Large","Mistral"],
       manifoldMarkets: ["Mistral Large"],
+      wikipedia: "Mistral_AI",
     }
   },
   {
@@ -878,6 +893,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["deepseek-r1"],
       arxiv: ["DeepSeek-R1","DeepSeek R1"],
       manifoldMarkets: ["DeepSeek R1"],
+      wikipedia: "DeepSeek",
     }
   },
   {

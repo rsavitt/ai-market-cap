@@ -17,12 +17,14 @@ export interface RawSignals {
   openWebUIUsage: Map<string, number>;
   cloudflareRadar: Map<string, number>;
   ollamaSignal: Map<string, number>;
+  dockerHubPulls: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
   smolaiSignal: Map<string, number>;
   googleTrendsSignal: Map<string, number>;
   stackoverflowSignal: Map<string, number>;
+  wikipediaPageviews: Map<string, number>;
   // capability signals
   openRouterSignal: Map<string, number>;
   groqSignal: Map<string, number>;
@@ -53,7 +55,9 @@ export interface EntityScores {
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
   'openRouterUsage', 'openWebUIUsage', 'cloudflareRadar', 'ollamaSignal', 'githubStars', 'githubForks',
+  'dockerHubPulls',
   'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal', 'stackoverflowSignal',
+  'wikipediaPageviews',
   'openRouterSignal',
   'groqSignal',
   'aaLlmIntelligence',
@@ -148,6 +152,40 @@ function normalizeWithinCategory(
     const score = Math.round(percentile * 95 * 100) / 100;
     entityScoreMap.set(logValues[i].id, score);
   }
+
+  // ── Company diversity adjustment ──
+  // When a single company has more entities than 35% of the category,
+  // apply a graduated penalty to its lowest-ranked excess models.
+  // Top models from each company keep full scores.
+  const entitiesWithData = logValues.length;
+  const maxSlots = Math.max(2, Math.ceil(entitiesWithData * 0.35));
+
+  // Group entities-with-data by company, sorted by score descending
+  const companyEntities = new Map<string, { id: string; score: number }[]>();
+  for (const { id: eid } of logValues) {
+    const ent = entityRegistry.find(e => e.id === eid);
+    const company = ent?.company ?? '__unknown__';
+    let list = companyEntities.get(company);
+    if (!list) {
+      list = [];
+      companyEntities.set(company, list);
+    }
+    list.push({ id: eid, score: entityScoreMap.get(eid) ?? 0 });
+  }
+
+  companyEntities.forEach((models) => {
+    if (models.length <= maxSlots) return;
+    // Sort descending so the company's best models are first
+    models.sort((a: { score: number }, b: { score: number }) => b.score - a.score);
+    const excess = models.length - maxSlots;
+    for (let i = maxSlots; i < models.length; i++) {
+      // Graduated penalty: linearly from 1.0 down to 0.5 for the last excess model
+      const penaltyPosition = i - maxSlots; // 0-based position within excess
+      const penaltyFactor = 1.0 - 0.5 * ((penaltyPosition + 1) / excess);
+      const original = entityScoreMap.get(models[i].id) ?? 0;
+      entityScoreMap.set(models[i].id, Math.round(original * penaltyFactor * 100) / 100);
+    }
+  });
 
   for (const id of categoryEntityIds) {
     result.set(id, entityScoreMap.get(id) ?? 0);
@@ -279,12 +317,14 @@ function calculateConfidence(
     { map: raw.ollamaSignal, applicable: !!sources?.ollama?.length },
     { map: raw.githubStars, applicable: !!sources?.github?.length },
     { map: raw.githubForks, applicable: !!sources?.github?.length },
+    { map: raw.dockerHubPulls, applicable: !!sources?.dockerHub?.length },
     // Universal signals — always applicable
     { map: raw.hackernewsSignal, applicable: true },
     { map: raw.redditSignal, applicable: true },
     { map: raw.smolaiSignal, applicable: true },
     { map: raw.googleTrendsSignal, applicable: true },
     { map: raw.stackoverflowSignal, applicable: true },
+    { map: raw.wikipediaPageviews, applicable: !!sources?.wikipedia },
     { map: raw.openRouterSignal, applicable: !!sources?.openRouter },
     { map: raw.groqSignal, applicable: !!sources?.groq },
     { map: raw.aaLlmIntelligence, applicable: !!sources?.artificialAnalysis },
@@ -343,11 +383,13 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     ollamaSignal: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
+    dockerHubPulls: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
     googleTrendsSignal: new Map(),
     stackoverflowSignal: new Map(),
+    wikipediaPageviews: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
     aaLlmIntelligence: new Map(),
@@ -374,11 +416,13 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     ollamaSignal: raw.ollamaSignal,
     githubStars: raw.githubStars,
     githubForks: raw.githubForks,
+    dockerHubPulls: raw.dockerHubPulls,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
     googleTrendsSignal: raw.googleTrendsSignal,
     stackoverflowSignal: raw.stackoverflowSignal,
+    wikipediaPageviews: raw.wikipediaPageviews,
     openRouterSignal: raw.openRouterSignal,
     groqSignal: raw.groqSignal,
     aaLlmIntelligence: raw.aaLlmIntelligence,
@@ -409,6 +453,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       { signal: 'hfLikes', getSourceKeys: (s) => s.huggingface },
       { signal: 'hfDownloadsVelocity', getSourceKeys: (s) => s.huggingface },
       { signal: 'cloudflareRadar', getSourceKeys: (s) => s.cloudflareRadar ? [s.cloudflareRadar] : null },
+      { signal: 'stackoverflowSignal', getSourceKeys: (s) => s.stackoverflow },
+      { signal: 'dockerHubPulls', getSourceKeys: (s) => s.dockerHub },
     ];
 
     for (const { signal, getSourceKeys } of deduplicationConfig) {
@@ -508,26 +554,28 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   //        + OpenRouter Usage (0.12) + OpenWebUI (0.07) + GitHub Stars (0.09) + GitHub Forks (0.08)
   // Note: GitHub clones/views excluded — traffic API requires push access to repos we don't own
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.13 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.13 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.12 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.12 },
     { normalized: normalizedSignals.huggingfaceSignal, weight: 0.07 },
     { normalized: normalizedSignals.hfDownloads, weight: 0.04 },
     { normalized: normalizedSignals.hfLikes, weight: 0.03 },
     { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.04 },
-    { normalized: normalizedSignals.cloudflareRadar, weight: 0.11 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.11 },
-    { normalized: normalizedSignals.ollamaSignal, weight: 0.12 },
+    { normalized: normalizedSignals.cloudflareRadar, weight: 0.10 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.10 },
+    { normalized: normalizedSignals.ollamaSignal, weight: 0.11 },
     { normalized: normalizedSignals.openWebUIUsage, weight: 0.06 },
     { normalized: normalizedSignals.githubStars, weight: 0.08 },
     { normalized: normalizedSignals.githubForks, weight: 0.08 },
+    { normalized: normalizedSignals.dockerHubPulls, weight: 0.05 },
   ], entityIds);
 
   // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
   const attentionScores = combineDimension([
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.30 },
-    { normalized: normalizedSignals.redditSignal, weight: 0.25 },
-    { normalized: normalizedSignals.googleTrendsSignal, weight: 0.20 },
-    { normalized: normalizedSignals.stackoverflowSignal, weight: 0.15 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.28 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.23 },
+    { normalized: normalizedSignals.googleTrendsSignal, weight: 0.18 },
+    { normalized: normalizedSignals.stackoverflowSignal, weight: 0.13 },
+    { normalized: normalizedSignals.wikipediaPageviews, weight: 0.08 },
     { normalized: normalizedSignals.smolaiSignal, weight: 0.10 },
   ], entityIds);
 

@@ -25,7 +25,10 @@ export async function collectCloudflareRadar(): Promise<Map<string, number>> {
   const results = new Map<string, number>();
 
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-  if (!apiToken) return results;
+  if (!apiToken) {
+    console.log('[cloudflare-radar] No CLOUDFLARE_API_TOKEN set, skipping');
+    return results;
+  }
 
   // Deduplicate domains across entities
   const domainToEntities = new Map<string, string[]>();
@@ -36,6 +39,8 @@ export async function collectCloudflareRadar(): Promise<Map<string, number>> {
     existing.push(entity.id);
     domainToEntities.set(domain, existing);
   }
+
+  console.log(`[cloudflare-radar] API token present (${apiToken.length} chars), ${domainToEntities.size} domains to check`);
 
   for (const [domain, entityIds] of Array.from(domainToEntities.entries())) {
     try {

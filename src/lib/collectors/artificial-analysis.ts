@@ -46,8 +46,10 @@ export async function collectArtificialAnalysis(): Promise<ArtificialAnalysisRes
 
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
   if (!apiKey) {
+    console.log('[artificial-analysis] No ARTIFICIAL_ANALYSIS_API_KEY set, skipping');
     return { llmIntelligence, imageArena, videoArena };
   }
+  console.log(`[artificial-analysis] API key present (${apiKey.length} chars), ${aaSlugToEntity.size} slug mappings`);
 
   const headers: Record<string, string> = {
     'x-api-key': apiKey,
@@ -60,10 +62,12 @@ export async function collectArtificialAnalysis(): Promise<ArtificialAnalysisRes
 
   // Fetch all 3 endpoints in parallel
   const [llmRes, imageRes, videoRes] = await Promise.all([
-    fetchWithRetry(`${BASE_URL}/data/llms/models`, fetchOpts).catch(() => null),
-    fetchWithRetry(`${BASE_URL}/data/media/text-to-image`, fetchOpts).catch(() => null),
-    fetchWithRetry(`${BASE_URL}/data/media/text-to-video`, fetchOpts).catch(() => null),
+    fetchWithRetry(`${BASE_URL}/data/llms/models`, fetchOpts).catch((e: Error) => { console.log(`[artificial-analysis] LLM fetch failed: ${e.message}`); return null; }),
+    fetchWithRetry(`${BASE_URL}/data/media/text-to-image`, fetchOpts).catch((e: Error) => { console.log(`[artificial-analysis] Image fetch failed: ${e.message}`); return null; }),
+    fetchWithRetry(`${BASE_URL}/data/media/text-to-video`, fetchOpts).catch((e: Error) => { console.log(`[artificial-analysis] Video fetch failed: ${e.message}`); return null; }),
   ]);
+
+  console.log(`[artificial-analysis] API responses: llm=${llmRes?.status ?? 'null'}, image=${imageRes?.status ?? 'null'}, video=${videoRes?.status ?? 'null'}`);
 
   // Process LLM intelligence index
   if (llmRes?.ok) {
@@ -119,5 +123,6 @@ export async function collectArtificialAnalysis(): Promise<ArtificialAnalysisRes
     }
   }
 
+  console.log(`[artificial-analysis] Results: llm=${llmIntelligence.size}, image=${imageArena.size}, video=${videoArena.size}`);
   return { llmIntelligence, imageArena, videoArena };
 }
