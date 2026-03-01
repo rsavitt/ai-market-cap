@@ -19,13 +19,18 @@ export async function collectOpenAlex(): Promise<Map<string, number>> {
   // Deduplicate queries — same pattern as Semantic Scholar collector
   const queryToEntities = new Map<string, string[]>();
   for (const entity of entityRegistry) {
-    if (!entity.sources.semanticScholar) continue;
-    const query = entity.sources.semanticScholar;
-    if (!queryToEntities.has(query)) queryToEntities.set(query, []);
-    queryToEntities.get(query)!.push(entity.id);
+    const queries = entity.sources.semanticScholar;
+    if (!queries || queries.length === 0) continue;
+    for (const query of queries) {
+      if (!queryToEntities.has(query)) queryToEntities.set(query, []);
+      queryToEntities.get(query)!.push(entity.id);
+    }
   }
 
-  for (const [query, entityIds] of Array.from(queryToEntities.entries())) {
+  // Cache query results so we only fetch each unique query once
+  const queryScores = new Map<string, number>();
+
+  for (const [query] of Array.from(queryToEntities.entries())) {
     try {
       const params = new URLSearchParams({
         'filter': `title.search:${query}`,
@@ -56,16 +61,27 @@ export async function collectOpenAlex(): Promise<Map<string, number>> {
         maxCitations = Math.max(maxCitations, work.cited_by_count ?? 0);
       }
 
-      if (maxCitations > 0) {
-        for (const id of entityIds) {
-          results.set(id, maxCitations);
-        }
-      }
+      queryScores.set(query, maxCitations);
     } catch {
       // timeout or network error — skip this query
     }
 
     await delay(100);
+  }
+
+  // Aggregate: sum scores across all queries for each entity
+  for (const entity of entityRegistry) {
+    const queries = entity.sources.semanticScholar;
+    if (!queries || queries.length === 0) continue;
+
+    let total = 0;
+    for (const query of queries) {
+      total += queryScores.get(query) ?? 0;
+    }
+
+    if (total > 0) {
+      results.set(entity.id, total);
+    }
   }
 
   return results;

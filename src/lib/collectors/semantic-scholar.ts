@@ -15,13 +15,16 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
     headers['x-api-key'] = apiKey;
   }
 
-  // Deduplicate queries — many entities share the same paper (e.g., all Claude models → "The Claude 3 Model Family")
+  // Deduplicate queries — many entities share papers
+  // Map each unique query to the entity IDs that reference it
   const queryToEntities = new Map<string, string[]>();
   for (const entity of entityRegistry) {
-    if (!entity.sources.semanticScholar) continue;
-    const query = entity.sources.semanticScholar;
-    if (!queryToEntities.has(query)) queryToEntities.set(query, []);
-    queryToEntities.get(query)!.push(entity.id);
+    const queries = entity.sources.semanticScholar;
+    if (!queries || queries.length === 0) continue;
+    for (const query of queries) {
+      if (!queryToEntities.has(query)) queryToEntities.set(query, []);
+      queryToEntities.get(query)!.push(entity.id);
+    }
   }
 
   // Without API key: 100 req/5min ≈ 1 req/3s. Use 3.5s to stay safe.
@@ -29,10 +32,13 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
   const delayMs = apiKey ? 200 : 3500;
   let consecutiveRateLimits = 0;
 
+  // Cache query results so we only fetch each unique query once
+  const queryScores = new Map<string, number>();
+
   for (const [query, entityIds] of Array.from(queryToEntities.entries())) {
     // If we've hit too many consecutive rate limits, stop early
     if (consecutiveRateLimits >= 3) {
-      console.log(`[semantic-scholar] Stopping early after ${consecutiveRateLimits} consecutive rate limits. Got ${results.size} results.`);
+      console.log(`[semantic-scholar] Stopping early after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size} query results.`);
       break;
     }
 
@@ -64,12 +70,7 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
           maxCitations = Math.max(maxCitations, score);
         }
 
-        if (maxCitations > 0) {
-          for (const id of entityIds) {
-            results.set(id, maxCitations);
-          }
-        }
-
+        queryScores.set(query, maxCitations);
         success = true;
         break;
       } catch {
@@ -84,6 +85,21 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
     }
 
     await new Promise(r => setTimeout(r, delayMs));
+  }
+
+  // Aggregate: sum scores across all queries for each entity
+  for (const entity of entityRegistry) {
+    const queries = entity.sources.semanticScholar;
+    if (!queries || queries.length === 0) continue;
+
+    let total = 0;
+    for (const query of queries) {
+      total += queryScores.get(query) ?? 0;
+    }
+
+    if (total > 0) {
+      results.set(entity.id, total);
+    }
   }
 
   return results;

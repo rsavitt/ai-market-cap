@@ -8,7 +8,7 @@ export interface EntitySources {
   hackernews: string[];
   reddit: string[];
   openRouter: string | null;
-  semanticScholar: string | null;
+  semanticScholar: string[];
   groq: string | null;
   smolai: string[];
 }
@@ -38,7 +38,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     hackernews: [],
     reddit: [],
     openRouter: null,
-    semanticScholar: null,
+    semanticScholar: [],
     groq: null,
     smolai: [],
   };
@@ -71,7 +71,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         sources.openRouter = row.source_value;
         break;
       case 'semanticScholar':
-        sources.semanticScholar = row.source_value;
+        sources.semanticScholar.push(row.source_value);
         break;
       case 'groq':
         sources.groq = row.source_value;
