@@ -1,4 +1,5 @@
 import { getEntityRegistry } from '../entity-registry';
+import { delay } from './fetch-utils';
 
 interface S2SearchResponse {
   total: number;
@@ -16,7 +17,6 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
   }
 
   // Deduplicate queries — many entities share papers
-  // Map each unique query to the entity IDs that reference it
   const queryToEntities = new Map<string, string[]>();
   for (const entity of entityRegistry) {
     const queries = entity.sources.semanticScholar;
@@ -27,18 +27,20 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
     }
   }
 
-  // Without API key: 100 req/5min ≈ 1 req/3s. Use 3.5s to stay safe.
-  // With API key: much higher limits, use 200ms.
-  const delayMs = apiKey ? 200 : 3500;
-  let consecutiveRateLimits = 0;
+  const allQueries = Array.from(queryToEntities.keys());
+  if (allQueries.length === 0) return results;
+
+  // Without API key: 100 req/5min. Sequential with adaptive delay.
+  // With API key: much higher limits, can batch.
+  const baseDelayMs = apiKey ? 200 : 3500;
+  let currentDelayMs = baseDelayMs;
 
   // Cache query results so we only fetch each unique query once
   const queryScores = new Map<string, number>();
 
-  const BATCH_SIZE = apiKey ? 3 : 2;
-
-  async function processQuery(query: string): Promise<boolean> {
-    for (let attempt = 0; attempt < 2; attempt++) {
+  async function processQuery(query: string): Promise<'ok' | 'rate_limited' | 'error'> {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const params = new URLSearchParams({
           query,
@@ -51,12 +53,21 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
         );
 
         if (res.status === 429) {
-          console.log(`[semantic-scholar] Rate limited on "${query}", waiting 60s...`);
-          await new Promise(r => setTimeout(r, 60000));
-          continue; // retry
+          // Check Retry-After header, otherwise use exponential backoff
+          const retryAfter = res.headers.get('Retry-After');
+          let waitMs: number;
+          if (retryAfter) {
+            const seconds = parseInt(retryAfter, 10);
+            waitMs = isNaN(seconds) ? 10000 : Math.min(seconds * 1000, 60000);
+          } else {
+            waitMs = Math.min(5000 * Math.pow(2, attempt), 30000);
+          }
+          console.log(`[semantic-scholar] Rate limited on "${query}", waiting ${Math.round(waitMs / 1000)}s (attempt ${attempt + 1}/${maxAttempts})...`);
+          await delay(waitMs);
+          continue;
         }
 
-        if (!res.ok) return false;
+        if (!res.ok) return 'error';
 
         const data = await res.json() as S2SearchResponse;
         let maxCitations = 0;
@@ -66,37 +77,54 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
         }
 
         queryScores.set(query, maxCitations);
-        return true;
+        return 'ok';
       } catch {
-        return false; // timeout or unavailable
+        return 'error';
       }
     }
-    return false;
+    return 'rate_limited';
   }
 
-  const allQueries = Array.from(queryToEntities.keys());
-
-  for (let i = 0; i < allQueries.length; i += BATCH_SIZE) {
-    if (consecutiveRateLimits >= 3) {
-      console.log(`[semantic-scholar] Stopping early after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size} query results.`);
-      break;
+  if (apiKey) {
+    // With API key: batch 3 at a time with short delays
+    for (let i = 0; i < allQueries.length; i += 3) {
+      const batch = allQueries.slice(i, i + 3);
+      await Promise.all(batch.map(processQuery));
+      if (i + 3 < allQueries.length) {
+        await delay(currentDelayMs);
+      }
     }
+  } else {
+    // Without API key: sequential with adaptive delay
+    let consecutiveRateLimits = 0;
 
-    const batch = allQueries.slice(i, i + BATCH_SIZE);
-    const results_batch = await Promise.all(batch.map(processQuery));
+    for (const query of allQueries) {
+      if (consecutiveRateLimits >= 5) {
+        console.log(`[semantic-scholar] Stopping after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size}/${allQueries.length} queries.`);
+        break;
+      }
 
-    for (const success of results_batch) {
-      if (success) {
+      const result = await processQuery(query);
+
+      if (result === 'ok') {
         consecutiveRateLimits = 0;
-      } else {
+        // Gradually reduce delay back toward baseline after successes
+        currentDelayMs = Math.max(baseDelayMs, currentDelayMs * 0.8);
+      } else if (result === 'rate_limited') {
         consecutiveRateLimits++;
+        // Increase inter-request delay on rate limits
+        currentDelayMs = Math.min(currentDelayMs * 1.5, 15000);
+        console.log(`[semantic-scholar] Increasing delay to ${Math.round(currentDelayMs)}ms`);
+      } else {
+        // Non-rate-limit errors don't count toward consecutive limit
+        consecutiveRateLimits = 0;
       }
-    }
 
-    if (i + BATCH_SIZE < allQueries.length) {
-      await new Promise(r => setTimeout(r, delayMs));
+      await delay(currentDelayMs);
     }
   }
+
+  console.log(`[semantic-scholar] Fetched ${queryScores.size}/${allQueries.length} unique queries`);
 
   // Aggregate: sum scores across all queries for each entity
   for (const entity of entityRegistry) {
