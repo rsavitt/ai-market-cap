@@ -58,6 +58,30 @@ describe('parsePullCount', () => {
     `;
     expect(parsePullCount(html)).toBe(45_600_000);
   });
+
+  it('parses x-test-pull-count attribute format', () => {
+    expect(parsePullCount('<span x-test-pull-count>3.3M</span>')).toBe(3_300_000);
+  });
+
+  it('parses x-test-pull-count with K suffix', () => {
+    expect(parsePullCount('<span x-test-pull-count>850K</span>')).toBe(850_000);
+  });
+
+  it('parses x-test-pull-count embedded in full page HTML', () => {
+    const html = `
+      <div>
+        <h1>llama3.3</h1>
+        <span x-test-pull-count>3.3M</span>
+        <span>Updated 2 days ago</span>
+      </div>
+    `;
+    expect(parsePullCount(html)).toBe(3_300_000);
+  });
+
+  it('prefers x-test-pull-count over Pulls text when both present', () => {
+    const html = '<span x-test-pull-count>5M</span><span>3M Pulls</span>';
+    expect(parsePullCount(html)).toBe(5_000_000);
+  });
 });
 
 // ── collectOllama integration tests ──

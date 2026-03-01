@@ -52,11 +52,17 @@ export async function collectOllama(): Promise<Map<string, number>> {
 
 /**
  * Parse pull count from Ollama library page HTML.
- * Looks for patterns like "1.2M Pulls", "523K Pulls", "12,345 Pulls".
+ * Supports two formats:
+ *   1. <span x-test-pull-count>3.3M</span>  (current ollama.com)
+ *   2. "1.2M Pulls", "523K Pulls", "12,345 Pulls"  (fallback)
  */
 export function parsePullCount(html: string): number {
-  // Match patterns like "1.2M Pulls", "523K Pulls", "12,345 Pulls"
-  const match = html.match(/([\d,.]+)\s*([KMBkmb])?\s*[Pp]ulls/);
+  // Primary: match the x-test-pull-count span used by ollama.com
+  const attrMatch = html.match(/x-test-pull-count[^>]*>([\d,.]+)\s*([KMBkmb])?/);
+  // Fallback: match "N Pulls" pattern
+  const pullsMatch = html.match(/([\d,.]+)\s*([KMBkmb])?\s*[Pp]ulls/);
+
+  const match = attrMatch || pullsMatch;
   if (!match) return 0;
 
   const numStr = match[1].replace(/,/g, '');
