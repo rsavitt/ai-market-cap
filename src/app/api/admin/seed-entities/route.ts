@@ -1139,6 +1139,377 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Qwen3 Technical Report"],
     }
   },
+  // ── NEW MODELS FROM OPENROUTER ──
+
+  // OpenAI - GPT-5.1
+  {
+    id: "gpt-5-1", name: "GPT-5.1", category: "general_llm", company: "OpenAI",
+    release_date: "2025-11-12", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "GPT-5 series update with shopping research and multimodal features",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT-5.1", "GPT 5.1"],
+      smolai: ["GPT-5.1", "GPT 5.1"],
+      reddit: ["GPT-5.1", "GPT 5.1"],
+      openRouter: "openai/gpt-5.1",
+      openWebUI: ["gpt-5.1"],
+      semanticScholar: ["OpenAI GPT-5 System Card"],
+    }
+  },
+  // OpenAI - GPT-5.1-Codex-Max
+  {
+    id: "gpt-5-1-codex-max", name: "GPT-5.1-Codex-Max", category: "general_llm", company: "OpenAI",
+    release_date: "2025-11-19", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Extended thinking Codex variant of GPT-5.1 for complex coding tasks",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node", "openai/codex"],
+      hackernews: ["GPT-5.1-Codex-Max", "GPT-5.1 Codex"],
+      smolai: ["GPT-5.1-Codex-Max", "GPT-5.1 Codex"],
+      reddit: ["GPT-5.1-Codex-Max", "GPT-5.1 Codex"],
+      openRouter: "openai/gpt-5.1-codex-max",
+      semanticScholar: ["OpenAI GPT-5 System Card"],
+    }
+  },
+  // OpenAI - GPT-5.2-Codex
+  {
+    id: "gpt-5-2-codex", name: "GPT-5.2-Codex", category: "general_llm", company: "OpenAI",
+    release_date: "2025-12-11", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Coding-specialized variant of GPT-5.2 for agentic development",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node", "openai/codex"],
+      hackernews: ["GPT-5.2-Codex", "GPT-5.2 Codex"],
+      smolai: ["GPT-5.2-Codex", "GPT-5.2 Codex"],
+      reddit: ["GPT-5.2-Codex", "GPT-5.2 Codex"],
+      openRouter: "openai/gpt-5.2-codex",
+      openWebUI: ["gpt-5.2-codex"],
+      semanticScholar: ["OpenAI GPT-5 System Card"],
+    }
+  },
+  // OpenAI - GPT-5.2-Pro
+  {
+    id: "gpt-5-2-pro", name: "GPT-5.2-Pro", category: "general_llm", company: "OpenAI",
+    release_date: "2025-12-11", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Pro tier of GPT-5.2 with extended capabilities for complex reasoning",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT-5.2-Pro", "GPT-5.2 Pro"],
+      smolai: ["GPT-5.2-Pro", "GPT-5.2 Pro"],
+      reddit: ["GPT-5.2-Pro", "GPT-5.2 Pro"],
+      openRouter: "openai/gpt-5.2-pro",
+      openWebUI: ["gpt-5.2-pro"],
+      semanticScholar: ["OpenAI GPT-5 System Card"],
+    }
+  },
+  // OpenAI - GPT Audio
+  {
+    id: "gpt-audio", name: "GPT Audio", category: "audio", company: "OpenAI",
+    release_date: "2025-08-28", pricing_tier: "paid", availability: "API", open_source: 0,
+    description: "OpenAI native audio model for natural speech generation and real-time conversation",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT Audio", "gpt-audio", "OpenAI audio model"],
+      smolai: ["GPT Audio", "gpt-audio"],
+      reddit: ["GPT Audio", "gpt-audio"],
+      openRouter: "openai/gpt-audio",
+    }
+  },
+  // OpenAI - GPT Audio Mini
+  {
+    id: "gpt-audio-mini", name: "GPT Audio Mini", category: "audio", company: "OpenAI",
+    release_date: "2025-08-28", pricing_tier: "paid", availability: "API", open_source: 0,
+    description: "Smaller GPT Audio variant for cost-effective audio tasks",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT Audio Mini", "gpt-audio-mini"],
+      smolai: ["GPT Audio Mini", "gpt-audio-mini"],
+      reddit: ["GPT Audio Mini", "gpt-audio-mini"],
+      openRouter: "openai/gpt-audio-mini",
+    }
+  },
+
+  // Google - Gemini 3.1 Flash
+  {
+    id: "gemini-31-flash", name: "Gemini 3.1 Flash", category: "general_llm", company: "Google",
+    release_date: "2026-02-26", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
+    description: "Fast lightweight Gemini 3.1 variant with image generation capabilities",
+    sources: {
+      github: ["google-gemini/generative-ai-python"],
+      hackernews: ["Gemini 3.1 Flash"],
+      smolai: ["Gemini 3.1 Flash"],
+      reddit: ["Gemini 3.1 Flash"],
+      openRouter: "google/gemini-3.1-flash-image-preview",
+      openWebUI: ["gemini-3.1-flash"],
+      semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
+    }
+  },
+
+  // Mistral - Ministral 14B
+  {
+    id: "ministral-14b", name: "Ministral 14B", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-12-02", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Mistral 14B dense model with vision capabilities built via cascade distillation",
+    sources: {
+      huggingface: ["mistralai/Ministral-3-14B-Instruct-2512"],
+      hackernews: ["Ministral 14B", "Ministral"],
+      smolai: ["Ministral 14B"],
+      reddit: ["Ministral 14B"],
+      openRouter: "mistralai/ministral-14b-2512",
+    }
+  },
+  // Mistral - Ministral 8B
+  {
+    id: "ministral-8b", name: "Ministral 8B", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-12-02", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Mistral 8B dense model for efficient edge and local deployment",
+    sources: {
+      huggingface: ["mistralai/Ministral-3-8B-Instruct-2512"],
+      hackernews: ["Ministral 8B"],
+      smolai: ["Ministral 8B"],
+      reddit: ["Ministral 8B"],
+      openRouter: "mistralai/ministral-8b-2512",
+    }
+  },
+  // Mistral - Ministral 3B
+  {
+    id: "ministral-3b", name: "Ministral 3B", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-12-02", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Smallest Mistral 3 model for ultra-lightweight deployment",
+    sources: {
+      huggingface: ["mistralai/Ministral-3-3B-Instruct-2512"],
+      hackernews: ["Ministral 3B"],
+      smolai: ["Ministral 3B"],
+      reddit: ["Ministral 3B"],
+      openRouter: "mistralai/ministral-3b-2512",
+    }
+  },
+  // Mistral - Devstral 2
+  {
+    id: "devstral-2", name: "Devstral 2", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-12-09", pricing_tier: "freemium", availability: "API", open_source: 1,
+    description: "123B dense coding model with 256K context, 73% on SWE-bench Verified",
+    sources: {
+      huggingface: ["mistralai/Devstral-2-123B-Instruct-2512"],
+      hackernews: ["Devstral 2", "Devstral"],
+      smolai: ["Devstral 2", "Devstral"],
+      reddit: ["Devstral 2", "Devstral"],
+      openRouter: "mistralai/devstral-2512",
+    }
+  },
+  // Mistral - Mistral Small Creative
+  {
+    id: "mistral-small-creative", name: "Mistral Small Creative", category: "general_llm", company: "Mistral AI",
+    release_date: "2025-12-16", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Experimental small model for creative writing, roleplay and narrative generation",
+    sources: {
+      hackernews: ["Mistral Small Creative"],
+      smolai: ["Mistral Small Creative"],
+      reddit: ["Mistral Small Creative"],
+      openRouter: "mistralai/mistral-small-creative",
+    }
+  },
+
+  // Qwen 3.5 series
+  {
+    id: "qwen-35-397b", name: "Qwen 3.5 397B", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-16", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Alibaba flagship open-weight agentic model with 397B params (17B active MoE)",
+    sources: {
+      github: ["QwenLM/Qwen3.5"],
+      huggingface: ["Qwen/Qwen3.5-397B-A17B"],
+      hackernews: ["Qwen 3.5", "Qwen3.5"],
+      smolai: ["Qwen 3.5", "Qwen3.5"],
+      reddit: ["Qwen 3.5", "Qwen3.5"],
+      openRouter: "qwen/qwen3.5-397b-a17b",
+      semanticScholar: ["Qwen3 Technical Report"],
+    }
+  },
+  {
+    id: "qwen-35-plus", name: "Qwen 3.5 Plus", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-16", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Hosted Qwen 3.5 with 1M context window and built-in tools",
+    sources: {
+      hackernews: ["Qwen 3.5 Plus", "Qwen3.5-Plus"],
+      smolai: ["Qwen 3.5 Plus"],
+      reddit: ["Qwen 3.5 Plus"],
+      openRouter: "qwen/qwen3.5-plus",
+    }
+  },
+  {
+    id: "qwen-35-122b", name: "Qwen 3.5 122B", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-16", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Mid-size Qwen 3.5 MoE model with 122B params (10B active)",
+    sources: {
+      huggingface: ["Qwen/Qwen3.5-122B-A10B"],
+      hackernews: ["Qwen 3.5 122B"],
+      smolai: ["Qwen 3.5 122B"],
+      reddit: ["Qwen 3.5 122B"],
+      openRouter: "qwen/qwen3.5-122b-a10b",
+    }
+  },
+  {
+    id: "qwen-35-35b", name: "Qwen 3.5 35B", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-24", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Compact multimodal Qwen 3.5 MoE model with 35B params (3B active)",
+    sources: {
+      huggingface: ["Qwen/Qwen3.5-35B-A3B"],
+      hackernews: ["Qwen 3.5 35B"],
+      smolai: ["Qwen 3.5 35B"],
+      reddit: ["Qwen 3.5 35B"],
+      openRouter: "qwen/qwen3.5-35b-a3b",
+    }
+  },
+  {
+    id: "qwen-35-27b", name: "Qwen 3.5 27B", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-16", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Dense 27B Qwen 3.5 model for efficient deployment",
+    sources: {
+      huggingface: ["Qwen/Qwen3.5-27B"],
+      hackernews: ["Qwen 3.5 27B"],
+      smolai: ["Qwen 3.5 27B"],
+      reddit: ["Qwen 3.5 27B"],
+      openRouter: "qwen/qwen3.5-27b",
+    }
+  },
+  {
+    id: "qwen-35-flash", name: "Qwen 3.5 Flash", category: "general_llm", company: "Alibaba",
+    release_date: "2026-02-16", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Fast lightweight Qwen 3.5 variant optimized for speed",
+    sources: {
+      hackernews: ["Qwen 3.5 Flash"],
+      smolai: ["Qwen 3.5 Flash"],
+      reddit: ["Qwen 3.5 Flash"],
+      openRouter: "qwen/qwen3.5-flash",
+    }
+  },
+  // Qwen 3 - Coder Next / Max Thinking
+  {
+    id: "qwen3-coder-next", name: "Qwen 3 Coder Next", category: "general_llm", company: "Alibaba",
+    release_date: "2025-12-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Alibaba coding-specialized model built on Qwen 3 architecture",
+    sources: {
+      hackernews: ["Qwen 3 Coder", "Qwen3 Coder"],
+      smolai: ["Qwen 3 Coder"],
+      reddit: ["Qwen 3 Coder"],
+      openRouter: "qwen/qwen3-coder-next",
+    }
+  },
+  {
+    id: "qwen3-max-thinking", name: "Qwen 3 Max Thinking", category: "general_llm", company: "Alibaba",
+    release_date: "2025-12-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Extended reasoning variant of Qwen 3 Max with chain-of-thought",
+    sources: {
+      hackernews: ["Qwen 3 Max"],
+      smolai: ["Qwen 3 Max"],
+      reddit: ["Qwen 3 Max"],
+      openRouter: "qwen/qwen3-max-thinking",
+    }
+  },
+
+  // DeepSeek V3.2 Speciale
+  {
+    id: "deepseek-v3-2-speciale", name: "DeepSeek V3.2 Speciale", category: "general_llm", company: "DeepSeek",
+    release_date: "2025-12-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Enhanced variant of DeepSeek V3.2 with improved capabilities",
+    sources: {
+      hackernews: ["DeepSeek V3.2 Speciale"],
+      smolai: ["DeepSeek V3.2 Speciale"],
+      reddit: ["DeepSeek V3.2 Speciale"],
+      openRouter: "deepseek/deepseek-v3.2-speciale",
+    }
+  },
+
+  // ByteDance Seed models
+  {
+    id: "seed-20-mini", name: "Seed 2.0 Mini", category: "general_llm", company: "ByteDance",
+    release_date: "2026-02-10", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "ByteDance compact agent model from the Seed 2.0 series",
+    sources: {
+      hackernews: ["ByteDance Seed", "Seed 2.0"],
+      smolai: ["ByteDance Seed", "Seed 2.0"],
+      reddit: ["ByteDance Seed", "Seed 2.0"],
+      openRouter: "bytedance/seed-2.0-mini",
+    }
+  },
+  {
+    id: "seed-16", name: "Seed 1.6", category: "general_llm", company: "ByteDance",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "ByteDance general-purpose language model",
+    sources: {
+      hackernews: ["ByteDance Seed 1.6", "Seed 1.6"],
+      smolai: ["Seed 1.6"],
+      reddit: ["Seed 1.6"],
+      openRouter: "bytedance/seed-1.6",
+    }
+  },
+  {
+    id: "seed-16-flash", name: "Seed 1.6 Flash", category: "general_llm", company: "ByteDance",
+    release_date: "2025-10-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Fast lightweight variant of ByteDance Seed 1.6",
+    sources: {
+      hackernews: ["Seed 1.6 Flash"],
+      smolai: ["Seed 1.6 Flash"],
+      reddit: ["Seed 1.6 Flash"],
+      openRouter: "bytedance/seed-1.6-flash",
+    }
+  },
+
+  // MiniMax M2.1
+  {
+    id: "minimax-m21", name: "MiniMax M2.1", category: "general_llm", company: "MiniMax",
+    release_date: "2025-12-23", pricing_tier: "freemium", availability: "API", open_source: 1,
+    description: "Enhanced multi-language programming model for real-world complex tasks",
+    sources: {
+      huggingface: ["MiniMaxAI/MiniMax-M2.1"],
+      hackernews: ["MiniMax M2.1"],
+      smolai: ["MiniMax M2.1"],
+      reddit: ["MiniMax M2.1"],
+      openRouter: "minimax/minimax-m2.1",
+    }
+  },
+
+  // GLM newer versions
+  {
+    id: "glm-47", name: "GLM-4.7", category: "general_llm", company: "Zhipu AI",
+    release_date: "2025-12-22", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "400B open-weight model with 200K context, 73.8% SWE-bench Verified",
+    sources: {
+      github: ["THUDM/GLM-4"],
+      hackernews: ["GLM-4.7", "GLM 4.7"],
+      smolai: ["GLM-4.7", "GLM 4.7"],
+      reddit: ["GLM-4.7", "GLM 4.7"],
+      openRouter: "z-ai/glm-4.7",
+    }
+  },
+  {
+    id: "glm-47-flash", name: "GLM-4.7 Flash", category: "general_llm", company: "Zhipu AI",
+    release_date: "2025-12-22", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Fast lightweight variant of GLM-4.7",
+    sources: {
+      hackernews: ["GLM-4.7 Flash"],
+      smolai: ["GLM-4.7 Flash"],
+      reddit: ["GLM-4.7 Flash"],
+      openRouter: "z-ai/glm-4.7-flash",
+    }
+  },
+
+  // Amazon Nova
+  {
+    id: "amazon-nova-2-lite", name: "Amazon Nova 2 Lite", category: "general_llm", company: "Amazon",
+    release_date: "2025-12-01", pricing_tier: "freemium", availability: "API", open_source: 0,
+    description: "Amazon lightweight multimodal model for cost-effective tasks",
+    sources: {
+      hackernews: ["Amazon Nova", "Nova 2 Lite"],
+      smolai: ["Amazon Nova"],
+      reddit: ["Amazon Nova"],
+      openRouter: "amazon/nova-2-lite-v1",
+    }
+  },
 ];
 
 function flattenSources(entityId: string, sources: Record<string, string | string[] | null>): { source_type: string; source_value: string }[] {
