@@ -512,7 +512,7 @@ const SEED_ENTITIES: SeedEntity[] = [
   },
   {
     id: "hermes-agent", name: "Hermes Agent", category: "agent_tools", company: "Nous Research",
-    release_date: "2025-06-01", pricing_tier: "free", availability: "CLI", open_source: 1,
+    release_date: "2026-02-26", pricing_tier: "free", availability: "CLI", open_source: 1,
     description: "Fully open-source AI agent with persistent memory and multi-platform messaging",
     sources: {
       github: ["NousResearch/hermes-agent"],
@@ -538,7 +538,7 @@ const SEED_ENTITIES: SeedEntity[] = [
   },
   {
     id: "crewai", name: "CrewAI", category: "agent_tools", company: "CrewAI",
-    release_date: "2024-01-15", pricing_tier: "freemium", availability: "API,CLI", open_source: 1,
+    release_date: "2023-11-14", pricing_tier: "freemium", availability: "API,CLI", open_source: 1,
     description: "Framework for orchestrating multi-agent AI systems",
     sources: {
       github: ["crewAIInc/crewAI"],
@@ -551,7 +551,7 @@ const SEED_ENTITIES: SeedEntity[] = [
   },
   {
     id: "langchain-agents", name: "LangChain Agents", category: "agent_tools", company: "LangChain",
-    release_date: "2023-10-01", pricing_tier: "free", availability: "API", open_source: 1,
+    release_date: "2022-10-01", pricing_tier: "free", availability: "API", open_source: 1,
     description: "Agent framework within the LangChain ecosystem",
     sources: {
       github: ["langchain-ai/langchain"],
@@ -592,7 +592,7 @@ const SEED_ENTITIES: SeedEntity[] = [
   },
   {
     id: "browseruse", name: "Browser Use", category: "agent_tools", company: "Browser Use",
-    release_date: "2024-11-01", pricing_tier: "free", availability: "API,CLI", open_source: 1,
+    release_date: "2024-11-06", pricing_tier: "free", availability: "API,CLI", open_source: 1,
     description: "AI agent framework for autonomous web browser interaction",
     sources: {
       github: ["browser-use/browser-use"],
