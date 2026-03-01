@@ -496,6 +496,136 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
 
+  // ── AGENT TOOLS ──
+  {
+    id: "openclaw", name: "OpenClaw", category: "agent_tools", company: "OpenClaw",
+    release_date: "2025-11-15", pricing_tier: "free", availability: "CLI,Web", open_source: 1,
+    description: "Open-source autonomous AI agent for messaging platforms",
+    sources: {
+      github: ["psteinerx/openclaw"],
+      hackernews: ["OpenClaw", "Clawdbot", "Moltbot"],
+      smolai: ["OpenClaw", "Clawdbot"],
+      reddit: ["OpenClaw", "openclaw agent"],
+      cloudflareRadar: "openclaw.ai",
+      stackoverflow: ["openclaw"],
+    }
+  },
+  {
+    id: "hermes-agent", name: "Hermes Agent", category: "agent_tools", company: "Nous Research",
+    release_date: "2025-06-01", pricing_tier: "free", availability: "CLI", open_source: 1,
+    description: "Fully open-source AI agent with persistent memory and multi-platform messaging",
+    sources: {
+      github: ["NousResearch/hermes-agent"],
+      hackernews: ["Hermes Agent", "Nous Research agent"],
+      smolai: ["Hermes Agent"],
+      reddit: ["Hermes Agent", "Nous Research Hermes"],
+      stackoverflow: ["hermes-agent"],
+    }
+  },
+  {
+    id: "autogpt", name: "AutoGPT", category: "agent_tools", company: "Significant Gravitas",
+    release_date: "2023-03-30", pricing_tier: "free", availability: "CLI,Web", open_source: 1,
+    description: "Autonomous AI agent framework for task completion",
+    sources: {
+      github: ["Significant-Gravitas/AutoGPT"],
+      hackernews: ["AutoGPT", "Auto-GPT"],
+      smolai: ["AutoGPT"],
+      reddit: ["AutoGPT", "Auto-GPT"],
+      pypi: ["autogpt"],
+      stackoverflow: ["autogpt", "auto-gpt"],
+      wikipedia: "Auto-GPT",
+    }
+  },
+  {
+    id: "crewai", name: "CrewAI", category: "agent_tools", company: "CrewAI",
+    release_date: "2024-01-15", pricing_tier: "freemium", availability: "API,CLI", open_source: 1,
+    description: "Framework for orchestrating multi-agent AI systems",
+    sources: {
+      github: ["crewAIInc/crewAI"],
+      pypi: ["crewai"],
+      hackernews: ["CrewAI"],
+      smolai: ["CrewAI"],
+      reddit: ["CrewAI"],
+      stackoverflow: ["crewai"],
+    }
+  },
+  {
+    id: "langchain-agents", name: "LangChain Agents", category: "agent_tools", company: "LangChain",
+    release_date: "2023-10-01", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Agent framework within the LangChain ecosystem",
+    sources: {
+      github: ["langchain-ai/langchain"],
+      pypi: ["langchain"],
+      npm: ["langchain"],
+      hackernews: ["LangChain agents", "LangChain"],
+      smolai: ["LangChain agents"],
+      reddit: ["LangChain agents"],
+      stackoverflow: ["langchain", "langchain-agents"],
+    }
+  },
+  {
+    id: "autogen", name: "AutoGen", category: "agent_tools", company: "Microsoft",
+    release_date: "2023-09-25", pricing_tier: "free", availability: "API", open_source: 1,
+    description: "Multi-agent conversation framework by Microsoft Research",
+    sources: {
+      github: ["microsoft/autogen"],
+      pypi: ["autogen", "pyautogen"],
+      hackernews: ["AutoGen", "Microsoft AutoGen"],
+      smolai: ["AutoGen"],
+      reddit: ["AutoGen"],
+      semanticScholar: ["AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation"],
+      stackoverflow: ["autogen", "pyautogen"],
+    }
+  },
+  {
+    id: "openai-agents-sdk", name: "OpenAI Agents SDK", category: "agent_tools", company: "OpenAI",
+    release_date: "2025-03-11", pricing_tier: "freemium", availability: "API", open_source: 1,
+    description: "Official OpenAI SDK for building multi-agent workflows",
+    sources: {
+      github: ["openai/openai-agents-python"],
+      pypi: ["openai-agents"],
+      hackernews: ["OpenAI Agents SDK"],
+      smolai: ["OpenAI Agents SDK"],
+      reddit: ["OpenAI Agents SDK"],
+      stackoverflow: ["openai-agents"],
+    }
+  },
+  {
+    id: "browseruse", name: "Browser Use", category: "agent_tools", company: "Browser Use",
+    release_date: "2024-11-01", pricing_tier: "free", availability: "API,CLI", open_source: 1,
+    description: "AI agent framework for autonomous web browser interaction",
+    sources: {
+      github: ["browser-use/browser-use"],
+      pypi: ["browser-use"],
+      hackernews: ["Browser Use", "browser-use"],
+      smolai: ["Browser Use"],
+      reddit: ["Browser Use", "browser-use"],
+      stackoverflow: ["browser-use"],
+    }
+  },
+  {
+    id: "manus", name: "Manus", category: "agent_tools", company: "Manus AI",
+    release_date: "2025-03-06", pricing_tier: "freemium", availability: "Web", open_source: 0,
+    description: "General-purpose AI agent that bridges minds and actions",
+    sources: {
+      hackernews: ["Manus AI", "Manus agent"],
+      smolai: ["Manus AI"],
+      reddit: ["Manus AI"],
+      cloudflareRadar: "manus.im",
+    }
+  },
+  {
+    id: "devin", name: "Devin", category: "agent_tools", company: "Cognition",
+    release_date: "2024-12-10", pricing_tier: "paid", availability: "Web", open_source: 0,
+    description: "Autonomous AI software engineering agent",
+    sources: {
+      hackernews: ["Devin AI", "Cognition Devin"],
+      smolai: ["Devin AI", "Cognition Devin"],
+      reddit: ["Devin AI", "Cognition Devin"],
+      cloudflareRadar: "devin.ai",
+    }
+  },
+
   // ── GENERAL LLMs ──
   {
     id: "gpt-4o-mini", name: "GPT-4o Mini", category: "general_llm", company: "OpenAI",
