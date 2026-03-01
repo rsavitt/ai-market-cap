@@ -52,13 +52,22 @@ export async function collectOpenWebUI(): Promise<Map<string, number>> {
     }
   }
 
-  // Match models to entities via substring patterns
+  // Match models to entities via substring patterns (longest match wins).
+  // When multiple patterns match a model name, only the longest pattern is used,
+  // so "gpt-4.1-mini" matches entity gpt-41-mini, not gpt-41.
   modelTotals.forEach((totalMessages, modelName) => {
+    let bestMatch: { entityId: string; length: number } | null = null;
     for (const { pattern, entityId } of patternToEntity) {
       if (modelName.includes(pattern) || pattern.includes(modelName)) {
-        const current = results.get(entityId) ?? 0;
-        results.set(entityId, current + totalMessages);
+        const matchLength = pattern.length;
+        if (!bestMatch || matchLength > bestMatch.length) {
+          bestMatch = { entityId, length: matchLength };
+        }
       }
+    }
+    if (bestMatch) {
+      const current = results.get(bestMatch.entityId) ?? 0;
+      results.set(bestMatch.entityId, current + totalMessages);
     }
   });
 
