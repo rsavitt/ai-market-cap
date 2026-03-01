@@ -5,7 +5,7 @@ import { delay } from './fetch-utils';
  * Collect arXiv mention velocity: number of papers mentioning a model
  * in their abstract over the last 30 days, scoped to AI/ML categories.
  *
- * API: http://export.arxiv.org/api/query (free, no auth, Atom XML)
+ * API: https://export.arxiv.org/api/query (free, no auth, Atom XML)
  * Rate limit: 1 request per 3 seconds (we use 3.5s to be safe)
  */
 export async function collectArxiv(): Promise<Map<string, number>> {
@@ -45,8 +45,9 @@ export async function collectArxiv(): Promise<Map<string, number>> {
     try {
       // Build arXiv API query URL
       // abs:"query" AND (cat:cs.AI OR cat:cs.LG OR cat:cs.CL) AND submittedDate:[from TO to]
-      const searchQuery = `abs:"${query}"+AND+(cat:cs.AI+OR+cat:cs.LG+OR+cat:cs.CL)+AND+submittedDate:[${dateFrom}0000+TO+${dateTo}2359]`;
-      const url = `http://export.arxiv.org/api/query?search_query=${encodeURIComponent(searchQuery)}&max_results=0`;
+      const encodedQuery = encodeURIComponent(`"${query}"`);
+      const searchQuery = `abs:${encodedQuery}+AND+(cat:cs.AI+OR+cat:cs.LG+OR+cat:cs.CL)+AND+submittedDate:[${dateFrom}0000+TO+${dateTo}2359]`;
+      const url = `https://export.arxiv.org/api/query?search_query=${searchQuery}&max_results=1`;
 
       const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
 
@@ -57,6 +58,13 @@ export async function collectArxiv(): Promise<Map<string, number>> {
       }
 
       const xml = await res.text();
+
+      // Skip error responses (arXiv returns 200 with error entry)
+      if (xml.includes('arxiv.org/api/errors')) {
+        console.log(`[arxiv] API error for "${query}"`);
+        await delay(3500);
+        continue;
+      }
 
       // Extract <opensearch:totalResults> from Atom XML via regex
       const match = xml.match(/<opensearch:totalResults[^>]*>(\d+)<\/opensearch:totalResults>/);
