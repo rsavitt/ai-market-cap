@@ -20,6 +20,8 @@ import { collectHfLeaderboard } from './collectors/hf-leaderboard';
 import { collectCloudflareRadar } from './collectors/cloudflare-radar';
 import { collectOllama } from './collectors/ollama';
 import { collectStackOverflow } from './collectors/stackoverflow';
+import { collectArxiv } from './collectors/arxiv';
+import { collectManifoldMarkets } from './collectors/manifold-markets';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -150,6 +152,8 @@ async function writeProvenance(
       ['hf_leaderboard', raw.hfLeaderboard],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
+      ['arxiv_mention_velocity', raw.arxivMentionVelocity],
+      ['manifold_markets', raw.manifoldMarkets],
     ];
 
     for (const [name, map] of signalChecks) {
@@ -351,7 +355,8 @@ export async function runGroup3SemanticScholar(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const ss = await safeCollect('semanticScholar', collectSemanticScholar, sources);
+  // Give S2 a 100s budget so we finish well within Vercel's 300s limit
+  const ss = await safeCollect('semanticScholar', () => collectSemanticScholar(100_000), sources);
 
   await storeRawSignals([
     ['semantic_scholar_citations', ss ?? new Map()],
@@ -399,8 +404,46 @@ export async function runGroup3OpenWebUI(): Promise<GroupResult> {
 }
 
 /**
- * Group 3: Reddit + Semantic Scholar + OpenAlex (convenience wrapper)
- * Runs all three sub-collectors sequentially.
+ * Group 3e: arXiv mention velocity
+ */
+export async function runGroup3Arxiv(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const arxiv = await safeCollect('arxiv', collectArxiv, sources);
+
+  await storeRawSignals([
+    ['arxiv_mention_velocity', arxiv ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3f: Manifold Markets prediction market sentiment
+ */
+export async function runGroup3ManifoldMarkets(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const manifold = await safeCollect('manifoldMarkets', collectManifoldMarkets, sources);
+
+  await storeRawSignals([
+    ['manifold_markets', manifold ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3: Reddit + Semantic Scholar + OpenAlex + OpenWebUI + arXiv + Manifold (convenience wrapper)
+ * Runs all sub-collectors sequentially.
  */
 export async function runGroup3(): Promise<GroupResult> {
   const start = Date.now();
@@ -417,6 +460,12 @@ export async function runGroup3(): Promise<GroupResult> {
 
   const owui = await runGroup3OpenWebUI();
   Object.assign(sources, owui.sources);
+
+  const arxiv = await runGroup3Arxiv();
+  Object.assign(sources, arxiv.sources);
+
+  const manifold = await runGroup3ManifoldMarkets();
+  Object.assign(sources, manifold.sources);
 
   return { date: r.date, sources, durationMs: Date.now() - start };
 }
@@ -464,6 +513,8 @@ export async function runScoring(): Promise<ScoringResult> {
     hfLeaderboard: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
+    arxivMentionVelocity: new Map(),
+    manifoldMarkets: new Map(),
   };
 
   const signalMapping: [string, keyof RawSignals][] = [
@@ -495,6 +546,8 @@ export async function runScoring(): Promise<ScoringResult> {
     ['hf_leaderboard', 'hfLeaderboard'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
     ['open_alex_citations', 'openAlexCitations'],
+    ['arxiv_mention_velocity', 'arxivMentionVelocity'],
+    ['manifold_markets', 'manifoldMarkets'],
   ];
 
   const rows = await db.execute({

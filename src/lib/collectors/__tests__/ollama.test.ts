@@ -120,6 +120,8 @@ function makeEntity(id: string, ollama: string[] | null) {
       openWebUI: [], cloudflareRadar: null,
       ollama,
       stackoverflow: null,
+      arxiv: [],
+      manifoldMarkets: [],
     },
   };
 }

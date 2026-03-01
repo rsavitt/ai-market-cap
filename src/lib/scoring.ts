@@ -34,6 +34,8 @@ export interface RawSignals {
   // expert signals
   semanticScholarCitations: Map<string, number>;
   openAlexCitations: Map<string, number>;
+  arxivMentionVelocity: Map<string, number>;
+  manifoldMarkets: Map<string, number>;
 }
 
 export interface EntityScores {
@@ -61,6 +63,8 @@ const SIGNAL_NAMES = [
   'hfLeaderboard',
   'semanticScholarCitations',
   'openAlexCitations',
+  'arxivMentionVelocity',
+  'manifoldMarkets',
 ] as const;
 
 type SignalName = typeof SIGNAL_NAMES[number];
@@ -290,6 +294,8 @@ function calculateConfidence(
     { map: raw.hfLeaderboard, applicable: !!sources?.hfLeaderboard },
     { map: raw.semanticScholarCitations, applicable: true },
     { map: raw.openAlexCitations, applicable: true },
+    { map: raw.arxivMentionVelocity, applicable: !!sources?.arxiv?.length },
+    { map: raw.manifoldMarkets, applicable: !!sources?.manifoldMarkets?.length },
   ];
 
   let available = 0;
@@ -351,6 +357,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfLeaderboard: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
+    arxivMentionVelocity: new Map(),
+    manifoldMarkets: new Map(),
   };
 
   const signalToRaw: Record<SignalName, Map<string, number>> = {
@@ -380,6 +388,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfLeaderboard: raw.hfLeaderboard,
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
+    arxivMentionVelocity: raw.arxivMentionVelocity,
+    manifoldMarkets: raw.manifoldMarkets,
   };
 
   // Deduplicate shared SDK/package signals before normalization.
@@ -448,6 +458,32 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     }
   }
 
+  // ── Outlier clipping ──
+  // Clip extreme values to the 95th percentile within each category.
+  // Prevents cheap/free-tier models from dominating usage via automated
+  // batch traffic (e.g. MiniMax on OpenRouter with 22x the median tokens).
+  {
+    const signalsToClip: SignalName[] = ['openRouterUsage'];
+    for (const signalName of signalsToClip) {
+      const rawMap = signalToRaw[signalName];
+      for (const [category, catIds] of Object.entries(categoriesMap)) {
+        const vals = catIds
+          .map(id => rawMap.get(id) ?? 0)
+          .filter(v => v > 0)
+          .sort((a, b) => a - b);
+        if (vals.length < 5) continue; // need enough data for percentile to be meaningful
+        const p95Index = Math.floor(vals.length * 0.95);
+        const p95 = vals[p95Index];
+        for (const id of catIds) {
+          const v = rawMap.get(id);
+          if (v !== undefined && v > p95) {
+            rawMap.set(id, p95);
+          }
+        }
+      }
+    }
+  }
+
   for (const [category] of Object.entries(categoriesMap)) {
     const baselines = await get90DayBaselines(category);
 
@@ -508,10 +544,12 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.hfLeaderboard, weight: 0.12 },
   ], entityIds);
 
-  // Expert: Semantic Scholar (0.5) + OpenAlex (0.5)
+  // Expert: Semantic Scholar (0.30) + OpenAlex (0.30) + arXiv Velocity (0.20) + Manifold (0.20)
   const expertScores = combineDimension([
-    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.5 },
-    { normalized: normalizedSignals.openAlexCitations, weight: 0.5 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.30 },
+    { normalized: normalizedSignals.openAlexCitations, weight: 0.30 },
+    { normalized: normalizedSignals.arxivMentionVelocity, weight: 0.20 },
+    { normalized: normalizedSignals.manifoldMarkets, weight: 0.20 },
   ], entityIds);
 
   // ── Apply recency decay to attention and usage ──
@@ -545,7 +583,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
         const attention = attentionScores.get(id) ?? 5;
         const capability = capabilityScores.get(id) ?? 5;
         const expert = expertScores.get(id) ?? 5;
-        totals.push(0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert);
+        totals.push(0.30 * usage + 0.30 * attention + 0.25 * capability + 0.15 * expert);
       }
     }
     totals.sort((a, b) => a - b);
@@ -560,7 +598,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     const capability = capabilityScores.get(id) ?? 5;
     const expert = expertScores.get(id) ?? 5;
 
-    let total = Math.round((0.45 * usage + 0.30 * attention + 0.15 * capability + 0.10 * expert) * 100) / 100;
+    let total = Math.round((0.30 * usage + 0.30 * attention + 0.25 * capability + 0.15 * expert) * 100) / 100;
 
     // New entrants start at category median
     if (isNewEntrant(id, entityRegistry) && entity) {

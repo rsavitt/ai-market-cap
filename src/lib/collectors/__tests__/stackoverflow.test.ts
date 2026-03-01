@@ -35,6 +35,8 @@ function makeEntity(id: string, stackoverflow: string[] | null) {
       openWebUI: [], cloudflareRadar: null,
       ollama: null,
       stackoverflow,
+      arxiv: [],
+      manifoldMarkets: [],
     },
   };
 }

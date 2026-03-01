@@ -18,6 +18,8 @@ export interface EntitySources {
   cloudflareRadar: string | null;
   ollama: string[] | null;
   stackoverflow: string[] | null;
+  arxiv: string[];
+  manifoldMarkets: string[];
 }
 
 export interface RegisteredEntity {
@@ -55,6 +57,8 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     cloudflareRadar: null,
     ollama: null,
     stackoverflow: [],
+    arxiv: [],
+    manifoldMarkets: [],
   };
 
   for (const row of rows) {
@@ -115,6 +119,12 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
       case 'stackoverflow':
         if (!sources.stackoverflow) sources.stackoverflow = [];
         sources.stackoverflow.push(row.source_value);
+        break;
+      case 'arxiv':
+        sources.arxiv.push(row.source_value);
+        break;
+      case 'manifoldMarkets':
+        sources.manifoldMarkets.push(row.source_value);
         break;
     }
   }

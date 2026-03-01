@@ -40,6 +40,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GitHub Copilot", "Copilot coding"],
       semanticScholar: ["Evaluating Large Language Models Trained on Code"],
       stackoverflow: ["github-copilot", "copilot"],
+      arxiv: ["GitHub Copilot","Copilot"],
+      manifoldMarkets: ["GitHub Copilot"],
     }
   },
   {
@@ -53,6 +55,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Cursor AI", "Cursor editor"],
       cloudflareRadar: "cursor.com",
       stackoverflow: ["cursor-editor", "cursor-ai"],
+      arxiv: ["Cursor IDE"],
+      manifoldMarkets: ["Cursor AI"],
     }
   },
   {
@@ -66,6 +70,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude Code", "Anthropic Claude Code"],
       reddit: ["Claude Code", "claude code CLI"],
       stackoverflow: ["claude-code", "anthropic-api"],
+      arxiv: ["Claude Code"],
+      manifoldMarkets: ["Claude Code"],
     }
   },
   {
@@ -82,6 +88,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-coder-v2"],
       stackoverflow: ["deepseek-coder"],
+      arxiv: ["DeepSeek Coder","DeepSeek-Coder"],
+      manifoldMarkets: ["DeepSeek Coder"],
     }
   },
   {
@@ -95,6 +103,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Codex CLI", "OpenAI Codex CLI"],
       reddit: ["Codex CLI", "OpenAI Codex"],
       stackoverflow: ["openai-codex"],
+      arxiv: ["OpenAI Codex"],
+      manifoldMarkets: ["OpenAI Codex"],
     }
   },
   {
@@ -495,6 +505,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-4o mini system card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4o-mini", "openai-api"],
+      arxiv: ["GPT-4o","GPT-4o mini"],
+      manifoldMarkets: ["GPT-4o mini"],
     }
   },
   {
@@ -512,6 +524,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-4o system card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4o", "openai-api"],
+      arxiv: ["GPT-4o"],
+      manifoldMarkets: ["GPT-4o"],
     }
   },
   {
@@ -529,6 +543,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.5 Sonnet Model Card Addendum", "Model Card Addendum: Claude 3.5 Haiku and Upgraded Claude 3.5 Sonnet"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude 3.5 Sonnet","Claude"],
+      manifoldMarkets: ["Claude 3.5 Sonnet"],
     }
   },
   {
@@ -545,6 +561,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-2.0-flash-001",
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       stackoverflow: ["gemini-api", "google-gemini"],
+      arxiv: ["Gemini 2.0 Flash","Gemini Flash"],
+      manifoldMarkets: ["Gemini Flash"],
     }
   },
   {
@@ -564,6 +582,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-v3"],
       stackoverflow: ["deepseek"],
+      arxiv: ["DeepSeek-V3","DeepSeek V3"],
+      manifoldMarkets: ["DeepSeek V3"],
     }
   },
   {
@@ -584,6 +604,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Llama 3 Herd of Models"],
       ollama: ["llama3.3"],
       stackoverflow: ["llama", "meta-llama"],
+      arxiv: ["Llama 3.3","Llama 3"],
+      manifoldMarkets: ["Llama 3.3"],
     }
   },
   {
@@ -598,6 +620,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "x-ai/grok-3",
       lmsysArena: "grok-3-preview-02-24",
       stackoverflow: ["grok", "xai"],
+      arxiv: ["Grok 3","Grok"],
+      manifoldMarkets: ["Grok 3"],
     }
   },
   {
@@ -618,6 +642,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral"],
       stackoverflow: ["mistral", "mistral-ai"],
+      arxiv: ["Mistral Large","Mistral"],
+      manifoldMarkets: ["Mistral Large"],
     }
   },
   {
@@ -637,6 +663,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Qwen2 Technical Report"],
       ollama: ["qwen2.5:72b"],
       stackoverflow: ["qwen"],
+      arxiv: ["Qwen 2.5","Qwen2.5"],
+      manifoldMarkets: ["Qwen 2.5"],
     }
   },
   {
@@ -651,6 +679,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["sonar"],
       cloudflareRadar: "perplexity.ai",
       stackoverflow: ["perplexity"],
+      arxiv: ["Perplexity"],
+      manifoldMarkets: ["Perplexity AI"],
     }
   },
   {
@@ -669,6 +699,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "cohere.com",
       ollama: ["command-r-plus"],
       stackoverflow: ["cohere"],
+      arxiv: ["Command R+","Cohere Command"],
+      manifoldMarkets: ["Command R+"],
     }
   },
   {
@@ -685,6 +717,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-4 Technical Report"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.5", "openai-api"],
+      arxiv: ["GPT-4.5"],
+      manifoldMarkets: ["GPT-4.5"],
     }
   },
   {
@@ -702,6 +736,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.7 Sonnet System Card"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude 3.7 Sonnet","Claude 3.7"],
+      manifoldMarkets: ["Claude 3.7 Sonnet"],
     }
   },
   {
@@ -719,6 +755,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.7 Sonnet System Card", "System Card: Claude Opus 4 & Claude Sonnet 4"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Sonnet 4","Claude 4"],
+      manifoldMarkets: ["Claude Sonnet 4"],
     }
   },
   {
@@ -737,6 +775,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Opus","Claude 4.6"],
+      manifoldMarkets: ["Claude Opus 4.6"],
     }
   },
   {
@@ -755,6 +795,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Sonnet 4.6","Claude 4.6"],
+      manifoldMarkets: ["Claude Sonnet 4.6"],
     }
   },
   {
@@ -773,6 +815,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Haiku 4.5"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Haiku","Claude 4.5"],
+      manifoldMarkets: ["Claude Haiku"],
     }
   },
   {
@@ -790,6 +834,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-2.5-pro",
       semanticScholar: ["Gemini 2.5: Pushing the Frontier"],
       stackoverflow: ["gemini-api", "google-gemini"],
+      arxiv: ["Gemini 2.5 Pro","Gemini 2.5"],
+      manifoldMarkets: ["Gemini 2.5 Pro"],
     }
   },
   {
@@ -809,6 +855,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Llama 3 Herd of Models"],
       ollama: ["llama4-scout"],
       stackoverflow: ["llama", "meta-llama"],
+      arxiv: ["Llama 4 Scout","Llama 4"],
+      manifoldMarkets: ["Llama 4"],
     }
   },
   {
@@ -828,6 +876,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-r1"],
       stackoverflow: ["deepseek-r1"],
+      arxiv: ["DeepSeek-R1","DeepSeek R1"],
+      manifoldMarkets: ["DeepSeek R1"],
     }
   },
   {
@@ -846,6 +896,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI o1 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-o3", "openai-api"],
+      arxiv: ["OpenAI o3"],
+      manifoldMarkets: ["OpenAI o3"],
     }
   },
   {
@@ -863,6 +915,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI o1 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["o3-mini", "openai-api"],
+      arxiv: ["o3-mini","o3 mini"],
+      manifoldMarkets: ["o3-mini"],
     }
   },
   {
@@ -881,6 +935,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI GPT-5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-5", "openai-api"],
+      arxiv: ["GPT-5","GPT-5.2"],
+      manifoldMarkets: ["GPT-5"],
     }
   },
   {
@@ -898,6 +954,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-5.3-Codex System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-codex", "gpt-5"],
+      arxiv: ["GPT-5.3-Codex","GPT-5.3"],
+      manifoldMarkets: ["GPT-5.3 Codex"],
     }
   },
   {
@@ -915,6 +973,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-5.3-Codex System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-codex"],
+      arxiv: ["GPT-5.3-Codex-Spark","Codex Spark"],
+      manifoldMarkets: ["Codex Spark"],
     }
   },
   {
@@ -932,6 +992,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-3-pro",
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       stackoverflow: ["gemini-api"],
+      arxiv: ["Gemini 3 Pro","Gemini 3"],
+      manifoldMarkets: ["Gemini 3 Pro"],
     }
   },
   {
@@ -950,6 +1012,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["DeepSeek-V3 Technical Report"],
       cloudflareRadar: "deepseek.com",
       stackoverflow: ["deepseek"],
+      arxiv: ["DeepSeek V3.2","DeepSeek-V3"],
+      manifoldMarkets: ["DeepSeek V3.2"],
     }
   },
   {
@@ -970,6 +1034,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral-large"],
       stackoverflow: ["mistral", "mistral-ai"],
+      arxiv: ["Mistral Large 3","Mistral"],
+      manifoldMarkets: ["Mistral Large 3"],
     }
   },
   {
@@ -985,6 +1051,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["grok-4-fast"],
       lmsysArena: "grok-4-0709",
       stackoverflow: ["grok"],
+      arxiv: ["Grok 4"],
+      manifoldMarkets: ["Grok 4"],
     }
   },
   {
@@ -1002,6 +1070,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-3-flash",
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       stackoverflow: ["gemini-api"],
+      arxiv: ["Gemini 3 Flash","Gemini Flash"],
+      manifoldMarkets: ["Gemini 3 Flash"],
     }
   },
   {
@@ -1019,6 +1089,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-2.5-flash",
       semanticScholar: ["Gemini 2.5: Pushing the Frontier"],
       stackoverflow: ["gemini-api"],
+      arxiv: ["Gemini 2.5 Flash"],
+      manifoldMarkets: ["Gemini 2.5 Flash"],
     }
   },
   {
@@ -1035,6 +1107,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gemini-3.1-pro-preview",
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       stackoverflow: ["gemini-api"],
+      arxiv: ["Gemini 3.1 Pro","Gemini 3.1"],
+      manifoldMarkets: ["Gemini 3.1 Pro"],
     }
   },
   {
@@ -1053,6 +1127,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Sonnet 4.5"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Sonnet 4.5","Claude 4.5"],
+      manifoldMarkets: ["Claude Sonnet 4.5"],
     }
   },
   {
@@ -1071,6 +1147,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4.5"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
+      arxiv: ["Claude Opus 4.5"],
+      manifoldMarkets: ["Claude Opus 4.5"],
     }
   },
   {
@@ -1089,6 +1167,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI GPT-5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-5", "openai-api"],
+      arxiv: ["GPT-5 Mini","GPT-5"],
+      manifoldMarkets: ["GPT-5 Mini"],
     }
   },
   {
@@ -1106,6 +1186,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI GPT-5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-5", "openai-api"],
+      arxiv: ["GPT-5 Nano","GPT-5"],
+      manifoldMarkets: ["GPT-5 Nano"],
     }
   },
   {
@@ -1125,6 +1207,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gpt-oss-120b",
       ollama: ["gpt-oss:120b"],
       stackoverflow: ["gpt-oss", "openai-api"],
+      arxiv: ["GPT-OSS"],
+      manifoldMarkets: ["GPT-OSS"],
     }
   },
   {
@@ -1143,6 +1227,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-4 Technical Report"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.1", "openai-api"],
+      arxiv: ["GPT-4.1"],
+      manifoldMarkets: ["GPT-4.1"],
     }
   },
   {
@@ -1161,6 +1247,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GPT-4 Technical Report"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.1", "openai-api"],
+      arxiv: ["GPT-4.1 Mini","GPT-4.1"],
+      manifoldMarkets: ["GPT-4.1 Mini"],
     }
   },
   {
@@ -1179,6 +1267,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["MiniMax-01 scaling foundation models mixture-of-experts"],
       cloudflareRadar: "minimax.io",
       stackoverflow: ["minimax"],
+      arxiv: ["MiniMax"],
+      manifoldMarkets: ["MiniMax"],
     }
   },
   {
@@ -1197,6 +1287,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GLM-4 all tools practical tool calling"],
       ollama: ["glm4"],
       stackoverflow: ["glm", "chatglm"],
+      arxiv: ["GLM-5","GLM-4"],
+      manifoldMarkets: ["GLM-5"],
     }
   },
   {
@@ -1215,6 +1307,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "kimi-k2.5-thinking",
       semanticScholar: ["Kimi K2: Open Agentic Intelligence"],
       stackoverflow: ["kimi", "moonshot"],
+      arxiv: ["Kimi K2","Moonshot"],
+      manifoldMarkets: ["Kimi K2"],
     }
   },
   {
@@ -1230,6 +1324,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "stepfun/step-3.5-flash",
       lmsysArena: "step-3.5-flash",
       stackoverflow: ["stepfun"],
+      arxiv: ["Step 3.5"],
+      manifoldMarkets: ["Step 3.5"],
     }
   },
   {
@@ -1248,6 +1344,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Qwen3 Technical Report"],
       ollama: ["qwen3:235b"],
       stackoverflow: ["qwen"],
+      arxiv: ["Qwen3","Qwen 3"],
+      manifoldMarkets: ["Qwen 3"],
     }
   },
   {
@@ -1263,6 +1361,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["grok-4-1", "grok-4.1"],
       lmsysArena: "grok-4.1",
       stackoverflow: ["grok"],
+      arxiv: ["Grok 4.1","Grok"],
+      manifoldMarkets: ["Grok 4.1"],
     }
   },
   {
@@ -1280,6 +1380,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "gpt-oss-20b",
       ollama: ["gpt-oss:20b"],
       stackoverflow: ["gpt-oss", "openai-api"],
+      arxiv: ["GPT-OSS"],
+      manifoldMarkets: ["GPT-OSS"],
     }
   },
   {
@@ -1301,6 +1403,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Llama 3 Herd of Models"],
       ollama: ["llama3.1:8b"],
       stackoverflow: ["llama", "meta-llama"],
+      arxiv: ["Llama 3.1","Llama 3"],
+      manifoldMarkets: ["Llama 3.1"],
     }
   },
   {
@@ -1320,6 +1424,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Llama 3 Herd of Models"],
       ollama: ["llama4-maverick"],
       stackoverflow: ["llama", "meta-llama"],
+      arxiv: ["Llama 4 Maverick","Llama 4"],
+      manifoldMarkets: ["Llama 4 Maverick"],
     }
   },
   {
@@ -1338,6 +1444,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Qwen3 Technical Report"],
       ollama: ["qwen3:32b"],
       stackoverflow: ["qwen"],
+      arxiv: ["Qwen3","Qwen 3"],
+      manifoldMarkets: ["Qwen 3"],
     }
   },
   // ── NEW MODELS FROM OPENROUTER ──
