@@ -57,15 +57,15 @@ export async function collectCloudflareRadar(): Promise<Map<string, number>> {
       const details = data.result?.details_0;
       if (!details) continue;
 
-      // Use exact rank if available, otherwise use bucket midpoint
+      // Use exact rank if available, otherwise use bucket value
       let rank: number;
       if (details.rank && details.rank > 0) {
         rank = details.rank;
       } else if (details.bucket) {
-        // Bucket is a string like "2000", "5000", etc.
-        // Use bucket value as approximate rank
-        rank = parseInt(details.bucket, 10);
-        if (isNaN(rank)) continue;
+        // Bucket is a string like "2000", "5000", or ">200000" for very low ranks
+        const cleaned = details.bucket.replace(/[^0-9]/g, '');
+        rank = parseInt(cleaned, 10);
+        if (isNaN(rank) || rank <= 0) continue;
       } else {
         continue;
       }

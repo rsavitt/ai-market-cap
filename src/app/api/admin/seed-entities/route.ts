@@ -50,6 +50,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Cursor AI", "Cursor editor", "Cursor IDE"],
       smolai: ["Cursor AI", "Cursor editor", "Cursor IDE"],
       reddit: ["Cursor AI", "Cursor editor"],
+      cloudflareRadar: "cursor.com",
     }
   },
   {
@@ -75,6 +76,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek Coder", "DeepSeek code"],
       reddit: ["DeepSeek Coder", "DeepSeek coding"],
       semanticScholar: ["DeepSeek-Coder-V2"],
+      cloudflareRadar: "deepseek.com",
     }
   },
   {
@@ -109,6 +111,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Windsurf", "Codeium Windsurf"],
       smolai: ["Windsurf", "Codeium Windsurf"],
       reddit: ["Windsurf IDE", "Windsurf editor"],
+      cloudflareRadar: "windsurf.com",
     }
   },
   {
@@ -129,6 +132,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Tabnine"],
       smolai: ["Tabnine"],
       reddit: ["Tabnine"],
+      cloudflareRadar: "tabnine.com",
     }
   },
   {
@@ -140,6 +144,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Devin AI", "Cognition Devin"],
       smolai: ["Devin AI", "Cognition Devin"],
       reddit: ["Devin AI", "Cognition Devin"],
+      cloudflareRadar: "devin.ai",
     }
   },
 
@@ -153,6 +158,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Midjourney"],
       reddit: ["Midjourney"],
       semanticScholar: ["Midjourney"],
+      cloudflareRadar: "midjourney.com",
     }
   },
   {
@@ -192,6 +198,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Stable Diffusion 3", "Stable Diffusion"],
       reddit: ["Stable Diffusion 3.5", "SD3.5"],
       semanticScholar: ["Scaling rectified flow transformers for high-resolution image synthesis"],
+      cloudflareRadar: "stability.ai",
     }
   },
   {
@@ -202,6 +209,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Ideogram"],
       smolai: ["Ideogram"],
       reddit: ["Ideogram"],
+      cloudflareRadar: "ideogram.ai",
     }
   },
   {
@@ -234,6 +242,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Leonardo AI"],
       smolai: ["Leonardo AI"],
       reddit: ["Leonardo AI"],
+      cloudflareRadar: "leonardo.ai",
     }
   },
   {
@@ -244,6 +253,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Recraft"],
       smolai: ["Recraft"],
       reddit: ["Recraft"],
+      cloudflareRadar: "recraft.ai",
     }
   },
   {
@@ -267,6 +277,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Sora", "OpenAI Sora"],
       reddit: ["Sora", "OpenAI Sora"],
       semanticScholar: ["Video generation models as world simulators"],
+      cloudflareRadar: "sora.com",
     }
   },
   {
@@ -278,6 +289,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Runway Gen-3", "Runway AI"],
       smolai: ["Runway Gen-3", "Runway AI"],
       reddit: ["Runway Gen-3", "Runway AI"],
+      cloudflareRadar: "runwayml.com",
     }
   },
   {
@@ -288,6 +300,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Kling video", "Kling AI"],
       smolai: ["Kling video", "Kling AI"],
       reddit: ["Kling AI", "Kling video"],
+      cloudflareRadar: "klingai.com",
     }
   },
   {
@@ -298,6 +311,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Pika Labs", "Pika AI"],
       smolai: ["Pika Labs", "Pika AI"],
       reddit: ["Pika Labs", "Pika AI"],
+      cloudflareRadar: "pika.art",
     }
   },
   {
@@ -318,6 +332,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["MiniMax video", "MiniMax AI"],
       smolai: ["MiniMax video", "MiniMax AI"],
       reddit: ["MiniMax AI"],
+      cloudflareRadar: "minimax.io",
     }
   },
   {
@@ -328,6 +343,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Luma Dream Machine", "Luma AI"],
       smolai: ["Luma Dream Machine", "Luma AI"],
       reddit: ["Luma Dream Machine", "Luma AI"],
+      cloudflareRadar: "lumalabs.ai",
     }
   },
   {
@@ -338,6 +354,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["HaiLuo"],
       smolai: ["HaiLuo"],
       reddit: ["HaiLuo AI"],
+      cloudflareRadar: "hailuoai.video",
     }
   },
   {
@@ -348,6 +365,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Synthesia"],
       smolai: ["Synthesia"],
       reddit: ["Synthesia"],
+      cloudflareRadar: "synthesia.io",
     }
   },
   {
@@ -358,6 +376,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Invideo AI"],
       smolai: ["Invideo AI"],
       reddit: ["Invideo AI"],
+      cloudflareRadar: "invideo.io",
     }
   },
 
@@ -372,6 +391,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["ElevenLabs"],
       smolai: ["ElevenLabs"],
       reddit: ["ElevenLabs"],
+      cloudflareRadar: "elevenlabs.io",
     }
   },
   {
@@ -382,6 +402,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Suno AI", "Suno music"],
       smolai: ["Suno AI", "Suno music"],
       reddit: ["Suno AI", "Suno music"],
+      cloudflareRadar: "suno.com",
     }
   },
   {
@@ -392,6 +413,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Udio"],
       smolai: ["Udio"],
       reddit: ["Udio"],
+      cloudflareRadar: "udio.com",
     }
   },
   {
@@ -435,6 +457,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-4o-mini"],
       lmsysArena: "gpt-4o-mini-2024-07-18",
       semanticScholar: ["GPT-4o mini system card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -450,6 +473,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-4o",
       lmsysArena: "gpt-4o-2024-08-06",
       semanticScholar: ["GPT-4o system card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -465,6 +489,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "anthropic/claude-3.5-sonnet",
       lmsysArena: "claude-3-5-sonnet-20241022",
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.5 Sonnet Model Card Addendum", "Model Card Addendum: Claude 3.5 Haiku and Upgraded Claude 3.5 Sonnet"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -496,6 +521,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["deepseek-chat"],
       lmsysArena: "deepseek-v3",
       semanticScholar: ["DeepSeek-V3 Technical Report"],
+      cloudflareRadar: "deepseek.com",
     }
   },
   {
@@ -544,6 +570,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "mistral-large-2407",
       hfLeaderboard: "mistralai/Mistral-Large-Instruct-2411",
       semanticScholar: ["Mistral 7B"],
+      cloudflareRadar: "mistral.ai",
     }
   },
   {
@@ -573,6 +600,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Perplexity AI", "Perplexity"],
       reddit: ["Perplexity AI", "Perplexity"],
       openWebUI: ["sonar"],
+      cloudflareRadar: "perplexity.ai",
     }
   },
   {
@@ -588,6 +616,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "command-r-plus-08-2024",
       hfLeaderboard: "CohereForAI/c4ai-command-r-plus",
       semanticScholar: ["Command R+ scalable retrieval augmented generation"],
+      cloudflareRadar: "cohere.com",
     }
   },
   {
@@ -602,6 +631,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GPT-4.5", "GPT 4.5"],
       lmsysArena: "gpt-4.5-preview-2025-02-27",
       semanticScholar: ["GPT-4 Technical Report"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -617,6 +647,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "anthropic/claude-3.7-sonnet",
       lmsysArena: "claude-3-7-sonnet-20250219",
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.7 Sonnet System Card"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -632,6 +663,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "anthropic/claude-sonnet-4",
       lmsysArena: "claude-sonnet-4-20250514",
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.7 Sonnet System Card", "System Card: Claude Opus 4 & Claude Sonnet 4"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -648,6 +680,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["claude-opus-4.6"],
       lmsysArena: "claude-opus-4-6",
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -664,6 +697,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["claude-sonnet-4-6", "claude-sonnet-4.6"],
       lmsysArena: "claude-sonnet-4-6",
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -680,6 +714,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["claude-haiku"],
       lmsysArena: "claude-haiku-4-5-20251001",
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Haiku 4.5"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -729,6 +764,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["deepseek-r1"],
       lmsysArena: "deepseek-r1",
       semanticScholar: ["DeepSeek-R1"],
+      cloudflareRadar: "deepseek.com",
     }
   },
   {
@@ -745,6 +781,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["o3"],
       lmsysArena: "o3-2025-04-16",
       semanticScholar: ["OpenAI o1 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -760,6 +797,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/o3-mini",
       lmsysArena: "o3-mini",
       semanticScholar: ["OpenAI o1 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -776,6 +814,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-5.2", "gpt-5"],
       lmsysArena: "gpt-5.2",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -791,6 +830,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-5.3-codex",
       openWebUI: ["gpt-5.3-codex"],
       semanticScholar: ["GPT-5.3-Codex System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -806,6 +846,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-5.3-codex-spark",
       openWebUI: ["gpt-5.3-codex-spark"],
       semanticScholar: ["GPT-5.3-Codex System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -838,6 +879,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["deepseek-v3.2"],
       lmsysArena: "deepseek-v3.2",
       semanticScholar: ["DeepSeek-V3 Technical Report"],
+      cloudflareRadar: "deepseek.com",
     }
   },
   {
@@ -855,6 +897,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["mistral-large-3"],
       lmsysArena: "mistral-large-3",
       semanticScholar: ["Mistral 7B"],
+      cloudflareRadar: "mistral.ai",
     }
   },
   {
@@ -932,6 +975,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["claude-sonnet-4.5", "claude-sonnet-4-5"],
       lmsysArena: "claude-sonnet-4-5-20250929",
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Sonnet 4.5"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -948,6 +992,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["claude-opus-4.5"],
       lmsysArena: "claude-opus-4-5-20251101",
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4.5"],
+      cloudflareRadar: "claude.ai",
     }
   },
   {
@@ -964,6 +1009,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-5-mini"],
       lmsysArena: "gpt-5-mini-high",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -979,6 +1025,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-5-nano",
       lmsysArena: "gpt-5-nano-high",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -1012,6 +1059,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-4.1"],
       lmsysArena: "gpt-4.1-2025-04-14",
       semanticScholar: ["GPT-4 Technical Report"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -1028,6 +1076,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-4.1-mini"],
       lmsysArena: "gpt-4.1-mini-2025-04-14",
       semanticScholar: ["GPT-4 Technical Report"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   {
@@ -1044,6 +1093,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["minimax-m2"],
       lmsysArena: "minimax-m2.5",
       semanticScholar: ["MiniMax-01 scaling foundation models mixture-of-experts"],
+      cloudflareRadar: "minimax.io",
     }
   },
   {
@@ -1207,6 +1257,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-5.1"],
       lmsysArena: "gpt-5.1",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   // OpenAI - GPT-5.1-Codex-Max
@@ -1222,6 +1273,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GPT-5.1-Codex-Max", "GPT-5.1 Codex"],
       openRouter: "openai/gpt-5.1-codex-max",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
     }
   },
   // OpenAI - GPT-5.2-Codex
@@ -1313,6 +1365,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Ministral 14B"],
       reddit: ["Ministral 14B"],
       openRouter: "mistralai/ministral-14b-2512",
+      cloudflareRadar: "mistral.ai",
     }
   },
   // Mistral - Ministral 8B
@@ -1328,6 +1381,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/ministral-8b-2512",
       lmsysArena: "ministral-8b-2410",
       hfLeaderboard: "mistralai/Ministral-8B-Instruct-2410",
+      cloudflareRadar: "mistral.ai",
     }
   },
   // Mistral - Ministral 3B
@@ -1341,6 +1395,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Ministral 3B"],
       reddit: ["Ministral 3B"],
       openRouter: "mistralai/ministral-3b-2512",
+      cloudflareRadar: "mistral.ai",
     }
   },
   // Mistral - Devstral 2
@@ -1354,6 +1409,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Devstral 2", "Devstral"],
       reddit: ["Devstral 2", "Devstral"],
       openRouter: "mistralai/devstral-2512",
+      cloudflareRadar: "mistral.ai",
     }
   },
   // Mistral - Mistral Small Creative
@@ -1366,6 +1422,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Mistral Small Creative"],
       reddit: ["Mistral Small Creative"],
       openRouter: "mistralai/mistral-small-creative",
+      cloudflareRadar: "mistral.ai",
     }
   },
 
@@ -1478,6 +1535,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["DeepSeek V3.2 Speciale"],
       openRouter: "deepseek/deepseek-v3.2-speciale",
       lmsysArena: "deepseek-v3.2-exp",
+      cloudflareRadar: "deepseek.com",
     }
   },
 
@@ -1529,6 +1587,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["MiniMax M2.1"],
       openRouter: "minimax/minimax-m2.1",
       lmsysArena: "minimax-m2.1-preview",
+      cloudflareRadar: "minimax.io",
     }
   },
 
