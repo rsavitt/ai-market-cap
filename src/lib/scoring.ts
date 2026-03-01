@@ -454,17 +454,21 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Combine into dimensions ──
-  // Usage: PyPI (0.20) + npm (0.20) + HuggingFace (0.15) + OpenRouter Usage (0.15) + OpenWebUI (0.10)
-  //        + GitHub Stars (0.10) + GitHub Forks (0.10)
+  // Usage: PyPI (0.18) + npm (0.18) + HuggingFace composite (0.10) + HF Downloads (0.06)
+  //        + HF Likes (0.04) + HF Download Velocity (0.06) + OpenRouter Usage (0.13)
+  //        + OpenWebUI (0.08) + GitHub Stars (0.09) + GitHub Forks (0.08)
   // Note: GitHub clones/views excluded — traffic API requires push access to repos we don't own
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.20 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.20 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.15 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.15 },
-    { normalized: normalizedSignals.openWebUIUsage, weight: 0.10 },
-    { normalized: normalizedSignals.githubStars, weight: 0.10 },
-    { normalized: normalizedSignals.githubForks, weight: 0.10 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.18 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.18 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.10 },
+    { normalized: normalizedSignals.hfDownloads, weight: 0.06 },
+    { normalized: normalizedSignals.hfLikes, weight: 0.04 },
+    { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.06 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.13 },
+    { normalized: normalizedSignals.openWebUIUsage, weight: 0.08 },
+    { normalized: normalizedSignals.githubStars, weight: 0.09 },
+    { normalized: normalizedSignals.githubForks, weight: 0.08 },
   ], entityIds);
 
   // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
