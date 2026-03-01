@@ -17,7 +17,7 @@ export async function collectStackOverflow(): Promise<Map<string, number>> {
   const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
 
-  const apiKey = process.env.STACKEXCHANGE_KEY;
+  const apiKey = process.env.STACK_OVERFLOW_API_KEY;
 
   for (const entity of entityRegistry) {
     if (!entity.sources.stackoverflow?.length) continue;
