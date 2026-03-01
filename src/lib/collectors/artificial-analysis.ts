@@ -19,6 +19,7 @@ interface AALlmModel {
 interface AAMediaModel {
   id: string;
   name: string;
+  slug?: string;
   elo?: number | null;
 }
 
@@ -88,7 +89,8 @@ export async function collectArtificialAnalysis(): Promise<ArtificialAnalysisRes
       const body = await imageRes.json() as AAMediaModel[] | { data: AAMediaModel[] };
       const models = Array.isArray(body) ? body : (body.data ?? []);
       for (const model of models) {
-        const entityId = aaSlugToEntity.get(model.name) ?? aaSlugToEntity.get(String(model.id));
+        const entityId = (model.slug ? aaSlugToEntity.get(model.slug) : undefined)
+          ?? aaSlugToEntity.get(model.name) ?? aaSlugToEntity.get(String(model.id));
         if (!entityId) continue;
         if (model.elo != null && model.elo > 0) {
           imageArena.set(entityId, model.elo);
@@ -105,7 +107,8 @@ export async function collectArtificialAnalysis(): Promise<ArtificialAnalysisRes
       const body = await videoRes.json() as AAMediaModel[] | { data: AAMediaModel[] };
       const models = Array.isArray(body) ? body : (body.data ?? []);
       for (const model of models) {
-        const entityId = aaSlugToEntity.get(model.name) ?? aaSlugToEntity.get(String(model.id));
+        const entityId = (model.slug ? aaSlugToEntity.get(model.slug) : undefined)
+          ?? aaSlugToEntity.get(model.name) ?? aaSlugToEntity.get(String(model.id));
         if (!entityId) continue;
         if (model.elo != null && model.elo > 0) {
           videoArena.set(entityId, model.elo);
