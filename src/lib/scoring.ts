@@ -14,6 +14,7 @@ export interface RawSignals {
   githubForks: Map<string, number>;
   githubClones: Map<string, number>;
   githubViews: Map<string, number>;
+  openWebUIUsage: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
@@ -37,10 +38,10 @@ export interface EntityScores {
   confidence_upper: number;
 }
 
-// Signal-to-dimension mapping for counting available signals per entity
+// Signals that participate in scoring (clones/views excluded — require push access)
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
-  'openRouterUsage', 'githubStars', 'githubForks', 'githubClones', 'githubViews',
+  'openRouterUsage', 'openWebUIUsage', 'githubStars', 'githubForks',
   'hackernewsSignal', 'redditSignal', 'smolaiSignal',
   'openRouterSignal',
   'groqSignal',
@@ -226,29 +227,65 @@ function isNewEntrant(entityId: string, entityRegistry: RegisteredEntity[]): boo
 
 /**
  * Calculate signal completeness confidence for an entity.
+ *
+ * Confidence is measured against *applicable* signals — signals the entity
+ * could reasonably have data for, based on its source configuration.
+ * A closed-source model with no PyPI/NPM/GitHub isn't penalized for lacking
+ * those signals; it's only penalized for missing signals it's configured to have.
+ *
+ * Universal signals (hackernews, reddit, smolai, semanticScholar, openAlex)
+ * apply to all entities. Source-gated signals only count if the entity has
+ * that source type configured.
  */
-function calculateConfidence(entityId: string, raw: RawSignals): { confidence: number; lower: number; upper: number } {
-  const signalMaps: Map<string, number>[] = [
-    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.hfDownloads, raw.hfLikes, raw.hfDownloadsVelocity,
-    raw.openRouterUsage, raw.githubStars, raw.githubForks, raw.githubClones, raw.githubViews,
-    raw.hackernewsSignal, raw.redditSignal, raw.smolaiSignal,
-    raw.openRouterSignal, raw.groqSignal,
-    raw.semanticScholarCitations,
-    raw.openAlexCitations,
+function calculateConfidence(
+  entityId: string,
+  raw: RawSignals,
+  entityRegistry: RegisteredEntity[],
+): { confidence: number; lower: number; upper: number } {
+  const entity = entityRegistry.find(e => e.id === entityId);
+  const sources = entity?.sources;
+
+  // Map of signal → whether it's applicable to this entity
+  // Universal signals (any entity could show up in these): always applicable
+  // Source-gated signals: only applicable if entity has the source configured
+  const signalApplicability: { map: Map<string, number>; applicable: boolean }[] = [
+    { map: raw.pypiDownloads, applicable: !!sources?.pypi?.length },
+    { map: raw.npmDownloads, applicable: !!sources?.npm?.length },
+    { map: raw.huggingfaceSignal, applicable: !!sources?.huggingface?.length },
+    { map: raw.hfDownloads, applicable: !!sources?.huggingface?.length },
+    { map: raw.hfLikes, applicable: !!sources?.huggingface?.length },
+    { map: raw.hfDownloadsVelocity, applicable: !!sources?.huggingface?.length },
+    { map: raw.openRouterUsage, applicable: !!sources?.openRouter },
+    { map: raw.openWebUIUsage, applicable: !!sources?.openWebUI?.length },
+    { map: raw.githubStars, applicable: !!sources?.github?.length },
+    { map: raw.githubForks, applicable: !!sources?.github?.length },
+    // Universal signals — always applicable
+    { map: raw.hackernewsSignal, applicable: true },
+    { map: raw.redditSignal, applicable: true },
+    { map: raw.smolaiSignal, applicable: true },
+    { map: raw.openRouterSignal, applicable: !!sources?.openRouter },
+    { map: raw.groqSignal, applicable: !!sources?.groq },
+    { map: raw.semanticScholarCitations, applicable: true },
+    { map: raw.openAlexCitations, applicable: true },
   ];
 
   let available = 0;
-  for (const map of signalMaps) {
+  let applicable = 0;
+  for (const { map, applicable: isApplicable } of signalApplicability) {
+    if (!isApplicable) continue;
+    applicable++;
     const val = map.get(entityId);
     if (val !== undefined && val > 0) {
       available++;
     }
   }
 
-  const confidence = available / SIGNAL_NAMES.length;
+  // Floor at 5 to avoid division by tiny numbers for entities with very few sources
+  const denominator = Math.max(applicable, 5);
+  const confidence = available / denominator;
   const band = (1 - confidence) * 10;
 
-  return { confidence, lower: -band, upper: band }; // offsets from total_score
+  return { confidence, lower: -band, upper: band };
 }
 
 export async function computeScores(raw: RawSignals): Promise<Map<string, EntityScores>> {
@@ -272,10 +309,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfLikes: new Map(),
     hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
+    openWebUIUsage: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
-    githubClones: new Map(),
-    githubViews: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
@@ -293,10 +329,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfLikes: raw.hfLikes,
     hfDownloadsVelocity: raw.hfDownloadsVelocity,
     openRouterUsage: raw.openRouterUsage,
+    openWebUIUsage: raw.openWebUIUsage,
     githubStars: raw.githubStars,
     githubForks: raw.githubForks,
-    githubClones: raw.githubClones,
-    githubViews: raw.githubViews,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
@@ -325,17 +360,17 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Combine into dimensions ──
-  // Usage: PyPI (0.22) + npm (0.22) + HuggingFace (0.18) + OpenRouter Usage (0.18) + GitHub Stars (0.05)
-  //        + GitHub Forks (0.05) + GitHub Clones (0.05) + GitHub Views (0.05)
+  // Usage: PyPI (0.20) + npm (0.20) + HuggingFace (0.15) + OpenRouter Usage (0.15) + OpenWebUI (0.10)
+  //        + GitHub Stars (0.10) + GitHub Forks (0.10)
+  // Note: GitHub clones/views excluded — traffic API requires push access to repos we don't own
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.22 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.22 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.18 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.18 },
-    { normalized: normalizedSignals.githubStars, weight: 0.05 },
-    { normalized: normalizedSignals.githubForks, weight: 0.05 },
-    { normalized: normalizedSignals.githubClones, weight: 0.05 },
-    { normalized: normalizedSignals.githubViews, weight: 0.05 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.20 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.20 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.15 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.15 },
+    { normalized: normalizedSignals.openWebUIUsage, weight: 0.10 },
+    { normalized: normalizedSignals.githubStars, weight: 0.10 },
+    { normalized: normalizedSignals.githubForks, weight: 0.10 },
   ], entityIds);
 
   // Attention: HackerNews (0.45) + Reddit (0.35) + SmolAI (0.20)
@@ -410,7 +445,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       total = categoryMedians[entity.category] ?? total;
     }
 
-    const { confidence, lower, upper } = calculateConfidence(id, raw);
+    const { confidence, lower, upper } = calculateConfidence(id, raw, entityRegistry);
 
     scores.set(id, {
       usage_score: usage,

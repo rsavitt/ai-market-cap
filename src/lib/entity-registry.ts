@@ -11,6 +11,7 @@ export interface EntitySources {
   semanticScholar: string[];
   groq: string | null;
   smolai: string[];
+  openWebUI: string[];
 }
 
 export interface RegisteredEntity {
@@ -41,6 +42,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     semanticScholar: [],
     groq: null,
     smolai: [],
+    openWebUI: [],
   };
 
   for (const row of rows) {
@@ -78,6 +80,9 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'smolai':
         sources.smolai.push(row.source_value);
+        break;
+      case 'openWebUI':
+        sources.openWebUI.push(row.source_value);
         break;
     }
   }

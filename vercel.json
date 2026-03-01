@@ -21,6 +21,10 @@
       "schedule": "10 6 * * *"
     },
     {
+      "path": "/api/collect/group3/openwebui",
+      "schedule": "12 6 * * *"
+    },
+    {
       "path": "/api/collect/score",
       "schedule": "15 6 * * *"
     }

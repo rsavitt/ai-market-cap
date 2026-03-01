@@ -12,12 +12,13 @@ import { collectSemanticScholar } from './collectors/semantic-scholar';
 import { collectOpenAlex } from './collectors/openalex';
 import { collectGroq } from './collectors/groq';
 import { collectSmolAI } from './collectors/smolai';
+import { collectOpenWebUI } from './collectors/openwebui';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
  * Merge two Maps, keeping the higher value per key.
  */
-export function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
+function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
   const merged = new Map(a);
   b.forEach((value, key) => {
     merged.set(key, Math.max(merged.get(key) ?? 0, value));
@@ -53,8 +54,18 @@ async function safeCollect<T>(
 ): Promise<T | null> {
   try {
     const result = await fn();
-    const count = result instanceof Map ? result.size :
-      (result && typeof result === 'object' && 'velocity' in result) ? (result as any).velocity.size : 0;
+    let count = 0;
+    if (result instanceof Map) {
+      count = result.size;
+    } else if (result && typeof result === 'object') {
+      // Find the first Map property to report count (works for GitHub's {velocity}, HF's {signal}, etc.)
+      for (const val of Object.values(result)) {
+        if (val instanceof Map && val.size > 0) {
+          count = val.size;
+          break;
+        }
+      }
+    }
     sources[name] = { count };
     return result;
   } catch (err: any) {
@@ -119,6 +130,7 @@ async function writeProvenance(
       ['smolai_signal', raw.smolaiSignal],
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
+      ['openwebui_usage', raw.openWebUIUsage],
       ['groq_signal', raw.groqSignal],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
@@ -279,6 +291,25 @@ export async function runGroup3OpenAlex(): Promise<GroupResult> {
 }
 
 /**
+ * Group 3d: OpenWebUI community leaderboard
+ */
+export async function runGroup3OpenWebUI(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const owui = await safeCollect('openWebUI', collectOpenWebUI, sources);
+
+  await storeRawSignals([
+    ['openwebui_usage', owui ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
  * Group 3: Reddit + Semantic Scholar + OpenAlex (convenience wrapper)
  * Runs all three sub-collectors sequentially.
  */
@@ -294,6 +325,9 @@ export async function runGroup3(): Promise<GroupResult> {
 
   const oa = await runGroup3OpenAlex();
   Object.assign(sources, oa.sources);
+
+  const owui = await runGroup3OpenWebUI();
+  Object.assign(sources, owui.sources);
 
   return { date: r.date, sources, durationMs: Date.now() - start };
 }
@@ -320,6 +354,7 @@ export async function runScoring(): Promise<ScoringResult> {
     hfLikes: new Map(),
     hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
+    openWebUIUsage: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
     githubClones: new Map(),
@@ -340,6 +375,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['hf_downloads', 'hfDownloads'],
     ['hf_likes', 'hfLikes'],
     ['hf_downloads_velocity', 'hfDownloadsVelocity'],
+    ['openwebui_usage', 'openWebUIUsage'],
     ['github_stars_velocity', 'githubStars'],
     ['github_forks', 'githubForks'],
     ['github_clones', 'githubClones'],

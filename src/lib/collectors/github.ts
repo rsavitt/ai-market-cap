@@ -105,11 +105,10 @@ export async function collectGitHub(): Promise<GitHubResult> {
       absolute.set(entity.id, totalStars);
 
       // Compute stars velocity: today's stars minus 7 days ago
+      // If no historical data, skip — don't use absolute count as velocity
       const stars7dAgo = await getRawSignalValue(entity.id, 'github_stars', 7);
       if (stars7dAgo !== null) {
-        velocity.set(entity.id, totalStars - stars7dAgo);
-      } else {
-        velocity.set(entity.id, totalStars);
+        velocity.set(entity.id, Math.max(0, totalStars - stars7dAgo));
       }
     }
 
@@ -117,11 +116,10 @@ export async function collectGitHub(): Promise<GitHubResult> {
       forks.set(entity.id, totalForks);
 
       // Compute forks velocity: today's forks minus 7 days ago
+      // If no historical data, skip — don't use absolute count as velocity
       const forks7dAgo = await getRawSignalValue(entity.id, 'github_forks', 7);
       if (forks7dAgo !== null) {
-        forksVelocity.set(entity.id, totalForks - forks7dAgo);
-      } else {
-        forksVelocity.set(entity.id, totalForks);
+        forksVelocity.set(entity.id, Math.max(0, totalForks - forks7dAgo));
       }
     }
 

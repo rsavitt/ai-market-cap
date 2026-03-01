@@ -446,6 +446,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-4o mini", "GPT-4o-mini"],
       reddit: ["GPT-4o mini", "GPT-4o-mini"],
       openRouter: "openai/gpt-4o-mini",
+      openWebUI: ["gpt-4o-mini"],
       semanticScholar: ["GPT-4o mini system card"],
     }
   },
@@ -502,6 +503,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek V3", "DeepSeek-V3"],
       reddit: ["DeepSeek V3", "DeepSeek-V3"],
       openRouter: "deepseek/deepseek-chat",
+      openWebUI: ["deepseek-chat"],
       semanticScholar: ["DeepSeek-V3 Technical Report"],
     }
   },
@@ -559,6 +561,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Qwen 2.5", "Qwen"],
       reddit: ["Qwen 2.5", "Qwen"],
       openRouter: "qwen/qwen-2.5-72b-instruct",
+      openWebUI: ["qwen2.5:72b"],
       semanticScholar: ["Qwen2 Technical Report"],
     }
   },
@@ -571,6 +574,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Perplexity AI", "Perplexity"],
       smolai: ["Perplexity AI", "Perplexity"],
       reddit: ["Perplexity AI", "Perplexity"],
+      openWebUI: ["sonar"],
     }
   },
   {
@@ -638,6 +642,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude Opus 4.6"],
       reddit: ["Claude Opus 4.6"],
       openRouter: "anthropic/claude-opus-4",
+      openWebUI: ["claude-opus-4.6"],
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
     }
   },
@@ -652,6 +657,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude Sonnet 4.6"],
       reddit: ["Claude Sonnet 4.6"],
       openRouter: "anthropic/claude-sonnet-4.6",
+      openWebUI: ["claude-sonnet-4-6", "claude-sonnet-4.6"],
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4 & Claude Sonnet 4", "System Card: Claude Opus 4.6 & Claude Sonnet 4.6"],
     }
   },
@@ -666,6 +672,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude Haiku 4.5"],
       reddit: ["Claude Haiku"],
       openRouter: "anthropic/claude-haiku-4.5",
+      openWebUI: ["claude-haiku"],
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Haiku 4.5"],
     }
   },
@@ -680,6 +687,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Gemini 2.5 Pro", "Gemini 2.5"],
       reddit: ["Gemini 2.5 Pro", "Gemini 2.5"],
       openRouter: "google/gemini-2.5-pro",
+      openWebUI: ["gemini-2.5-pro"],
       semanticScholar: ["Gemini 2.5: Pushing the Frontier"],
     }
   },
@@ -710,6 +718,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek R1", "DeepSeek-R1"],
       reddit: ["DeepSeek R1", "DeepSeek-R1"],
       openRouter: "deepseek/deepseek-r1",
+      openWebUI: ["deepseek-r1"],
       semanticScholar: ["DeepSeek-R1"],
     }
   },
@@ -724,6 +733,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["OpenAI o3", "o3 model"],
       reddit: ["OpenAI o3", "o3 model"],
       openRouter: "openai/o3",
+      openWebUI: ["o3"],
       semanticScholar: ["OpenAI o1 System Card"],
     }
   },
@@ -752,6 +762,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-5", "GPT 5.2"],
       reddit: ["GPT-5", "GPT 5.2"],
       openRouter: "openai/gpt-5.2",
+      openWebUI: ["gpt-5.2", "gpt-5"],
       semanticScholar: ["OpenAI GPT-5 System Card"],
     }
   },
@@ -766,6 +777,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Gemini 3", "Gemini 3 Pro"],
       reddit: ["Gemini 3", "Gemini 3 Pro"],
       openRouter: "google/gemini-3-pro-preview",
+      openWebUI: ["gemini-3-pro"],
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
     }
   },
@@ -780,6 +792,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["DeepSeek V3.2", "DeepSeek-V3.2"],
       reddit: ["DeepSeek V3.2"],
       openRouter: "deepseek/deepseek-chat-v3-0324",
+      openWebUI: ["deepseek-v3.2"],
       semanticScholar: ["DeepSeek-V3 Technical Report"],
     }
   },
@@ -795,6 +808,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Mistral Large 3", "Mistral AI"],
       reddit: ["Mistral Large 3"],
       openRouter: "mistralai/mistral-large-2512",
+      openWebUI: ["mistral-large-3"],
       semanticScholar: ["Mistral 7B"],
     }
   },
@@ -808,6 +822,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Grok 4", "xAI Grok 4"],
       reddit: ["Grok 4", "xAI Grok"],
       openRouter: "x-ai/grok-4",
+      openWebUI: ["grok-4-fast"],
     }
   },
   {
@@ -821,6 +836,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Gemini 3 Flash", "Gemini Flash"],
       reddit: ["Gemini 3 Flash"],
       openRouter: "google/gemini-3-flash-preview",
+      openWebUI: ["gemini-3-flash"],
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
     }
   },
@@ -835,6 +851,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Gemini 2.5 Flash"],
       reddit: ["Gemini 2.5 Flash"],
       openRouter: "google/gemini-2.5-flash",
+      openWebUI: ["gemini-2.5-flash"],
       semanticScholar: ["Gemini 2.5: Pushing the Frontier"],
     }
   },
@@ -863,6 +880,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude 4.5 Sonnet", "Claude Sonnet 4.5"],
       reddit: ["Claude 4.5 Sonnet", "Claude Sonnet 4.5"],
       openRouter: "anthropic/claude-sonnet-4.5",
+      openWebUI: ["claude-sonnet-4.5", "claude-sonnet-4-5"],
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Sonnet 4.5"],
     }
   },
@@ -877,6 +895,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Claude 4.5 Opus", "Claude Opus 4.5"],
       reddit: ["Claude 4.5 Opus", "Claude Opus 4.5"],
       openRouter: "anthropic/claude-opus-4.5",
+      openWebUI: ["claude-opus-4.5"],
       semanticScholar: ["The Claude 3 Model Family", "System Card: Claude Opus 4.5"],
     }
   },
@@ -891,6 +910,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-5 mini", "GPT-5-mini"],
       reddit: ["GPT-5 mini"],
       openRouter: "openai/gpt-5-mini",
+      openWebUI: ["gpt-5-mini"],
       semanticScholar: ["OpenAI GPT-5 System Card"],
     }
   },
@@ -921,6 +941,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GPT-OSS", "GPT OSS"],
       openRouter: "openai/gpt-oss-120b",
       groq: "openai/gpt-oss-120b",
+      openWebUI: ["gpt-oss:120b", "gpt-oss-120b"],
     }
   },
   {
@@ -934,6 +955,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-4.1"],
       reddit: ["GPT-4.1", "GPT 4.1"],
       openRouter: "openai/gpt-4.1",
+      openWebUI: ["gpt-4.1"],
       semanticScholar: ["GPT-4 Technical Report"],
     }
   },
@@ -948,6 +970,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-4.1 mini"],
       reddit: ["GPT-4.1 mini"],
       openRouter: "openai/gpt-4.1-mini",
+      openWebUI: ["gpt-4.1-mini"],
       semanticScholar: ["GPT-4 Technical Report"],
     }
   },
@@ -962,6 +985,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["MiniMax", "MiniMax M2"],
       reddit: ["MiniMax AI", "MiniMax M2"],
       openRouter: "minimax/minimax-m2.5",
+      openWebUI: ["minimax-m2"],
       semanticScholar: ["MiniMax-01 scaling foundation models mixture-of-experts"],
     }
   },
@@ -976,6 +1000,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GLM-5", "Zhipu AI"],
       reddit: ["GLM-5", "Zhipu"],
       openRouter: "z-ai/glm-5",
+      openWebUI: ["glm-5"],
       semanticScholar: ["GLM-4 all tools practical tool calling"],
     }
   },
@@ -990,6 +1015,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Kimi K2", "Moonshot AI"],
       reddit: ["Kimi K2", "Moonshot"],
       openRouter: "moonshotai/kimi-k2.5",
+      openWebUI: ["kimi-k2"],
       groq: "moonshotai/kimi-k2-instruct-0905",
       semanticScholar: ["Kimi K2: Open Agentic Intelligence"],
     }
@@ -1018,6 +1044,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Qwen 3", "Qwen3"],
       reddit: ["Qwen 3", "Qwen3"],
       openRouter: "qwen/qwen3-235b-a22b",
+      openWebUI: ["qwen3:235b"],
       semanticScholar: ["Qwen3 Technical Report"],
     }
   },
@@ -1031,6 +1058,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Grok 4.1", "xAI Grok"],
       reddit: ["Grok 4.1"],
       openRouter: "x-ai/grok-4.1-fast",
+      openWebUI: ["grok-4-1", "grok-4.1"],
     }
   },
   {
@@ -1044,6 +1072,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-OSS 20B"],
       reddit: ["GPT-OSS 20B", "GPT OSS"],
       groq: "openai/gpt-oss-20b",
+      openWebUI: ["gpt-oss:20b", "gpt-oss-20b"],
     }
   },
   {
@@ -1058,6 +1087,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Llama 3.1", "Llama 3.1 8B"],
       reddit: ["Llama 3.1 8B", "Llama 3.1"],
       openRouter: "meta-llama/llama-3.1-8b-instruct",
+      openWebUI: ["llama3.1:8b"],
       groq: "llama-3.1-8b-instant",
       semanticScholar: ["The Llama 3 Herd of Models"],
     }
