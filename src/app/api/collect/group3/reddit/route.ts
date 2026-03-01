@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runGroup3 } from '@/lib/collect';
+import { runGroup3Reddit } from '@/lib/collect';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
@@ -23,11 +23,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await runGroup3();
+    const result = await runGroup3Reddit();
     return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message ?? 'Group 3 collection failed' },
+      { error: error.message ?? 'Reddit collection failed' },
       { status: 500 },
     );
   }

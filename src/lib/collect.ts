@@ -17,7 +17,7 @@ import { detectVelocityAnomaly } from './anomaly';
 /**
  * Merge two Maps, keeping the higher value per key.
  */
-function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
+export function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
   const merged = new Map(a);
   b.forEach((value, key) => {
     merged.set(key, Math.max(merged.get(key) ?? 0, value));
@@ -200,33 +200,80 @@ export async function runGroup2(): Promise<GroupResult> {
 }
 
 /**
- * Group 3: Reddit + Semantic Scholar
- * Rate-limited APIs.
+ * Group 3a: Reddit
  */
-export async function runGroup3(): Promise<GroupResult> {
+export async function runGroup3Reddit(): Promise<GroupResult> {
   const start = Date.now();
   const today = new Date().toISOString().split('T')[0];
   const sources: Record<string, { count: number; error?: string }> = {};
 
   await ensureDb();
 
-  const [reddit, ss, oa] = await Promise.all([
-    safeCollect('reddit', collectReddit, sources),
-    safeCollect('semanticScholar', collectSemanticScholar, sources),
-    safeCollect('openAlex', collectOpenAlex, sources),
-  ]);
-
-  const ssMap = ss ?? new Map<string, number>();
-  const oaMap = oa ?? new Map<string, number>();
-  const mergedCitations = mergeMapsMax(ssMap, oaMap);
+  const reddit = await safeCollect('reddit', collectReddit, sources);
 
   await storeRawSignals([
     ['reddit_signal', reddit ?? new Map()],
-    ['semantic_scholar_citations', mergedCitations],
-    ['open_alex_citations', oaMap],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3b: Semantic Scholar
+ */
+export async function runGroup3SemanticScholar(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const ss = await safeCollect('semanticScholar', collectSemanticScholar, sources);
+
+  await storeRawSignals([
+    ['semantic_scholar_citations', ss ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3c: OpenAlex
+ */
+export async function runGroup3OpenAlex(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const oa = await safeCollect('openAlex', collectOpenAlex, sources);
+
+  await storeRawSignals([
+    ['open_alex_citations', oa ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 3: Reddit + Semantic Scholar + OpenAlex (convenience wrapper)
+ * Runs all three sub-collectors sequentially.
+ */
+export async function runGroup3(): Promise<GroupResult> {
+  const start = Date.now();
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  const r = await runGroup3Reddit();
+  Object.assign(sources, r.sources);
+
+  const ss = await runGroup3SemanticScholar();
+  Object.assign(sources, ss.sources);
+
+  const oa = await runGroup3OpenAlex();
+  Object.assign(sources, oa.sources);
+
+  return { date: r.date, sources, durationMs: Date.now() - start };
 }
 
 /**

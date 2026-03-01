@@ -9,8 +9,16 @@
       "schedule": "3 6 * * *"
     },
     {
-      "path": "/api/collect/group3",
+      "path": "/api/collect/group3/reddit",
       "schedule": "6 6 * * *"
+    },
+    {
+      "path": "/api/collect/group3/semantic-scholar",
+      "schedule": "8 6 * * *"
+    },
+    {
+      "path": "/api/collect/group3/openalex",
+      "schedule": "10 6 * * *"
     },
     {
       "path": "/api/collect/score",
