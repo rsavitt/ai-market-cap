@@ -13,6 +13,7 @@ import { collectOpenAlex } from './collectors/openalex';
 import { collectGroq } from './collectors/groq';
 import { collectSmolAI } from './collectors/smolai';
 import { collectOpenWebUI } from './collectors/openwebui';
+import { collectGoogleTrends } from './collectors/google-trends';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -128,6 +129,7 @@ async function writeProvenance(
       ['hackernews_signal', raw.hackernewsSignal],
       ['reddit_signal', raw.redditSignal],
       ['smolai_signal', raw.smolaiSignal],
+      ['google_trends_signal', raw.googleTrendsSignal],
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
       ['openwebui_usage', raw.openWebUIUsage],
@@ -166,11 +168,12 @@ export async function runGroup1(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [pypi, npm, hn, smolai] = await Promise.all([
+  const [pypi, npm, hn, smolai, googleTrends] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
     safeCollect('smolai', collectSmolAI, sources),
+    safeCollect('googleTrends', collectGoogleTrends, sources),
   ]);
 
   await storeRawSignals([
@@ -178,6 +181,26 @@ export async function runGroup1(): Promise<GroupResult> {
     ['npm_downloads', npm ?? new Map()],
     ['hackernews_signal', hn ?? new Map()],
     ['smolai_signal', smolai ?? new Map()],
+    ['google_trends_signal', googleTrends ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 1 sub-collector: Google Trends standalone
+ */
+export async function runGroup1GoogleTrends(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const googleTrends = await safeCollect('googleTrends', collectGoogleTrends, sources);
+
+  await storeRawSignals([
+    ['google_trends_signal', googleTrends ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -362,6 +385,7 @@ export async function runScoring(): Promise<ScoringResult> {
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
+    googleTrendsSignal: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
     semanticScholarCitations: new Map(),
@@ -383,6 +407,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['hackernews_signal', 'hackernewsSignal'],
     ['reddit_signal', 'redditSignal'],
     ['smolai_signal', 'smolaiSignal'],
+    ['google_trends_signal', 'googleTrendsSignal'],
     ['open_router_signal', 'openRouterSignal'],
     ['open_router_usage', 'openRouterUsage'],
     ['groq_signal', 'groqSignal'],

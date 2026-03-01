@@ -65,20 +65,6 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "gpt4o-coding", name: "GPT-4o (Coding)", category: "coding", company: "OpenAI",
-    release_date: "2024-05-13", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
-    description: "GPT-4o optimized for code generation and review",
-    sources: {
-      pypi: ["openai"], npm: ["openai"],
-      github: ["openai/openai-python", "openai/openai-node"],
-      hackernews: ["GPT-4o coding", "GPT-4o code"],
-      smolai: ["GPT-4o coding", "GPT-4o code"],
-      reddit: ["GPT-4o coding", "GPT-4o code"],
-      openRouter: "openai/gpt-4o",
-      semanticScholar: ["GPT-4o system card"],
-    }
-  },
-  {
     id: "deepseek-coder-v3", name: "DeepSeek Coder V3", category: "coding", company: "DeepSeek",
     release_date: "2025-01-20", pricing_tier: "freemium", availability: "API,Web", open_source: 1,
     description: "Open-source code LLM with MoE architecture",
@@ -457,9 +443,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       pypi: ["openai"], npm: ["openai"],
       github: ["openai/openai-python", "openai/openai-node"],
-      hackernews: ["GPT-4o", "GPT4o"],
-      smolai: ["GPT-4o", "GPT4o"],
-      reddit: ["GPT-4o", "GPT4o"],
+      hackernews: ["GPT-4o", "GPT4o", "GPT-4o coding", "GPT-4o code"],
+      smolai: ["GPT-4o", "GPT4o", "GPT-4o coding", "GPT-4o code"],
+      reddit: ["GPT-4o", "GPT4o", "GPT-4o coding", "GPT-4o code"],
       openRouter: "openai/gpt-4o",
       semanticScholar: ["GPT-4o system card"],
     }

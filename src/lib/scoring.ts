@@ -19,6 +19,7 @@ export interface RawSignals {
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
   smolaiSignal: Map<string, number>;
+  googleTrendsSignal: Map<string, number>;
   // capability signals
   openRouterSignal: Map<string, number>;
   groqSignal: Map<string, number>;
@@ -42,7 +43,7 @@ export interface EntityScores {
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
   'openRouterUsage', 'openWebUIUsage', 'githubStars', 'githubForks',
-  'hackernewsSignal', 'redditSignal', 'smolaiSignal',
+  'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal',
   'openRouterSignal',
   'groqSignal',
   'semanticScholarCitations',
@@ -263,6 +264,7 @@ function calculateConfidence(
     { map: raw.hackernewsSignal, applicable: true },
     { map: raw.redditSignal, applicable: true },
     { map: raw.smolaiSignal, applicable: true },
+    { map: raw.googleTrendsSignal, applicable: true },
     { map: raw.openRouterSignal, applicable: !!sources?.openRouter },
     { map: raw.groqSignal, applicable: !!sources?.groq },
     { map: raw.semanticScholarCitations, applicable: true },
@@ -315,6 +317,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
+    googleTrendsSignal: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
     semanticScholarCitations: new Map(),
@@ -335,6 +338,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
+    googleTrendsSignal: raw.googleTrendsSignal,
     openRouterSignal: raw.openRouterSignal,
     groqSignal: raw.groqSignal,
     semanticScholarCitations: raw.semanticScholarCitations,
@@ -373,11 +377,12 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.githubForks, weight: 0.10 },
   ], entityIds);
 
-  // Attention: HackerNews (0.45) + Reddit (0.35) + SmolAI (0.20)
+  // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
   const attentionScores = combineDimension([
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.45 },
-    { normalized: normalizedSignals.redditSignal, weight: 0.35 },
-    { normalized: normalizedSignals.smolaiSignal, weight: 0.20 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.30 },
+    { normalized: normalizedSignals.googleTrendsSignal, weight: 0.20 },
+    { normalized: normalizedSignals.smolaiSignal, weight: 0.15 },
   ], entityIds);
 
   // Capability: OpenRouter (0.6) + Groq (0.4)
