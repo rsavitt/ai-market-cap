@@ -16,11 +16,13 @@ export interface RawSignals {
   githubViews: Map<string, number>;
   openWebUIUsage: Map<string, number>;
   cloudflareRadar: Map<string, number>;
+  ollamaSignal: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
   smolaiSignal: Map<string, number>;
   googleTrendsSignal: Map<string, number>;
+  stackoverflowSignal: Map<string, number>;
   // capability signals
   openRouterSignal: Map<string, number>;
   groqSignal: Map<string, number>;
@@ -48,8 +50,8 @@ export interface EntityScores {
 // Signals that participate in scoring (clones/views excluded — require push access)
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
-  'openRouterUsage', 'openWebUIUsage', 'cloudflareRadar', 'githubStars', 'githubForks',
-  'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal',
+  'openRouterUsage', 'openWebUIUsage', 'cloudflareRadar', 'ollamaSignal', 'githubStars', 'githubForks',
+  'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal', 'stackoverflowSignal',
   'openRouterSignal',
   'groqSignal',
   'aaLlmIntelligence',
@@ -270,6 +272,7 @@ function calculateConfidence(
     { map: raw.openRouterUsage, applicable: !!sources?.openRouter },
     { map: raw.openWebUIUsage, applicable: !!sources?.openWebUI?.length },
     { map: raw.cloudflareRadar, applicable: !!sources?.cloudflareRadar },
+    { map: raw.ollamaSignal, applicable: !!sources?.ollama?.length },
     { map: raw.githubStars, applicable: !!sources?.github?.length },
     { map: raw.githubForks, applicable: !!sources?.github?.length },
     // Universal signals — always applicable
@@ -277,6 +280,7 @@ function calculateConfidence(
     { map: raw.redditSignal, applicable: true },
     { map: raw.smolaiSignal, applicable: true },
     { map: raw.googleTrendsSignal, applicable: true },
+    { map: raw.stackoverflowSignal, applicable: true },
     { map: raw.openRouterSignal, applicable: !!sources?.openRouter },
     { map: raw.groqSignal, applicable: !!sources?.groq },
     { map: raw.aaLlmIntelligence, applicable: !!sources?.artificialAnalysis },
@@ -330,12 +334,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     openRouterUsage: new Map(),
     openWebUIUsage: new Map(),
     cloudflareRadar: new Map(),
+    ollamaSignal: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
     googleTrendsSignal: new Map(),
+    stackoverflowSignal: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
     aaLlmIntelligence: new Map(),
@@ -357,12 +363,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     openRouterUsage: raw.openRouterUsage,
     openWebUIUsage: raw.openWebUIUsage,
     cloudflareRadar: raw.cloudflareRadar,
+    ollamaSignal: raw.ollamaSignal,
     githubStars: raw.githubStars,
     githubForks: raw.githubForks,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
     googleTrendsSignal: raw.googleTrendsSignal,
+    stackoverflowSignal: raw.stackoverflowSignal,
     openRouterSignal: raw.openRouterSignal,
     groqSignal: raw.groqSignal,
     aaLlmIntelligence: raw.aaLlmIntelligence,
@@ -464,25 +472,27 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   //        + OpenRouter Usage (0.12) + OpenWebUI (0.07) + GitHub Stars (0.09) + GitHub Forks (0.08)
   // Note: GitHub clones/views excluded — traffic API requires push access to repos we don't own
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.15 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.15 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.08 },
-    { normalized: normalizedSignals.hfDownloads, weight: 0.05 },
-    { normalized: normalizedSignals.hfLikes, weight: 0.04 },
-    { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.05 },
-    { normalized: normalizedSignals.cloudflareRadar, weight: 0.12 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.12 },
-    { normalized: normalizedSignals.openWebUIUsage, weight: 0.07 },
-    { normalized: normalizedSignals.githubStars, weight: 0.09 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.13 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.13 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.07 },
+    { normalized: normalizedSignals.hfDownloads, weight: 0.04 },
+    { normalized: normalizedSignals.hfLikes, weight: 0.03 },
+    { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.04 },
+    { normalized: normalizedSignals.cloudflareRadar, weight: 0.11 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.11 },
+    { normalized: normalizedSignals.ollamaSignal, weight: 0.12 },
+    { normalized: normalizedSignals.openWebUIUsage, weight: 0.06 },
+    { normalized: normalizedSignals.githubStars, weight: 0.08 },
     { normalized: normalizedSignals.githubForks, weight: 0.08 },
   ], entityIds);
 
   // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
   const attentionScores = combineDimension([
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.35 },
-    { normalized: normalizedSignals.redditSignal, weight: 0.30 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.30 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.25 },
     { normalized: normalizedSignals.googleTrendsSignal, weight: 0.20 },
-    { normalized: normalizedSignals.smolaiSignal, weight: 0.15 },
+    { normalized: normalizedSignals.stackoverflowSignal, weight: 0.15 },
+    { normalized: normalizedSignals.smolaiSignal, weight: 0.10 },
   ], entityIds);
 
   // Capability: OpenRouter (0.20) + Groq (0.15) + AA LLM Intelligence (0.20)

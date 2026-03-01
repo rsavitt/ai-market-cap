@@ -16,6 +16,8 @@ export interface EntitySources {
   smolai: string[];
   openWebUI: string[];
   cloudflareRadar: string | null;
+  ollama: string[] | null;
+  stackoverflow: string[] | null;
 }
 
 export interface RegisteredEntity {
@@ -51,6 +53,8 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     smolai: [],
     openWebUI: [],
     cloudflareRadar: null,
+    ollama: null,
+    stackoverflow: [],
   };
 
   for (const row of rows) {
@@ -103,6 +107,14 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'cloudflareRadar':
         sources.cloudflareRadar = row.source_value;
+        break;
+      case 'ollama':
+        if (!sources.ollama) sources.ollama = [];
+        sources.ollama.push(row.source_value);
+        break;
+      case 'stackoverflow':
+        if (!sources.stackoverflow) sources.stackoverflow = [];
+        sources.stackoverflow.push(row.source_value);
         break;
     }
   }
