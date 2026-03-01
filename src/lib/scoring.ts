@@ -655,6 +655,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
 
     const { confidence, lower, upper } = calculateConfidence(id, raw, entityRegistry);
 
+    // ── Confidence discount ──
+    // Penalize total score when signal coverage is low.
+    // Maps confidence 0→1 to a discount factor of 0.6→1.0 (linear).
+    // An entity with 50% signal coverage gets 80% of its raw total;
+    // one with full coverage keeps 100%.
+    const confidenceDiscount = 0.6 + 0.4 * confidence;
+    total = Math.round(total * confidenceDiscount * 100) / 100;
+
     scores.set(id, {
       usage_score: usage,
       attention_score: attention,

@@ -228,6 +228,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "stability.ai",
       stackoverflow: ["stable-diffusion"],
       wikipedia: "Stable_Diffusion",
+      dockerHub: ["stability-ai/stable-diffusion"],
     }
   },
   {
@@ -264,6 +265,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Adobe Firefly"],
       reddit: ["Adobe Firefly"],
       stackoverflow: ["adobe-firefly"],
+      wikipedia: "Adobe_Firefly",
     }
   },
   {
@@ -482,6 +484,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Robust Speech Recognition via Large-Scale Weak Supervision"],
       stackoverflow: ["whisper", "openai-whisper"],
       wikipedia: "Whisper_(speech_recognition_system)",
+      dockerHub: ["onerahmet/openai-whisper-asr-webservice"],
     }
   },
   {
@@ -597,6 +600,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       arxiv: ["DeepSeek-V3","DeepSeek V3"],
       manifoldMarkets: ["DeepSeek V3"],
       wikipedia: "DeepSeek",
+      dockerHub: ["vllm/vllm-openai"],
     }
   },
   {
@@ -636,6 +640,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["grok", "xai"],
       arxiv: ["Grok 3","Grok"],
       manifoldMarkets: ["Grok 3"],
+      wikipedia: "Grok_(chatbot)",
     }
   },
   {
@@ -696,6 +701,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["perplexity"],
       arxiv: ["Perplexity"],
       manifoldMarkets: ["Perplexity AI"],
+      wikipedia: "Perplexity.ai",
     }
   },
   {
