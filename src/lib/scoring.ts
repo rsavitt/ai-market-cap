@@ -1,4 +1,4 @@
-import { getEntityRegistry, getAllEntityIds, type RegisteredEntity } from './entity-registry';
+import { getEntityRegistry, getAllEntityIds, type RegisteredEntity, type EntitySources } from './entity-registry';
 import { get90DayBaselines } from './db';
 
 export interface RawSignals {
@@ -359,6 +359,71 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
   };
+
+  // Deduplicate shared SDK/package signals before normalization.
+  // For each dedup-eligible signal, divides raw values evenly among all
+  // entities that reference the same source value (e.g., same pypi package).
+  {
+    const deduplicationConfig: {
+      signal: SignalName;
+      getSourceKeys: (sources: EntitySources) => string[] | null;
+    }[] = [
+      { signal: 'pypiDownloads', getSourceKeys: (s) => s.pypi },
+      { signal: 'npmDownloads', getSourceKeys: (s) => s.npm },
+      { signal: 'githubStars', getSourceKeys: (s) => s.github },
+      { signal: 'githubForks', getSourceKeys: (s) => s.github },
+      { signal: 'huggingfaceSignal', getSourceKeys: (s) => s.huggingface },
+      { signal: 'hfDownloads', getSourceKeys: (s) => s.huggingface },
+      { signal: 'hfLikes', getSourceKeys: (s) => s.huggingface },
+      { signal: 'hfDownloadsVelocity', getSourceKeys: (s) => s.huggingface },
+    ];
+
+    for (const { signal, getSourceKeys } of deduplicationConfig) {
+      const rawMap = signalToRaw[signal];
+
+      // Build reverse map: source value → list of entity IDs referencing it
+      const sourceToEntities = new Map<string, string[]>();
+      for (const entity of entityRegistry) {
+        const keys = getSourceKeys(entity.sources);
+        if (!keys) continue;
+        for (const key of keys) {
+          let list = sourceToEntities.get(key);
+          if (!list) {
+            list = [];
+            sourceToEntities.set(key, list);
+          }
+          list.push(entity.id);
+        }
+      }
+
+      // For each source value shared by multiple entities, divide the raw value
+      sourceToEntities.forEach((entityIdsForSource) => {
+        if (entityIdsForSource.length <= 1) return;
+
+        // Get the raw value (all sharing entities have the same raw for this source)
+        let rawValue = 0;
+        for (const eid of entityIdsForSource) {
+          const v = rawMap.get(eid);
+          if (v !== undefined && v > 0) {
+            rawValue = v;
+            break;
+          }
+        }
+        if (rawValue === 0) return;
+
+        const share = rawValue / entityIdsForSource.length;
+
+        // For multi-package entities: subtract this source's full contribution,
+        // add back the shared portion. Entity total = sum of per-package shares.
+        for (const eid of entityIdsForSource) {
+          const currentVal = rawMap.get(eid) ?? 0;
+          if (currentVal === 0) continue;
+          const newVal = currentVal - rawValue + share;
+          rawMap.set(eid, Math.max(0, newVal));
+        }
+      });
+    }
+  }
 
   for (const [category] of Object.entries(categoriesMap)) {
     const baselines = await get90DayBaselines(category);
