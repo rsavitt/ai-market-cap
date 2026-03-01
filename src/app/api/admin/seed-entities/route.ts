@@ -753,18 +753,33 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "gpt-5-3", name: "GPT-5.3", category: "general_llm", company: "OpenAI",
-    release_date: "2026-02-14", pricing_tier: "paid", availability: "API,Web", open_source: 0,
-    description: "Latest GPT-5 series model available in Codex",
+    id: "gpt-5-3-codex", name: "GPT-5.3-Codex", category: "general_llm", company: "OpenAI",
+    release_date: "2026-02-05", pricing_tier: "paid", availability: "API,Web,CLI,IDE", open_source: 0,
+    description: "Most capable agentic coding model, 25% faster than GPT-5.2-Codex with broader knowledge work capabilities",
     sources: {
       pypi: ["openai"], npm: ["openai"],
-      github: ["openai/openai-python", "openai/openai-node"],
-      hackernews: ["GPT-5.3", "GPT 5.3"],
-      smolai: ["GPT-5.3", "GPT 5.3"],
-      reddit: ["GPT-5.3", "GPT 5.3"],
-      openRouter: "openai/gpt-5.3",
-      openWebUI: ["gpt-5.3"],
-      semanticScholar: ["OpenAI GPT-5 System Card"],
+      github: ["openai/openai-python", "openai/openai-node", "openai/codex"],
+      hackernews: ["GPT-5.3-Codex", "GPT-5.3 Codex", "GPT 5.3"],
+      smolai: ["GPT-5.3-Codex", "GPT-5.3 Codex", "GPT 5.3"],
+      reddit: ["GPT-5.3-Codex", "GPT-5.3 Codex", "GPT 5.3"],
+      openRouter: "openai/gpt-5.3-codex",
+      openWebUI: ["gpt-5.3-codex"],
+      semanticScholar: ["GPT-5.3-Codex System Card"],
+    }
+  },
+  {
+    id: "gpt-5-3-codex-spark", name: "GPT-5.3-Codex-Spark", category: "general_llm", company: "OpenAI",
+    release_date: "2026-02-12", pricing_tier: "paid", availability: "API,Web,CLI,IDE", open_source: 0,
+    description: "Smaller real-time coding variant of GPT-5.3-Codex for interactive development",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node", "openai/codex"],
+      hackernews: ["GPT-5.3-Codex-Spark", "Codex Spark"],
+      smolai: ["GPT-5.3-Codex-Spark", "Codex Spark"],
+      reddit: ["GPT-5.3-Codex-Spark", "Codex Spark"],
+      openRouter: "openai/gpt-5.3-codex-spark",
+      openWebUI: ["gpt-5.3-codex-spark"],
+      semanticScholar: ["GPT-5.3-Codex System Card"],
     }
   },
   {
