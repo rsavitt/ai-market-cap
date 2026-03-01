@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureDb, insertRawSignal } from '@/lib/db';
+import { ensureDb } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -19,11 +19,12 @@ function isAuthorized(request: NextRequest): boolean {
 
 /**
  * Simple seeded PRNG for reproducible daily variation.
+ * Includes signal name in seed so different signals vary independently.
  * Returns a value in [1 - amplitude, 1 + amplitude].
  */
-function seededVariation(entityId: string, dayOffset: number, amplitude = 0.05): number {
+function seededVariation(entityId: string, dayOffset: number, signalName: string, amplitude = 0.05): number {
   let hash = 0;
-  const seed = `${entityId}:${dayOffset}`;
+  const seed = `${entityId}:${signalName}:${dayOffset}`;
   for (let i = 0; i < seed.length; i++) {
     hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
   }
@@ -32,34 +33,28 @@ function seededVariation(entityId: string, dayOffset: number, amplitude = 0.05):
 }
 
 /**
- * Read the most recent citation data already stored in raw_signals.
+ * Read the most recent value per entity for every signal in raw_signals.
  */
-async function getLatestCitations(): Promise<{ ss: Map<string, number>; oa: Map<string, number> }> {
-  const db = await ensureDb();
-
-  const ssRows = await db.execute(
-    `SELECT entity_id, raw_value FROM raw_signals
-     WHERE signal_name = 'semantic_scholar_citations' AND raw_value IS NOT NULL
+async function getLatestSignals(db: ReturnType<typeof import('@libsql/client').createClient>): Promise<Map<string, Map<string, number>>> {
+  const rows = await db.execute(
+    `SELECT entity_id, signal_name, raw_value, date FROM raw_signals
+     WHERE raw_value IS NOT NULL
      ORDER BY date DESC`
   );
-  const ss = new Map<string, number>();
-  for (const row of ssRows.rows) {
-    const eid = row.entity_id as string;
-    if (!ss.has(eid)) ss.set(eid, row.raw_value as number);
+
+  const signals = new Map<string, Map<string, number>>();
+
+  for (const row of rows.rows) {
+    const signalName = row.signal_name as string;
+    const entityId = row.entity_id as string;
+    const value = row.raw_value as number;
+
+    if (!signals.has(signalName)) signals.set(signalName, new Map());
+    const entityMap = signals.get(signalName)!;
+    if (!entityMap.has(entityId)) entityMap.set(entityId, value);
   }
 
-  const oaRows = await db.execute(
-    `SELECT entity_id, raw_value FROM raw_signals
-     WHERE signal_name = 'open_alex_citations' AND raw_value IS NOT NULL
-     ORDER BY date DESC`
-  );
-  const oa = new Map<string, number>();
-  for (const row of oaRows.rows) {
-    const eid = row.entity_id as string;
-    if (!oa.has(eid)) oa.set(eid, row.raw_value as number);
-  }
-
-  return { ss, oa };
+  return signals;
 }
 
 export async function GET(request: NextRequest) {
@@ -71,58 +66,66 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const days = Math.min(Math.max(parseInt(url.searchParams.get('days') ?? '30', 10) || 30, 1), 90);
 
-    console.log(`[backfill] Reading existing citation data from DB...`);
+    const db = await ensureDb();
 
-    const { ss: ssMap, oa: oaMap } = await getLatestCitations();
+    console.log(`[backfill] Reading existing signal data from DB...`);
+    const signals = await getLatestSignals(db);
 
-    if (ssMap.size === 0 && oaMap.size === 0) {
+    if (signals.size === 0) {
       return NextResponse.json(
-        { error: 'No existing citation data found in raw_signals. Run collectors first.' },
+        { error: 'No existing signal data found in raw_signals. Run collectors first.' },
         { status: 400 },
       );
     }
 
-    console.log(`[backfill] Found ${ssMap.size} SS entities, ${oaMap.size} OA entities`);
+    const signalCounts: Record<string, number> = {};
+    const entitiesCovered: Record<string, number> = {};
 
-    let ssInserts = 0;
-    let oaInserts = 0;
+    signals.forEach((entityMap, signalName) => {
+      signalCounts[signalName] = 0;
+      entitiesCovered[signalName] = entityMap.size;
+    });
+
+    // Build all statements, then batch in chunks
+    const BATCH_SIZE = 200;
 
     for (let dayOffset = 1; dayOffset <= days; dayOffset++) {
       const date = new Date();
       date.setDate(date.getDate() - dayOffset);
       const dateStr = date.toISOString().split('T')[0];
 
-      const ssPromises: Promise<void>[] = [];
-      ssMap.forEach((value, entityId) => {
-        const variation = seededVariation(entityId, dayOffset);
-        const variedValue = Math.round(value * variation);
-        ssPromises.push(insertRawSignal(entityId, dateStr, 'semantic_scholar_citations', variedValue));
-        ssInserts++;
-      });
-      await Promise.all(ssPromises);
+      const stmts: { sql: string; args: any[] }[] = [];
 
-      const oaPromises: Promise<void>[] = [];
-      oaMap.forEach((value, entityId) => {
-        const variation = seededVariation(entityId, dayOffset);
-        const variedValue = Math.round(value * variation);
-        oaPromises.push(insertRawSignal(entityId, dateStr, 'open_alex_citations', variedValue));
-        oaInserts++;
+      signals.forEach((entityMap, signalName) => {
+        entityMap.forEach((value, entityId) => {
+          const variation = seededVariation(entityId, dayOffset, signalName);
+          const variedValue = Math.round(value * variation);
+          stmts.push({
+            sql: `INSERT INTO raw_signals (entity_id, date, signal_name, raw_value)
+                  VALUES (?, ?, ?, ?)
+                  ON CONFLICT(entity_id, date, signal_name) DO UPDATE SET raw_value = excluded.raw_value`,
+            args: [entityId, dateStr, signalName, variedValue],
+          });
+          signalCounts[signalName]++;
+        });
       });
-      await Promise.all(oaPromises);
+
+      // Batch in chunks to avoid hitting limits
+      for (let i = 0; i < stmts.length; i += BATCH_SIZE) {
+        const chunk = stmts.slice(i, i + BATCH_SIZE);
+        await db.batch(chunk, 'write');
+      }
     }
 
-    console.log(`[backfill] Done: ${days} days, ${ssInserts} SS inserts, ${oaInserts} OA inserts`);
+    const totalInserts = Object.values(signalCounts).reduce((a, b) => a + b, 0);
+    console.log(`[backfill] Done: ${days} days, ${totalInserts} total inserts across ${signals.size} signals`);
 
     return NextResponse.json({
       daysBackfilled: days,
-      signalCounts: {
-        semanticScholar: ssInserts,
-        openAlex: oaInserts,
-      },
-      entitiesCovered: {
-        semanticScholar: ssMap.size,
-        openAlex: oaMap.size,
-      },
+      signalsBackfilled: signals.size,
+      totalInserts,
+      signalCounts,
+      entitiesCovered,
     });
   } catch (error: any) {
     return NextResponse.json(
