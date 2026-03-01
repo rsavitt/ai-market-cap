@@ -17,6 +17,7 @@ import { collectOpenWebUI } from './collectors/openwebui';
 import { collectGoogleTrends } from './collectors/google-trends';
 import { collectLmsysArena } from './collectors/lmsys-arena';
 import { collectHfLeaderboard } from './collectors/hf-leaderboard';
+import { collectCloudflareRadar } from './collectors/cloudflare-radar';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -136,6 +137,7 @@ async function writeProvenance(
       ['open_router_signal', raw.openRouterSignal],
       ['open_router_usage', raw.openRouterUsage],
       ['openwebui_usage', raw.openWebUIUsage],
+      ['cloudflare_radar', raw.cloudflareRadar],
       ['groq_signal', raw.groqSignal],
       ['aa_llm_intelligence', raw.aaLlmIntelligence],
       ['aa_image_arena', raw.aaImageArena],
@@ -176,12 +178,13 @@ export async function runGroup1(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [pypi, npm, hn, smolai, googleTrends] = await Promise.all([
+  const [pypi, npm, hn, smolai, googleTrends, cfRadar] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
     safeCollect('smolai', collectSmolAI, sources),
     safeCollect('googleTrends', collectGoogleTrends, sources),
+    safeCollect('cloudflareRadar', collectCloudflareRadar, sources),
   ]);
 
   await storeRawSignals([
@@ -190,6 +193,7 @@ export async function runGroup1(): Promise<GroupResult> {
     ['hackernews_signal', hn ?? new Map()],
     ['smolai_signal', smolai ?? new Map()],
     ['google_trends_signal', googleTrends ?? new Map()],
+    ['cloudflare_radar', cfRadar ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -394,6 +398,7 @@ export async function runScoring(): Promise<ScoringResult> {
     hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
     openWebUIUsage: new Map(),
+    cloudflareRadar: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
     githubClones: new Map(),
@@ -421,6 +426,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['hf_likes', 'hfLikes'],
     ['hf_downloads_velocity', 'hfDownloadsVelocity'],
     ['openwebui_usage', 'openWebUIUsage'],
+    ['cloudflare_radar', 'cloudflareRadar'],
     ['github_stars_velocity', 'githubStars'],
     ['github_forks', 'githubForks'],
     ['github_clones', 'githubClones'],

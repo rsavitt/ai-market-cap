@@ -15,6 +15,7 @@ export interface RawSignals {
   githubClones: Map<string, number>;
   githubViews: Map<string, number>;
   openWebUIUsage: Map<string, number>;
+  cloudflareRadar: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
@@ -47,7 +48,7 @@ export interface EntityScores {
 // Signals that participate in scoring (clones/views excluded — require push access)
 const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
-  'openRouterUsage', 'openWebUIUsage', 'githubStars', 'githubForks',
+  'openRouterUsage', 'openWebUIUsage', 'cloudflareRadar', 'githubStars', 'githubForks',
   'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal',
   'openRouterSignal',
   'groqSignal',
@@ -268,6 +269,7 @@ function calculateConfidence(
     { map: raw.hfDownloadsVelocity, applicable: !!sources?.huggingface?.length },
     { map: raw.openRouterUsage, applicable: !!sources?.openRouter },
     { map: raw.openWebUIUsage, applicable: !!sources?.openWebUI?.length },
+    { map: raw.cloudflareRadar, applicable: !!sources?.cloudflareRadar },
     { map: raw.githubStars, applicable: !!sources?.github?.length },
     { map: raw.githubForks, applicable: !!sources?.github?.length },
     // Universal signals — always applicable
@@ -327,6 +329,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
     openWebUIUsage: new Map(),
+    cloudflareRadar: new Map(),
     githubStars: new Map(),
     githubForks: new Map(),
     hackernewsSignal: new Map(),
@@ -353,6 +356,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     hfDownloadsVelocity: raw.hfDownloadsVelocity,
     openRouterUsage: raw.openRouterUsage,
     openWebUIUsage: raw.openWebUIUsage,
+    cloudflareRadar: raw.cloudflareRadar,
     githubStars: raw.githubStars,
     githubForks: raw.githubForks,
     hackernewsSignal: raw.hackernewsSignal,
@@ -454,19 +458,20 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Combine into dimensions ──
-  // Usage: PyPI (0.18) + npm (0.18) + HuggingFace composite (0.10) + HF Downloads (0.06)
-  //        + HF Likes (0.04) + HF Download Velocity (0.06) + OpenRouter Usage (0.13)
-  //        + OpenWebUI (0.08) + GitHub Stars (0.09) + GitHub Forks (0.08)
+  // Usage: PyPI (0.15) + npm (0.15) + HuggingFace composite (0.08) + HF Downloads (0.05)
+  //        + HF Likes (0.04) + HF Download Velocity (0.05) + Cloudflare Radar (0.12)
+  //        + OpenRouter Usage (0.12) + OpenWebUI (0.07) + GitHub Stars (0.09) + GitHub Forks (0.08)
   // Note: GitHub clones/views excluded — traffic API requires push access to repos we don't own
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.18 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.18 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.10 },
-    { normalized: normalizedSignals.hfDownloads, weight: 0.06 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.15 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.15 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.08 },
+    { normalized: normalizedSignals.hfDownloads, weight: 0.05 },
     { normalized: normalizedSignals.hfLikes, weight: 0.04 },
-    { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.06 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.13 },
-    { normalized: normalizedSignals.openWebUIUsage, weight: 0.08 },
+    { normalized: normalizedSignals.hfDownloadsVelocity, weight: 0.05 },
+    { normalized: normalizedSignals.cloudflareRadar, weight: 0.12 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.12 },
+    { normalized: normalizedSignals.openWebUIUsage, weight: 0.07 },
     { normalized: normalizedSignals.githubStars, weight: 0.09 },
     { normalized: normalizedSignals.githubForks, weight: 0.08 },
   ], entityIds);

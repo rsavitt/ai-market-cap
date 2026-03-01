@@ -15,6 +15,7 @@ export interface EntitySources {
   hfLeaderboard: string | null;
   smolai: string[];
   openWebUI: string[];
+  cloudflareRadar: string | null;
 }
 
 export interface RegisteredEntity {
@@ -49,6 +50,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     hfLeaderboard: null,
     smolai: [],
     openWebUI: [],
+    cloudflareRadar: null,
   };
 
   for (const row of rows) {
@@ -98,6 +100,9 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'openWebUI':
         sources.openWebUI.push(row.source_value);
+        break;
+      case 'cloudflareRadar':
+        sources.cloudflareRadar = row.source_value;
         break;
     }
   }
