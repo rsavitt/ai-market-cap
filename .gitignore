@@ -39,3 +39,6 @@ local.db
 *.tsbuildinfo
 next-env.d.ts
 .env.vercel
+
+# ad-hoc scripts
+check-signals.ts
