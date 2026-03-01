@@ -30,7 +30,9 @@ export async function collectOpenAlex(): Promise<Map<string, number>> {
   // Cache query results so we only fetch each unique query once
   const queryScores = new Map<string, number>();
 
-  for (const [query] of Array.from(queryToEntities.entries())) {
+  const BATCH_SIZE = 5;
+
+  async function processQuery(query: string) {
     try {
       const params = new URLSearchParams({
         'filter': `title.search:${query}`,
@@ -51,8 +53,7 @@ export async function collectOpenAlex(): Promise<Map<string, number>> {
 
       if (!res.ok) {
         console.log(`[openalex] HTTP ${res.status} for "${query}"`);
-        await delay(100);
-        continue;
+        return;
       }
 
       const data = (await res.json()) as OpenAlexResponse;
@@ -65,8 +66,16 @@ export async function collectOpenAlex(): Promise<Map<string, number>> {
     } catch {
       // timeout or network error — skip this query
     }
+  }
 
-    await delay(100);
+  const allQueries = Array.from(queryToEntities.keys());
+
+  for (let i = 0; i < allQueries.length; i += BATCH_SIZE) {
+    const batch = allQueries.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(processQuery));
+    if (i + BATCH_SIZE < allQueries.length) {
+      await delay(100);
+    }
   }
 
   // Aggregate: sum scores across all queries for each entity

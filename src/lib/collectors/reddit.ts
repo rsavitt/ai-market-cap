@@ -47,7 +47,9 @@ export async function collectReddit(): Promise<Map<string, number>> {
   const token = await getRedditToken();
   if (!token) return results; // Skip if no credentials
 
-  for (const entity of entityRegistry) {
+  const BATCH_SIZE = 5;
+
+  async function processEntity(entity: typeof entityRegistry[number]) {
     let totalScore = 0;
     let totalPosts = 0;
 
@@ -79,12 +81,19 @@ export async function collectReddit(): Promise<Map<string, number>> {
       } catch {
         // Skip failed queries
       }
-      await delay(200);
     }
 
     const signal = totalScore + totalPosts * 5;
     if (signal > 0) {
       results.set(entity.id, signal);
+    }
+  }
+
+  for (let i = 0; i < entityRegistry.length; i += BATCH_SIZE) {
+    const batch = entityRegistry.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(processEntity));
+    if (i + BATCH_SIZE < entityRegistry.length) {
+      await delay(200);
     }
   }
 

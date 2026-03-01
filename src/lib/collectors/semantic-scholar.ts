@@ -35,14 +35,9 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
   // Cache query results so we only fetch each unique query once
   const queryScores = new Map<string, number>();
 
-  for (const [query, entityIds] of Array.from(queryToEntities.entries())) {
-    // If we've hit too many consecutive rate limits, stop early
-    if (consecutiveRateLimits >= 3) {
-      console.log(`[semantic-scholar] Stopping early after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size} query results.`);
-      break;
-    }
+  const BATCH_SIZE = apiKey ? 3 : 2;
 
-    let success = false;
+  async function processQuery(query: string): Promise<boolean> {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
         const params = new URLSearchParams({
@@ -61,7 +56,7 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
           continue; // retry
         }
 
-        if (!res.ok) break;
+        if (!res.ok) return false;
 
         const data = await res.json() as S2SearchResponse;
         let maxCitations = 0;
@@ -71,20 +66,36 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
         }
 
         queryScores.set(query, maxCitations);
-        success = true;
-        break;
+        return true;
       } catch {
-        break; // timeout or unavailable
+        return false; // timeout or unavailable
+      }
+    }
+    return false;
+  }
+
+  const allQueries = Array.from(queryToEntities.keys());
+
+  for (let i = 0; i < allQueries.length; i += BATCH_SIZE) {
+    if (consecutiveRateLimits >= 3) {
+      console.log(`[semantic-scholar] Stopping early after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size} query results.`);
+      break;
+    }
+
+    const batch = allQueries.slice(i, i + BATCH_SIZE);
+    const results_batch = await Promise.all(batch.map(processQuery));
+
+    for (const success of results_batch) {
+      if (success) {
+        consecutiveRateLimits = 0;
+      } else {
+        consecutiveRateLimits++;
       }
     }
 
-    if (success) {
-      consecutiveRateLimits = 0;
-    } else {
-      consecutiveRateLimits++;
+    if (i + BATCH_SIZE < allQueries.length) {
+      await new Promise(r => setTimeout(r, delayMs));
     }
-
-    await new Promise(r => setTimeout(r, delayMs));
   }
 
   // Aggregate: sum scores across all queries for each entity
