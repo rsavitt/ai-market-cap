@@ -489,6 +489,85 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["NotebookLM"],
       reddit: ["NotebookLM"],
       stackoverflow: ["notebooklm"],
+      cloudflareRadar: "notebooklm.google.com",
+      wikipedia: "NotebookLM",
+    }
+  },
+  {
+    id: "chatgpt", name: "ChatGPT", category: "app", company: "OpenAI",
+    release_date: "2022-11-30", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "OpenAI consumer AI chat application",
+    sources: {
+      hackernews: ["ChatGPT"],
+      smolai: ["ChatGPT"],
+      reddit: ["ChatGPT"],
+      cloudflareRadar: "chatgpt.com",
+      stackoverflow: ["chatgpt"],
+      wikipedia: "ChatGPT",
+      arxiv: ["ChatGPT"],
+      manifoldMarkets: ["ChatGPT"],
+    }
+  },
+  {
+    id: "claude-app", name: "Claude", category: "app", company: "Anthropic",
+    release_date: "2023-03-14", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "Anthropic consumer AI assistant application",
+    sources: {
+      hackernews: ["Claude app", "Claude AI"],
+      smolai: ["Claude app", "Claude AI"],
+      reddit: ["Claude app", "Claude AI"],
+      cloudflareRadar: "claude.ai",
+      stackoverflow: ["claude"],
+      wikipedia: "Claude_(language_model)",
+      arxiv: ["Claude"],
+      manifoldMarkets: ["Claude AI"],
+    }
+  },
+  {
+    id: "gemini-app", name: "Gemini", category: "app", company: "Google",
+    release_date: "2023-12-06", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "Google consumer AI assistant application",
+    sources: {
+      hackernews: ["Google Gemini app", "Gemini app"],
+      smolai: ["Google Gemini app"],
+      reddit: ["Gemini app", "Google Gemini"],
+      cloudflareRadar: "gemini.google.com",
+      stackoverflow: ["google-gemini"],
+      wikipedia: "Gemini_(chatbot)",
+      arxiv: ["Gemini"],
+      manifoldMarkets: ["Google Gemini"],
+    }
+  },
+  {
+    id: "grok-app", name: "Grok", category: "app", company: "xAI",
+    release_date: "2023-11-04", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "xAI consumer AI assistant integrated with X/Twitter",
+    sources: {
+      hackernews: ["Grok app", "Grok xAI"],
+      smolai: ["Grok app", "Grok xAI"],
+      reddit: ["Grok app", "xAI Grok"],
+      cloudflareRadar: "grok.com",
+      stackoverflow: ["grok"],
+      wikipedia: "Grok_(chatbot)",
+      arxiv: ["Grok"],
+      manifoldMarkets: ["Grok"],
+    }
+  },
+  {
+    id: "perplexity-app", name: "Perplexity", category: "app", company: "Perplexity AI",
+    release_date: "2022-12-07", pricing_tier: "freemium", availability: "Web,Mobile,API", open_source: 0,
+    description: "AI-powered answer engine with real-time search",
+    sources: {
+      github: ["ppl-ai/pplx-kernels"],
+      hackernews: ["Perplexity AI", "Perplexity"],
+      smolai: ["Perplexity AI", "Perplexity"],
+      reddit: ["Perplexity AI", "Perplexity"],
+      openWebUI: ["sonar"],
+      cloudflareRadar: "perplexity.ai",
+      stackoverflow: ["perplexity"],
+      wikipedia: "Perplexity.ai",
+      arxiv: ["Perplexity"],
+      manifoldMarkets: ["Perplexity AI"],
     }
   },
 
@@ -823,23 +902,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["qwen"],
       arxiv: ["Qwen 2.5","Qwen2.5"],
       manifoldMarkets: ["Qwen 2.5"],
-    }
-  },
-  {
-    id: "perplexity", name: "Perplexity", category: "general_llm", company: "Perplexity AI",
-    release_date: "2024-11-15", pricing_tier: "freemium", availability: "Web,Mobile,API", open_source: 0,
-    description: "AI-powered answer engine with real-time search",
-    sources: {
-      github: ["ppl-ai/pplx-kernels"],
-      hackernews: ["Perplexity AI", "Perplexity"],
-      smolai: ["Perplexity AI", "Perplexity"],
-      reddit: ["Perplexity AI", "Perplexity"],
-      openWebUI: ["sonar"],
-      cloudflareRadar: "perplexity.ai",
-      stackoverflow: ["perplexity"],
-      arxiv: ["Perplexity"],
-      manifoldMarkets: ["Perplexity AI"],
-      wikipedia: "Perplexity.ai",
     }
   },
   {
