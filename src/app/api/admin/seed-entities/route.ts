@@ -753,6 +753,21 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
+    id: "gpt-5-3", name: "GPT-5.3", category: "general_llm", company: "OpenAI",
+    release_date: "2026-02-14", pricing_tier: "paid", availability: "API,Web", open_source: 0,
+    description: "Latest GPT-5 series model available in Codex",
+    sources: {
+      pypi: ["openai"], npm: ["openai"],
+      github: ["openai/openai-python", "openai/openai-node"],
+      hackernews: ["GPT-5.3", "GPT 5.3"],
+      smolai: ["GPT-5.3", "GPT 5.3"],
+      reddit: ["GPT-5.3", "GPT 5.3"],
+      openRouter: "openai/gpt-5.3",
+      openWebUI: ["gpt-5.3"],
+      semanticScholar: ["OpenAI GPT-5 System Card"],
+    }
+  },
+  {
     id: "gemini-3-pro", name: "Gemini 3 Pro", category: "general_llm", company: "Google",
     release_date: "2025-10-01", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "Google flagship frontier model for high-precision multimodal reasoning",
