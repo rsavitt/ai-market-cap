@@ -26,6 +26,8 @@ export interface RawSignals {
   aaLlmIntelligence: Map<string, number>;
   aaImageArena: Map<string, number>;
   aaVideoArena: Map<string, number>;
+  lmsysArena: Map<string, number>;
+  hfLeaderboard: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
   openAlexCitations: Map<string, number>;
@@ -52,6 +54,8 @@ const SIGNAL_NAMES = [
   'aaLlmIntelligence',
   'aaImageArena',
   'aaVideoArena',
+  'lmsysArena',
+  'hfLeaderboard',
   'semanticScholarCitations',
   'openAlexCitations',
 ] as const;
@@ -276,6 +280,8 @@ function calculateConfidence(
     { map: raw.aaLlmIntelligence, applicable: !!sources?.artificialAnalysis },
     { map: raw.aaImageArena, applicable: !!sources?.artificialAnalysis },
     { map: raw.aaVideoArena, applicable: !!sources?.artificialAnalysis },
+    { map: raw.lmsysArena, applicable: !!sources?.lmsysArena },
+    { map: raw.hfLeaderboard, applicable: !!sources?.hfLeaderboard },
     { map: raw.semanticScholarCitations, applicable: true },
     { map: raw.openAlexCitations, applicable: true },
   ];
@@ -332,6 +338,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     aaLlmIntelligence: new Map(),
     aaImageArena: new Map(),
     aaVideoArena: new Map(),
+    lmsysArena: new Map(),
+    hfLeaderboard: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -356,6 +364,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     aaLlmIntelligence: raw.aaLlmIntelligence,
     aaImageArena: raw.aaImageArena,
     aaVideoArena: raw.aaVideoArena,
+    lmsysArena: raw.lmsysArena,
+    hfLeaderboard: raw.hfLeaderboard,
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
   };
@@ -465,14 +475,17 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.smolaiSignal, weight: 0.15 },
   ], entityIds);
 
-  // Capability: OpenRouter (0.30) + Groq (0.20) + AA LLM Intelligence (0.25)
-  //             + AA Image Arena (0.15) + AA Video Arena (0.10)
+  // Capability: OpenRouter (0.20) + Groq (0.15) + AA LLM Intelligence (0.20)
+  //             + AA Image Arena (0.10) + AA Video Arena (0.08)
+  //             + LMSYS Arena (0.15) + HF Leaderboard (0.12)
   const capabilityScores = combineDimension([
-    { normalized: normalizedSignals.openRouterSignal, weight: 0.30 },
-    { normalized: normalizedSignals.groqSignal, weight: 0.20 },
-    { normalized: normalizedSignals.aaLlmIntelligence, weight: 0.25 },
-    { normalized: normalizedSignals.aaImageArena, weight: 0.15 },
-    { normalized: normalizedSignals.aaVideoArena, weight: 0.10 },
+    { normalized: normalizedSignals.openRouterSignal, weight: 0.20 },
+    { normalized: normalizedSignals.groqSignal, weight: 0.15 },
+    { normalized: normalizedSignals.aaLlmIntelligence, weight: 0.20 },
+    { normalized: normalizedSignals.aaImageArena, weight: 0.10 },
+    { normalized: normalizedSignals.aaVideoArena, weight: 0.08 },
+    { normalized: normalizedSignals.lmsysArena, weight: 0.15 },
+    { normalized: normalizedSignals.hfLeaderboard, weight: 0.12 },
   ], entityIds);
 
   // Expert: Semantic Scholar (0.5) + OpenAlex (0.5)

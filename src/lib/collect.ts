@@ -15,6 +15,8 @@ import { collectArtificialAnalysis } from './collectors/artificial-analysis';
 import { collectSmolAI } from './collectors/smolai';
 import { collectOpenWebUI } from './collectors/openwebui';
 import { collectGoogleTrends } from './collectors/google-trends';
+import { collectLmsysArena } from './collectors/lmsys-arena';
+import { collectHfLeaderboard } from './collectors/hf-leaderboard';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -138,6 +140,8 @@ async function writeProvenance(
       ['aa_llm_intelligence', raw.aaLlmIntelligence],
       ['aa_image_arena', raw.aaImageArena],
       ['aa_video_arena', raw.aaVideoArena],
+      ['lmsys_arena', raw.lmsysArena],
+      ['hf_leaderboard', raw.hfLeaderboard],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
     ];
@@ -221,13 +225,15 @@ export async function runGroup2(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [hfResult, githubResult, or, orUsage, groq, aaResult] = await Promise.all([
+  const [hfResult, githubResult, or, orUsage, groq, aaResult, lmsysArena, hfLeaderboard] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
     safeCollect('openRouter', collectOpenRouter, sources),
     safeCollect('openRouterUsage', collectOpenRouterUsage, sources),
     safeCollect('groq', collectGroq, sources),
     safeCollect('artificialAnalysis', collectArtificialAnalysis, sources),
+    safeCollect('lmsysArena', collectLmsysArena, sources),
+    safeCollect('hfLeaderboard', collectHfLeaderboard, sources),
   ]);
 
   const hfSignal = hfResult?.signal ?? new Map<string, number>();
@@ -259,6 +265,8 @@ export async function runGroup2(): Promise<GroupResult> {
     ['aa_llm_intelligence', aaResult?.llmIntelligence ?? new Map()],
     ['aa_image_arena', aaResult?.imageArena ?? new Map()],
     ['aa_video_arena', aaResult?.videoArena ?? new Map()],
+    ['lmsys_arena', lmsysArena ?? new Map()],
+    ['hf_leaderboard', hfLeaderboard ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -399,6 +407,8 @@ export async function runScoring(): Promise<ScoringResult> {
     aaLlmIntelligence: new Map(),
     aaImageArena: new Map(),
     aaVideoArena: new Map(),
+    lmsysArena: new Map(),
+    hfLeaderboard: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -425,6 +435,8 @@ export async function runScoring(): Promise<ScoringResult> {
     ['aa_llm_intelligence', 'aaLlmIntelligence'],
     ['aa_image_arena', 'aaImageArena'],
     ['aa_video_arena', 'aaVideoArena'],
+    ['lmsys_arena', 'lmsysArena'],
+    ['hf_leaderboard', 'hfLeaderboard'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
     ['open_alex_citations', 'openAlexCitations'],
   ];

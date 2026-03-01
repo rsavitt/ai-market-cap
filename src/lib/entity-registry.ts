@@ -11,6 +11,8 @@ export interface EntitySources {
   semanticScholar: string[];
   groq: string | null;
   artificialAnalysis: string | null;
+  lmsysArena: string | null;
+  hfLeaderboard: string | null;
   smolai: string[];
   openWebUI: string[];
 }
@@ -43,6 +45,8 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     semanticScholar: [],
     groq: null,
     artificialAnalysis: null,
+    lmsysArena: null,
+    hfLeaderboard: null,
     smolai: [],
     openWebUI: [],
   };
@@ -82,6 +86,12 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'artificialAnalysis':
         sources.artificialAnalysis = row.source_value;
+        break;
+      case 'lmsysArena':
+        sources.lmsysArena = row.source_value;
+        break;
+      case 'hfLeaderboard':
+        sources.hfLeaderboard = row.source_value;
         break;
       case 'smolai':
         sources.smolai.push(row.source_value);
