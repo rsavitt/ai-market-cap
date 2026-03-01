@@ -6,8 +6,14 @@ export interface RawSignals {
   pypiDownloads: Map<string, number>;
   npmDownloads: Map<string, number>;
   huggingfaceSignal: Map<string, number>;
+  hfDownloads: Map<string, number>;
+  hfLikes: Map<string, number>;
+  hfDownloadsVelocity: Map<string, number>;
   openRouterUsage: Map<string, number>;
   githubStars: Map<string, number>;
+  githubForks: Map<string, number>;
+  githubClones: Map<string, number>;
+  githubViews: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
@@ -33,7 +39,8 @@ export interface EntityScores {
 
 // Signal-to-dimension mapping for counting available signals per entity
 const SIGNAL_NAMES = [
-  'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'openRouterUsage', 'githubStars',
+  'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
+  'openRouterUsage', 'githubStars', 'githubForks', 'githubClones', 'githubViews',
   'hackernewsSignal', 'redditSignal', 'smolaiSignal',
   'openRouterSignal',
   'groqSignal',
@@ -222,7 +229,8 @@ function isNewEntrant(entityId: string, entityRegistry: RegisteredEntity[]): boo
  */
 function calculateConfidence(entityId: string, raw: RawSignals): { confidence: number; lower: number; upper: number } {
   const signalMaps: Map<string, number>[] = [
-    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.openRouterUsage, raw.githubStars,
+    raw.pypiDownloads, raw.npmDownloads, raw.huggingfaceSignal, raw.hfDownloads, raw.hfLikes, raw.hfDownloadsVelocity,
+    raw.openRouterUsage, raw.githubStars, raw.githubForks, raw.githubClones, raw.githubViews,
     raw.hackernewsSignal, raw.redditSignal, raw.smolaiSignal,
     raw.openRouterSignal, raw.groqSignal,
     raw.semanticScholarCitations,
@@ -260,8 +268,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     pypiDownloads: new Map(),
     npmDownloads: new Map(),
     huggingfaceSignal: new Map(),
+    hfDownloads: new Map(),
+    hfLikes: new Map(),
+    hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
     githubStars: new Map(),
+    githubForks: new Map(),
+    githubClones: new Map(),
+    githubViews: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
@@ -275,8 +289,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     pypiDownloads: raw.pypiDownloads,
     npmDownloads: raw.npmDownloads,
     huggingfaceSignal: raw.huggingfaceSignal,
+    hfDownloads: raw.hfDownloads,
+    hfLikes: raw.hfLikes,
+    hfDownloadsVelocity: raw.hfDownloadsVelocity,
     openRouterUsage: raw.openRouterUsage,
     githubStars: raw.githubStars,
+    githubForks: raw.githubForks,
+    githubClones: raw.githubClones,
+    githubViews: raw.githubViews,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
@@ -305,13 +325,17 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Combine into dimensions ──
-  // Usage: PyPI (0.25) + npm (0.25) + HuggingFace (0.20) + OpenRouter Usage (0.20) + GitHub (0.10)
+  // Usage: PyPI (0.22) + npm (0.22) + HuggingFace (0.18) + OpenRouter Usage (0.18) + GitHub Stars (0.05)
+  //        + GitHub Forks (0.05) + GitHub Clones (0.05) + GitHub Views (0.05)
   const usageScores = combineDimension([
-    { normalized: normalizedSignals.pypiDownloads, weight: 0.25 },
-    { normalized: normalizedSignals.npmDownloads, weight: 0.25 },
-    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.20 },
-    { normalized: normalizedSignals.openRouterUsage, weight: 0.20 },
-    { normalized: normalizedSignals.githubStars, weight: 0.10 },
+    { normalized: normalizedSignals.pypiDownloads, weight: 0.22 },
+    { normalized: normalizedSignals.npmDownloads, weight: 0.22 },
+    { normalized: normalizedSignals.huggingfaceSignal, weight: 0.18 },
+    { normalized: normalizedSignals.openRouterUsage, weight: 0.18 },
+    { normalized: normalizedSignals.githubStars, weight: 0.05 },
+    { normalized: normalizedSignals.githubForks, weight: 0.05 },
+    { normalized: normalizedSignals.githubClones, weight: 0.05 },
+    { normalized: normalizedSignals.githubViews, weight: 0.05 },
   ], entityIds);
 
   // Attention: HackerNews (0.45) + Reddit (0.35) + SmolAI (0.20)

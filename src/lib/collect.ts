@@ -107,7 +107,13 @@ async function writeProvenance(
       ['pypi_downloads', raw.pypiDownloads],
       ['npm_downloads', raw.npmDownloads],
       ['huggingface_signal', raw.huggingfaceSignal],
+      ['hf_downloads', raw.hfDownloads],
+      ['hf_likes', raw.hfLikes],
+      ['hf_downloads_velocity', raw.hfDownloadsVelocity],
       ['github_stars', raw.githubStars],
+      ['github_forks', raw.githubForks],
+      ['github_clones', raw.githubClones],
+      ['github_views', raw.githubViews],
       ['hackernews_signal', raw.hackernewsSignal],
       ['reddit_signal', raw.redditSignal],
       ['smolai_signal', raw.smolaiSignal],
@@ -176,7 +182,7 @@ export async function runGroup2(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [hf, githubResult, or, orUsage, groq] = await Promise.all([
+  const [hfResult, githubResult, or, orUsage, groq] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
     safeCollect('openRouter', collectOpenRouter, sources),
@@ -184,13 +190,29 @@ export async function runGroup2(): Promise<GroupResult> {
     safeCollect('groq', collectGroq, sources),
   ]);
 
+  const hfSignal = hfResult?.signal ?? new Map<string, number>();
+  const hfDownloads = hfResult?.downloads ?? new Map<string, number>();
+  const hfLikes = hfResult?.likes ?? new Map<string, number>();
+  const hfDownloadsVelocity = hfResult?.downloadsVelocity ?? new Map<string, number>();
+
   const githubVelocity = githubResult?.velocity ?? new Map<string, number>();
   const githubAbsolute = githubResult?.absolute ?? new Map<string, number>();
+  const githubForks = githubResult?.forks ?? new Map<string, number>();
+  const githubForksVelocity = githubResult?.forksVelocity ?? new Map<string, number>();
+  const githubClones = githubResult?.clones ?? new Map<string, number>();
+  const githubViews = githubResult?.views ?? new Map<string, number>();
 
   await storeRawSignals([
-    ['huggingface_signal', hf ?? new Map()],
+    ['huggingface_signal', hfSignal],
+    ['hf_downloads', hfDownloads],
+    ['hf_likes', hfLikes],
+    ['hf_downloads_velocity', hfDownloadsVelocity],
     ['github_stars', githubAbsolute],
     ['github_stars_velocity', githubVelocity],
+    ['github_forks', githubForks],
+    ['github_forks_velocity', githubForksVelocity],
+    ['github_clones', githubClones],
+    ['github_views', githubViews],
     ['open_router_signal', or ?? new Map()],
     ['open_router_usage', orUsage ?? new Map()],
     ['groq_signal', groq ?? new Map()],
@@ -294,8 +316,14 @@ export async function runScoring(): Promise<ScoringResult> {
     pypiDownloads: new Map(),
     npmDownloads: new Map(),
     huggingfaceSignal: new Map(),
+    hfDownloads: new Map(),
+    hfLikes: new Map(),
+    hfDownloadsVelocity: new Map(),
     openRouterUsage: new Map(),
     githubStars: new Map(),
+    githubForks: new Map(),
+    githubClones: new Map(),
+    githubViews: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
@@ -309,7 +337,13 @@ export async function runScoring(): Promise<ScoringResult> {
     ['pypi_downloads', 'pypiDownloads'],
     ['npm_downloads', 'npmDownloads'],
     ['huggingface_signal', 'huggingfaceSignal'],
+    ['hf_downloads', 'hfDownloads'],
+    ['hf_likes', 'hfLikes'],
+    ['hf_downloads_velocity', 'hfDownloadsVelocity'],
     ['github_stars_velocity', 'githubStars'],
+    ['github_forks', 'githubForks'],
+    ['github_clones', 'githubClones'],
+    ['github_views', 'githubViews'],
     ['hackernews_signal', 'hackernewsSignal'],
     ['reddit_signal', 'redditSignal'],
     ['smolai_signal', 'smolaiSignal'],
