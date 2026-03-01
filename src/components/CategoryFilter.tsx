@@ -6,6 +6,7 @@ const LABELS: Record<string, string> = {
   video: "Video Gen",
   audio: "Audio",
   general_llm: "General LLMs",
+  agent_tools: "Agent Tools",
 };
 
 interface Props {

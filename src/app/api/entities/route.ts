@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       entities,
-      categories: ['coding', 'image', 'video', 'audio', 'general_llm'],
+      categories: ['coding', 'image', 'video', 'audio', 'general_llm', 'agent_tools'],
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
