@@ -23,6 +23,9 @@ export interface RawSignals {
   // capability signals
   openRouterSignal: Map<string, number>;
   groqSignal: Map<string, number>;
+  aaLlmIntelligence: Map<string, number>;
+  aaImageArena: Map<string, number>;
+  aaVideoArena: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
   openAlexCitations: Map<string, number>;
@@ -46,6 +49,9 @@ const SIGNAL_NAMES = [
   'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal',
   'openRouterSignal',
   'groqSignal',
+  'aaLlmIntelligence',
+  'aaImageArena',
+  'aaVideoArena',
   'semanticScholarCitations',
   'openAlexCitations',
 ] as const;
@@ -267,6 +273,9 @@ function calculateConfidence(
     { map: raw.googleTrendsSignal, applicable: true },
     { map: raw.openRouterSignal, applicable: !!sources?.openRouter },
     { map: raw.groqSignal, applicable: !!sources?.groq },
+    { map: raw.aaLlmIntelligence, applicable: !!sources?.artificialAnalysis },
+    { map: raw.aaImageArena, applicable: !!sources?.artificialAnalysis },
+    { map: raw.aaVideoArena, applicable: !!sources?.artificialAnalysis },
     { map: raw.semanticScholarCitations, applicable: true },
     { map: raw.openAlexCitations, applicable: true },
   ];
@@ -320,6 +329,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     googleTrendsSignal: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
+    aaLlmIntelligence: new Map(),
+    aaImageArena: new Map(),
+    aaVideoArena: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -341,6 +353,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     googleTrendsSignal: raw.googleTrendsSignal,
     openRouterSignal: raw.openRouterSignal,
     groqSignal: raw.groqSignal,
+    aaLlmIntelligence: raw.aaLlmIntelligence,
+    aaImageArena: raw.aaImageArena,
+    aaVideoArena: raw.aaVideoArena,
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
   };
@@ -385,10 +400,14 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.smolaiSignal, weight: 0.15 },
   ], entityIds);
 
-  // Capability: OpenRouter (0.6) + Groq (0.4)
+  // Capability: OpenRouter (0.30) + Groq (0.20) + AA LLM Intelligence (0.25)
+  //             + AA Image Arena (0.15) + AA Video Arena (0.10)
   const capabilityScores = combineDimension([
-    { normalized: normalizedSignals.openRouterSignal, weight: 0.6 },
-    { normalized: normalizedSignals.groqSignal, weight: 0.4 },
+    { normalized: normalizedSignals.openRouterSignal, weight: 0.30 },
+    { normalized: normalizedSignals.groqSignal, weight: 0.20 },
+    { normalized: normalizedSignals.aaLlmIntelligence, weight: 0.25 },
+    { normalized: normalizedSignals.aaImageArena, weight: 0.15 },
+    { normalized: normalizedSignals.aaVideoArena, weight: 0.10 },
   ], entityIds);
 
   // Expert: Semantic Scholar (0.5) + OpenAlex (0.5)

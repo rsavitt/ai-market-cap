@@ -10,6 +10,7 @@ export interface EntitySources {
   openRouter: string | null;
   semanticScholar: string[];
   groq: string | null;
+  artificialAnalysis: string | null;
   smolai: string[];
   openWebUI: string[];
 }
@@ -41,6 +42,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     openRouter: null,
     semanticScholar: [],
     groq: null,
+    artificialAnalysis: null,
     smolai: [],
     openWebUI: [],
   };
@@ -77,6 +79,9 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         break;
       case 'groq':
         sources.groq = row.source_value;
+        break;
+      case 'artificialAnalysis':
+        sources.artificialAnalysis = row.source_value;
         break;
       case 'smolai':
         sources.smolai.push(row.source_value);

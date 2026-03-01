@@ -11,6 +11,7 @@ import { collectOpenRouter, collectOpenRouterUsage } from './collectors/open-rou
 import { collectSemanticScholar } from './collectors/semantic-scholar';
 import { collectOpenAlex } from './collectors/openalex';
 import { collectGroq } from './collectors/groq';
+import { collectArtificialAnalysis } from './collectors/artificial-analysis';
 import { collectSmolAI } from './collectors/smolai';
 import { collectOpenWebUI } from './collectors/openwebui';
 import { collectGoogleTrends } from './collectors/google-trends';
@@ -134,6 +135,9 @@ async function writeProvenance(
       ['open_router_usage', raw.openRouterUsage],
       ['openwebui_usage', raw.openWebUIUsage],
       ['groq_signal', raw.groqSignal],
+      ['aa_llm_intelligence', raw.aaLlmIntelligence],
+      ['aa_image_arena', raw.aaImageArena],
+      ['aa_video_arena', raw.aaVideoArena],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
     ];
@@ -217,12 +221,13 @@ export async function runGroup2(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [hfResult, githubResult, or, orUsage, groq] = await Promise.all([
+  const [hfResult, githubResult, or, orUsage, groq, aaResult] = await Promise.all([
     safeCollect('huggingface', collectHuggingFace, sources),
     safeCollect('github', collectGitHub, sources),
     safeCollect('openRouter', collectOpenRouter, sources),
     safeCollect('openRouterUsage', collectOpenRouterUsage, sources),
     safeCollect('groq', collectGroq, sources),
+    safeCollect('artificialAnalysis', collectArtificialAnalysis, sources),
   ]);
 
   const hfSignal = hfResult?.signal ?? new Map<string, number>();
@@ -251,6 +256,9 @@ export async function runGroup2(): Promise<GroupResult> {
     ['open_router_signal', or ?? new Map()],
     ['open_router_usage', orUsage ?? new Map()],
     ['groq_signal', groq ?? new Map()],
+    ['aa_llm_intelligence', aaResult?.llmIntelligence ?? new Map()],
+    ['aa_image_arena', aaResult?.imageArena ?? new Map()],
+    ['aa_video_arena', aaResult?.videoArena ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -388,6 +396,9 @@ export async function runScoring(): Promise<ScoringResult> {
     googleTrendsSignal: new Map(),
     openRouterSignal: new Map(),
     groqSignal: new Map(),
+    aaLlmIntelligence: new Map(),
+    aaImageArena: new Map(),
+    aaVideoArena: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
   };
@@ -411,6 +422,9 @@ export async function runScoring(): Promise<ScoringResult> {
     ['open_router_signal', 'openRouterSignal'],
     ['open_router_usage', 'openRouterUsage'],
     ['groq_signal', 'groqSignal'],
+    ['aa_llm_intelligence', 'aaLlmIntelligence'],
+    ['aa_image_arena', 'aaImageArena'],
+    ['aa_video_arena', 'aaVideoArena'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
     ['open_alex_citations', 'openAlexCitations'],
   ];
