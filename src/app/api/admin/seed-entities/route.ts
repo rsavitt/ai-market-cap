@@ -123,7 +123,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "windsurf", name: "Windsurf", category: "coding", company: "Codeium",
+    id: "windsurf", name: "Windsurf", category: "coding", company: "Cognition",
     release_date: "2024-11-13", pricing_tier: "freemium", availability: "IDE", open_source: 0,
     description: "Agentic IDE with Cascade flow system",
     sources: {
@@ -168,6 +168,9 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Devin AI", "Cognition Devin"],
       cloudflareRadar: "devin.ai",
       stackoverflow: ["devin-ai"],
+      wikipedia: "Devin_(software)",
+      arxiv: ["Devin AI"],
+      manifoldMarkets: ["Devin AI"],
     }
   },
 
@@ -370,15 +373,15 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "minimax-video", name: "Minimax Video-01", category: "video", company: "MiniMax",
+    id: "minimax-video", name: "Minimax Video-01 / HaiLuo", category: "video", company: "MiniMax",
     release_date: "2024-12-05", pricing_tier: "freemium", availability: "Web,API", open_source: 0,
-    description: "Long-form video generation with HaiLuo",
+    description: "Long-form video generation platform (consumer brand: HaiLuo AI)",
     sources: {
-      hackernews: ["MiniMax video", "MiniMax AI"],
-      smolai: ["MiniMax video", "MiniMax AI"],
-      reddit: ["MiniMax AI"],
-      cloudflareRadar: "minimax.io",
-      stackoverflow: ["minimax-video"],
+      hackernews: ["MiniMax video", "MiniMax AI", "HaiLuo"],
+      smolai: ["MiniMax video", "MiniMax AI", "HaiLuo"],
+      reddit: ["MiniMax AI", "HaiLuo AI"],
+      cloudflareRadar: "hailuoai.video",
+      stackoverflow: ["minimax-video", "hailuo"],
     }
   },
   {
@@ -391,18 +394,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Luma Dream Machine", "Luma AI"],
       cloudflareRadar: "lumalabs.ai",
       stackoverflow: ["luma-ai"],
-    }
-  },
-  {
-    id: "hailuo-ai", name: "HaiLuo AI", category: "video", company: "MiniMax",
-    release_date: "2024-09-22", pricing_tier: "free", availability: "Web", open_source: 0,
-    description: "Free video generation with long clip support",
-    sources: {
-      hackernews: ["HaiLuo"],
-      smolai: ["HaiLuo"],
-      reddit: ["HaiLuo AI"],
-      cloudflareRadar: "hailuoai.video",
-      stackoverflow: ["hailuo"],
     }
   },
   {
@@ -490,9 +481,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "notebooklm", name: "NotebookLM", category: "audio", company: "Google",
+    id: "notebooklm", name: "NotebookLM", category: "app", company: "Google",
     release_date: "2024-09-11", pricing_tier: "free", availability: "Web", open_source: 0,
-    description: "AI research assistant with audio overview podcasts",
+    description: "AI research assistant with source-grounded answers and audio overviews",
     sources: {
       hackernews: ["NotebookLM"],
       smolai: ["NotebookLM"],
@@ -640,19 +631,6 @@ const SEED_ENTITIES: SeedEntity[] = [
       arxiv: ["Manus AI"],
       semanticScholar: ["From Mind to Machine: The Rise of Manus AI as a Fully Autonomous Digital Agent"],
       manifoldMarkets: ["Manus AI"],
-    }
-  },
-  {
-    id: "devin", name: "Devin", category: "agent_tools", company: "Cognition",
-    release_date: "2024-12-10", pricing_tier: "paid", availability: "Web", open_source: 0,
-    description: "Autonomous AI software engineering agent",
-    sources: {
-      hackernews: ["Devin AI", "Cognition Devin"],
-      smolai: ["Devin AI", "Cognition Devin"],
-      reddit: ["Devin AI", "Cognition Devin"],
-      cloudflareRadar: "devin.ai",
-      wikipedia: "Devin AI",
-      manifoldMarkets: ["Devin AI"],
     }
   },
 
@@ -815,7 +793,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/mistral-large",
       lmsysArena: "mistral-large-2407",
       hfLeaderboard: "mistralai/Mistral-Large-Instruct-2411",
-      semanticScholar: ["Mistral 7B"],
+      semanticScholar: ["Mistral Large 2"],
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral"],
       modelscope: ["AI-ModelScope/Mistral-Large-Instruct-2411"],
@@ -895,7 +873,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT-4.5"],
       reddit: ["GPT-4.5", "GPT 4.5"],
       lmsysArena: "gpt-4.5-preview-2025-02-27",
-      semanticScholar: ["GPT-4 Technical Report"],
+      semanticScholar: ["GPT-4.5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.5", "openai-api"],
       arxiv: ["GPT-4.5"],
@@ -1033,7 +1011,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "meta-llama/llama-4-scout",
       groq: "meta-llama/llama-4-scout-17b-16e-instruct",
       lmsysArena: "llama-4-scout-17b-16e-instruct",
-      semanticScholar: ["The Llama 3 Herd of Models"],
+      semanticScholar: ["Llama 4 Multimodal Models"],
       ollama: ["llama4-scout"],
       stackoverflow: ["llama", "meta-llama"],
       arxiv: ["Llama 4 Scout","Llama 4"],
@@ -1076,7 +1054,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/o3",
       openWebUI: ["o3"],
       lmsysArena: "o3-2025-04-16",
-      semanticScholar: ["OpenAI o1 System Card"],
+      semanticScholar: ["OpenAI o3 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-o3", "openai-api"],
       arxiv: ["OpenAI o3"],
@@ -1095,7 +1073,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["o3-mini", "o3 mini"],
       openRouter: "openai/o3-mini",
       lmsysArena: "o3-mini",
-      semanticScholar: ["OpenAI o1 System Card"],
+      semanticScholar: ["OpenAI o3-mini System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["o3-mini", "openai-api"],
       arxiv: ["o3-mini","o3 mini"],
@@ -1123,7 +1101,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "gpt-5-3-codex", name: "GPT-5.3-Codex", category: "general_llm", company: "OpenAI",
+    id: "gpt-5-3-codex", name: "GPT-5.3-Codex", category: "coding", company: "OpenAI",
     release_date: "2026-02-05", pricing_tier: "paid", availability: "API,Web,CLI,IDE", open_source: 0,
     description: "Most capable agentic coding model, 25% faster than GPT-5.2-Codex with broader knowledge work capabilities",
     sources: {
@@ -1142,7 +1120,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     }
   },
   {
-    id: "gpt-5-3-codex-spark", name: "GPT-5.3-Codex-Spark", category: "general_llm", company: "OpenAI",
+    id: "gpt-5-3-codex-spark", name: "GPT-5.3-Codex-Spark", category: "coding", company: "OpenAI",
     release_date: "2026-02-12", pricing_tier: "paid", availability: "API,Web,CLI,IDE", open_source: 0,
     description: "Smaller real-time coding variant of GPT-5.3-Codex for interactive development",
     sources: {
@@ -1214,7 +1192,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/mistral-large-2512",
       openWebUI: ["mistral-large-3"],
       lmsysArena: "mistral-large-3",
-      semanticScholar: ["Mistral 7B"],
+      semanticScholar: ["Mistral Large 3"],
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral-large"],
       stackoverflow: ["mistral", "mistral-ai"],
@@ -1408,7 +1386,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-4.1",
       openWebUI: ["gpt-4.1"],
       lmsysArena: "gpt-4.1-2025-04-14",
-      semanticScholar: ["GPT-4 Technical Report"],
+      semanticScholar: ["GPT-4.1 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.1", "openai-api"],
       arxiv: ["GPT-4.1"],
@@ -1428,7 +1406,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-4.1-mini",
       openWebUI: ["gpt-4.1-mini"],
       lmsysArena: "gpt-4.1-mini-2025-04-14",
-      semanticScholar: ["GPT-4 Technical Report"],
+      semanticScholar: ["GPT-4.1 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-4.1", "openai-api"],
       arxiv: ["GPT-4.1 Mini","GPT-4.1"],
@@ -1610,7 +1588,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "meta-llama/llama-4-maverick",
       groq: "meta-llama/llama-4-maverick-17b-128e-instruct",
       lmsysArena: "llama-4-maverick-17b-128e-instruct",
-      semanticScholar: ["The Llama 3 Herd of Models"],
+      semanticScholar: ["Llama 4 Multimodal Models"],
       ollama: ["llama4-maverick"],
       stackoverflow: ["llama", "meta-llama"],
       arxiv: ["Llama 4 Maverick","Llama 4"],
@@ -1657,11 +1635,13 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI GPT-5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-5", "openai-api"],
+      arxiv: ["GPT-5.1"],
+      manifoldMarkets: ["GPT-5.1"],
     }
   },
   // OpenAI - GPT-5.1-Codex-Max
   {
-    id: "gpt-5-1-codex-max", name: "GPT-5.1-Codex-Max", category: "general_llm", company: "OpenAI",
+    id: "gpt-5-1-codex-max", name: "GPT-5.1-Codex-Max", category: "coding", company: "OpenAI",
     release_date: "2025-11-19", pricing_tier: "paid", availability: "API,Web", open_source: 0,
     description: "Extended thinking Codex variant of GPT-5.1 for complex coding tasks",
     sources: {
@@ -1674,11 +1654,13 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["OpenAI GPT-5 System Card"],
       cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-codex"],
+      arxiv: ["GPT-5.1-Codex"],
+      manifoldMarkets: ["GPT-5.1 Codex"],
     }
   },
   // OpenAI - GPT-5.2-Codex
   {
-    id: "gpt-5-2-codex", name: "GPT-5.2-Codex", category: "general_llm", company: "OpenAI",
+    id: "gpt-5-2-codex", name: "GPT-5.2-Codex", category: "coding", company: "OpenAI",
     release_date: "2025-12-11", pricing_tier: "paid", availability: "API,Web", open_source: 0,
     description: "Coding-specialized variant of GPT-5.2 for agentic development",
     sources: {
@@ -1690,7 +1672,10 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "openai/gpt-5.2-codex",
       openWebUI: ["gpt-5.2-codex"],
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-codex"],
+      arxiv: ["GPT-5.2-Codex"],
+      manifoldMarkets: ["GPT-5.2 Codex"],
     }
   },
   // OpenAI - GPT-5.2-Pro
@@ -1708,7 +1693,10 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gpt-5.2-pro"],
       lmsysArena: "gpt-5.2-high",
       semanticScholar: ["OpenAI GPT-5 System Card"],
+      cloudflareRadar: "chatgpt.com",
       stackoverflow: ["gpt-5", "openai-api"],
+      arxiv: ["GPT-5.2"],
+      manifoldMarkets: ["GPT-5.2 Pro"],
     }
   },
   // OpenAI - GPT Audio
@@ -1723,7 +1711,9 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT Audio", "gpt-audio"],
       reddit: ["GPT Audio", "gpt-audio"],
       openRouter: "openai/gpt-audio",
+      cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-audio"],
+      arxiv: ["GPT Audio"],
     }
   },
   // OpenAI - GPT Audio Mini
@@ -1738,6 +1728,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["GPT Audio Mini", "gpt-audio-mini"],
       reddit: ["GPT Audio Mini", "gpt-audio-mini"],
       openRouter: "openai/gpt-audio-mini",
+      cloudflareRadar: "chatgpt.com",
       stackoverflow: ["openai-audio"],
     }
   },
@@ -1748,6 +1739,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2026-02-26", pricing_tier: "freemium", availability: "API,Web", open_source: 0,
     description: "Fast lightweight Gemini 3.1 variant with image generation capabilities",
     sources: {
+      pypi: ["google-generativeai"], npm: ["@google/generative-ai"],
       github: ["google-gemini/generative-ai-python"],
       hackernews: ["Gemini 3.1 Flash"],
       smolai: ["Gemini 3.1 Flash"],
@@ -1756,6 +1748,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["gemini-3.1-flash"],
       semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       stackoverflow: ["gemini-api"],
+      arxiv: ["Gemini 3.1 Flash"],
     }
   },
 
@@ -1773,6 +1766,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral"],
       stackoverflow: ["mistral"],
+      arxiv: ["Ministral"],
     }
   },
   // Mistral - Ministral 8B
@@ -1791,6 +1785,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral:8b"],
       stackoverflow: ["mistral"],
+      arxiv: ["Ministral"],
     }
   },
   // Mistral - Ministral 3B
@@ -1807,11 +1802,12 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral:3b"],
       stackoverflow: ["mistral"],
+      arxiv: ["Ministral"],
     }
   },
   // Mistral - Devstral 2
   {
-    id: "devstral-2", name: "Devstral 2", category: "general_llm", company: "Mistral AI",
+    id: "devstral-2", name: "Devstral 2", category: "coding", company: "Mistral AI",
     release_date: "2025-12-09", pricing_tier: "freemium", availability: "API", open_source: 1,
     description: "123B dense coding model with 256K context, 73% on SWE-bench Verified",
     sources: {
@@ -1823,6 +1819,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["devstral"],
       stackoverflow: ["mistral", "devstral"],
+      arxiv: ["Devstral"],
     }
   },
   // Mistral - Mistral Small Creative
@@ -1857,6 +1854,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       ollama: ["qwen3.5:397b"],
       modelscope: ["Qwen/Qwen3.5-397B-A17B"],
       stackoverflow: ["qwen"],
+      arxiv: ["Qwen3.5","Qwen 3.5"],
+      manifoldMarkets: ["Qwen 3.5"],
     }
   },
   {
@@ -1928,7 +1927,7 @@ const SEED_ENTITIES: SeedEntity[] = [
   },
   // Qwen 3 - Coder Next / Max Thinking
   {
-    id: "qwen3-coder-next", name: "Qwen 3 Coder Next", category: "general_llm", company: "Alibaba",
+    id: "qwen3-coder-next", name: "Qwen 3 Coder Next", category: "coding", company: "Alibaba",
     release_date: "2025-12-01", pricing_tier: "freemium", availability: "API", open_source: 0,
     description: "Alibaba coding-specialized model built on Qwen 3 architecture",
     sources: {
@@ -1965,6 +1964,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "deepseek-v3.2-exp",
       cloudflareRadar: "deepseek.com",
       stackoverflow: ["deepseek"],
+      arxiv: ["DeepSeek-V3"],
     }
   },
 
@@ -2021,6 +2021,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "minimax-m2.1-preview",
       cloudflareRadar: "minimax.io",
       stackoverflow: ["minimax"],
+      arxiv: ["MiniMax"],
     }
   },
 
@@ -2031,12 +2032,14 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "400B open-weight model with 200K context, 73.8% SWE-bench Verified",
     sources: {
       github: ["THUDM/GLM-4"],
+      huggingface: ["THUDM/GLM-4.7-400B-A40B-Instruct"],
       hackernews: ["GLM-4.7", "GLM 4.7"],
       smolai: ["GLM-4.7", "GLM 4.7"],
       reddit: ["GLM-4.7", "GLM 4.7"],
       openRouter: "z-ai/glm-4.7",
       lmsysArena: "glm-4.7",
       stackoverflow: ["glm", "chatglm"],
+      arxiv: ["GLM-4.7","GLM 4.7"],
     }
   },
   {
@@ -2050,6 +2053,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "z-ai/glm-4.7-flash",
       lmsysArena: "glm-4.7-flash",
       stackoverflow: ["glm", "chatglm"],
+      arxiv: ["GLM-4.7"],
     }
   },
 

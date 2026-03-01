@@ -509,7 +509,7 @@ describe('computeScores', () => {
   // ── Composite total ──
 
   describe('composite total', () => {
-    it('total equals 0.30*usage + 0.30*attention + 0.25*capability + 0.15*expert (with confidence discount)', async () => {
+    it('total equals 0.25*usage + 0.30*attention + 0.25*capability + 0.20*expert (with confidence discount)', async () => {
       const entities = [
         makeEntity('a', 'llm', 'Co1', '2025-05-01'),
         makeEntity('b', 'llm', 'Co2', '2025-05-01'),
@@ -528,8 +528,8 @@ describe('computeScores', () => {
 
       for (const id of ['a', 'b', 'c']) {
         const s = scores.get(id)!;
-        const rawTotal = 0.30 * s.usage_score + 0.30 * s.attention_score
-          + 0.25 * s.capability_score + 0.15 * s.expert_score;
+        const rawTotal = 0.25 * s.usage_score + 0.30 * s.attention_score
+          + 0.25 * s.capability_score + 0.20 * s.expert_score;
         // total = rawTotal * confidenceDiscount, so total <= rawTotal
         // Since confidence discount = 0.6 + 0.4 * confidence:
         const expectedDiscount = 0.6 + 0.4 * s.confidence;

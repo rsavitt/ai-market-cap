@@ -654,7 +654,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
         const attention = attentionScores.get(id) ?? 5;
         const capability = capabilityScores.get(id) ?? 5;
         const expert = expertScores.get(id) ?? 5;
-        totals.push(0.30 * usage + 0.30 * attention + 0.25 * capability + 0.15 * expert);
+        totals.push(0.25 * usage + 0.30 * attention + 0.25 * capability + 0.20 * expert);
       }
     }
     totals.sort((a, b) => a - b);
@@ -669,7 +669,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     const capability = capabilityScores.get(id) ?? 5;
     const expert = expertScores.get(id) ?? 5;
 
-    let total = Math.round((0.30 * usage + 0.30 * attention + 0.25 * capability + 0.15 * expert) * 100) / 100;
+    let total = Math.round((0.25 * usage + 0.30 * attention + 0.25 * capability + 0.20 * expert) * 100) / 100;
 
     // New entrants start at category median
     if (isNewEntrant(id, entityRegistry) && entity) {
