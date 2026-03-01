@@ -39,6 +39,7 @@ function makeEntity(id: string, stackoverflow: string[] | null) {
       manifoldMarkets: [],
       wikipedia: null,
       dockerHub: null,
+      modelscope: null,
     },
   };
 }

@@ -24,6 +24,7 @@ import { collectArxiv } from './collectors/arxiv';
 import { collectManifoldMarkets } from './collectors/manifold-markets';
 import { collectWikipediaPageviews } from './collectors/wikipedia-pageviews';
 import { collectDockerHub } from './collectors/docker-hub';
+import { collectModelScope } from './collectors/modelscope';
 import { detectVelocityAnomaly } from './anomaly';
 
 /**
@@ -148,6 +149,7 @@ async function writeProvenance(
       ['cloudflare_radar', raw.cloudflareRadar],
       ['ollama_signal', raw.ollamaSignal],
       ['docker_hub_pulls', raw.dockerHubPulls],
+      ['modelscope_signal', raw.modelscopeSignal],
       ['groq_signal', raw.groqSignal],
       ['aa_llm_intelligence', raw.aaLlmIntelligence],
       ['aa_image_arena', raw.aaImageArena],
@@ -190,7 +192,7 @@ export async function runGroup1(): Promise<GroupResult> {
 
   await ensureDb();
 
-  const [pypi, npm, hn, smolai, googleTrends, cfRadar, ollama, stackoverflow, wiki, docker] = await Promise.all([
+  const [pypi, npm, hn, smolai, googleTrends, cfRadar, ollama, stackoverflow, wiki, docker, modelscope] = await Promise.all([
     safeCollect('pypi', collectPyPI, sources),
     safeCollect('npm', collectNpm, sources),
     safeCollect('hackernews', collectHackerNews, sources),
@@ -201,6 +203,7 @@ export async function runGroup1(): Promise<GroupResult> {
     safeCollect('stackoverflow', collectStackOverflow, sources),
     safeCollect('wikipediaPageviews', collectWikipediaPageviews, sources),
     safeCollect('dockerHub', collectDockerHub, sources),
+    safeCollect('modelscope', collectModelScope, sources),
   ]);
 
   await storeRawSignals([
@@ -214,6 +217,7 @@ export async function runGroup1(): Promise<GroupResult> {
     ['stackoverflow_signal', stackoverflow ?? new Map()],
     ['wikipedia_pageviews', wiki ?? new Map()],
     ['docker_hub_pulls', docker ?? new Map()],
+    ['modelscope_signal', modelscope ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -271,6 +275,25 @@ export async function runGroup1StackOverflow(): Promise<GroupResult> {
 
   await storeRawSignals([
     ['stackoverflow_signal', stackoverflow ?? new Map()],
+  ], today);
+
+  return { date: today, sources, durationMs: Date.now() - start };
+}
+
+/**
+ * Group 1 sub-collector: ModelScope standalone
+ */
+export async function runGroup1ModelScope(): Promise<GroupResult> {
+  const start = Date.now();
+  const today = new Date().toISOString().split('T')[0];
+  const sources: Record<string, { count: number; error?: string }> = {};
+
+  await ensureDb();
+
+  const modelscope = await safeCollect('modelscope', collectModelScope, sources);
+
+  await storeRawSignals([
+    ['modelscope_signal', modelscope ?? new Map()],
   ], today);
 
   return { date: today, sources, durationMs: Date.now() - start };
@@ -508,6 +531,7 @@ export async function runScoring(): Promise<ScoringResult> {
     githubClones: new Map(),
     githubViews: new Map(),
     dockerHubPulls: new Map(),
+    modelscopeSignal: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
@@ -538,6 +562,7 @@ export async function runScoring(): Promise<ScoringResult> {
     ['cloudflare_radar', 'cloudflareRadar'],
     ['ollama_signal', 'ollamaSignal'],
     ['docker_hub_pulls', 'dockerHubPulls'],
+    ['modelscope_signal', 'modelscopeSignal'],
     ['github_stars_velocity', 'githubStars'],
     ['github_forks', 'githubForks'],
     ['github_clones', 'githubClones'],

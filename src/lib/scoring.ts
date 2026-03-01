@@ -18,6 +18,7 @@ export interface RawSignals {
   cloudflareRadar: Map<string, number>;
   ollamaSignal: Map<string, number>;
   dockerHubPulls: Map<string, number>;
+  modelscopeSignal: Map<string, number>;
   // attention signals
   hackernewsSignal: Map<string, number>;
   redditSignal: Map<string, number>;
@@ -56,6 +57,7 @@ const SIGNAL_NAMES = [
   'pypiDownloads', 'npmDownloads', 'huggingfaceSignal', 'hfDownloads', 'hfLikes', 'hfDownloadsVelocity',
   'openRouterUsage', 'openWebUIUsage', 'cloudflareRadar', 'ollamaSignal', 'githubStars', 'githubForks',
   'dockerHubPulls',
+  'modelscopeSignal',
   'hackernewsSignal', 'redditSignal', 'smolaiSignal', 'googleTrendsSignal', 'stackoverflowSignal',
   'wikipediaPageviews',
   'openRouterSignal',
@@ -198,17 +200,23 @@ function normalizeWithinCategory(
  * Combine multiple normalized signals with sub-weights into a dimension score.
  * Enforces 30% source cap only when 3+ sources contribute for an entity.
  * With 1-2 sources, signals use their full normalized weight.
+ *
+ * maxSignals: optional cap on how many signals can contribute per entity.
+ * When an entity has more contributing signals than the cap, only the top N
+ * by weighted contribution (value × weight) are kept. This prevents
+ * open-weight models from dominating usage via sheer signal breadth.
  */
 function combineDimension(
   signals: { normalized: Map<string, number>; weight: number }[],
   entityIds: string[],
+  maxSignals?: number,
 ): Map<string, number> {
   const result = new Map<string, number>();
   const SOURCE_CAP = 0.30;
 
   for (const id of entityIds) {
     let totalWeight = 0;
-    const contributions: { value: number; weight: number }[] = [];
+    let contributions: { value: number; weight: number }[] = [];
 
     for (const signal of signals) {
       const val = signal.normalized.get(id);
@@ -221,6 +229,13 @@ function combineDimension(
     if (totalWeight === 0) {
       result.set(id, 5); // baseline for no data
       continue;
+    }
+
+    // Cap number of contributing signals — keep top N by contribution
+    if (maxSignals !== undefined && contributions.length > maxSignals) {
+      contributions.sort((a, b) => (b.value * b.weight) - (a.value * a.weight));
+      contributions = contributions.slice(0, maxSignals);
+      totalWeight = contributions.reduce((sum, c) => sum + c.weight, 0);
     }
 
     // Only apply the 30% source cap when 3+ sources contribute
@@ -318,6 +333,7 @@ function calculateConfidence(
     { map: raw.githubStars, applicable: !!sources?.github?.length },
     { map: raw.githubForks, applicable: !!sources?.github?.length },
     { map: raw.dockerHubPulls, applicable: !!sources?.dockerHub?.length },
+    { map: raw.modelscopeSignal, applicable: !!sources?.modelscope?.length },
     // Universal signals — always applicable
     { map: raw.hackernewsSignal, applicable: true },
     { map: raw.redditSignal, applicable: true },
@@ -384,6 +400,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: new Map(),
     githubForks: new Map(),
     dockerHubPulls: new Map(),
+    modelscopeSignal: new Map(),
     hackernewsSignal: new Map(),
     redditSignal: new Map(),
     smolaiSignal: new Map(),
@@ -417,6 +434,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     githubStars: raw.githubStars,
     githubForks: raw.githubForks,
     dockerHubPulls: raw.dockerHubPulls,
+    modelscopeSignal: raw.modelscopeSignal,
     hackernewsSignal: raw.hackernewsSignal,
     redditSignal: raw.redditSignal,
     smolaiSignal: raw.smolaiSignal,
@@ -455,6 +473,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       { signal: 'cloudflareRadar', getSourceKeys: (s) => s.cloudflareRadar ? [s.cloudflareRadar] : null },
       { signal: 'stackoverflowSignal', getSourceKeys: (s) => s.stackoverflow },
       { signal: 'dockerHubPulls', getSourceKeys: (s) => s.dockerHub },
+      { signal: 'modelscopeSignal', getSourceKeys: (s) => s.modelscope },
     ];
 
     for (const { signal, getSourceKeys } of deduplicationConfig) {
@@ -505,25 +524,28 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   }
 
   // ── Outlier clipping ──
-  // Clip extreme values to the 95th percentile within each category.
-  // Prevents cheap/free-tier models from dominating usage via automated
-  // batch traffic (e.g. MiniMax on OpenRouter with 22x the median tokens).
+  // Clip extreme values within each category to prevent cheap/free-tier
+  // models from dominating via automated batch traffic.
+  // OpenRouter usage uses P75 because token volume correlates with price
+  // (cheap models accumulate 10-100x more tokens from batch jobs).
   {
-    const signalsToClip: SignalName[] = ['openRouterUsage'];
-    for (const signalName of signalsToClip) {
+    const signalsToClip: { signal: SignalName; percentile: number }[] = [
+      { signal: 'openRouterUsage', percentile: 0.75 },
+    ];
+    for (const { signal: signalName, percentile } of signalsToClip) {
       const rawMap = signalToRaw[signalName];
       for (const [category, catIds] of Object.entries(categoriesMap)) {
         const vals = catIds
           .map(id => rawMap.get(id) ?? 0)
           .filter(v => v > 0)
           .sort((a, b) => a - b);
-        if (vals.length < 5) continue; // need enough data for percentile to be meaningful
-        const p95Index = Math.floor(vals.length * 0.95);
-        const p95 = vals[p95Index];
+        if (vals.length < 5) continue;
+        const clipIndex = Math.floor(vals.length * percentile);
+        const clipVal = vals[clipIndex];
         for (const id of catIds) {
           const v = rawMap.get(id);
-          if (v !== undefined && v > p95) {
-            rawMap.set(id, p95);
+          if (v !== undefined && v > clipVal) {
+            rawMap.set(id, clipVal);
           }
         }
       }
@@ -567,7 +589,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.githubStars, weight: 0.08 },
     { normalized: normalizedSignals.githubForks, weight: 0.08 },
     { normalized: normalizedSignals.dockerHubPulls, weight: 0.05 },
-  ], entityIds);
+    { normalized: normalizedSignals.modelscopeSignal, weight: 0.04 },
+  ], entityIds, 8);
 
   // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
   const attentionScores = combineDimension([

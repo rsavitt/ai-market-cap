@@ -22,6 +22,7 @@ export interface EntitySources {
   manifoldMarkets: string[];
   wikipedia: string | null;
   dockerHub: string[] | null;
+  modelscope: string[] | null;
 }
 
 export interface RegisteredEntity {
@@ -63,6 +64,7 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
     manifoldMarkets: [],
     wikipedia: null,
     dockerHub: null,
+    modelscope: null,
   };
 
   for (const row of rows) {
@@ -136,6 +138,10 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
       case 'dockerHub':
         if (!sources.dockerHub) sources.dockerHub = [];
         sources.dockerHub.push(row.source_value);
+        break;
+      case 'modelscope':
+        if (!sources.modelscope) sources.modelscope = [];
+        sources.modelscope.push(row.source_value);
         break;
     }
   }

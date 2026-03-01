@@ -88,6 +88,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["DeepSeek-Coder-V2"],
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-coder-v2"],
+      modelscope: ["deepseek-ai/DeepSeek-Coder-V2-Instruct"],
       stackoverflow: ["deepseek-coder"],
       arxiv: ["DeepSeek Coder","DeepSeek-Coder"],
       manifoldMarkets: ["DeepSeek Coder"],
@@ -221,6 +222,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       pypi: ["diffusers"],
       github: ["Stability-AI/StableDiffusion", "Stability-AI/generative-models"],
       huggingface: ["stabilityai/stable-diffusion-3.5-large"],
+      modelscope: ["AI-ModelScope/stable-diffusion-3.5-large"],
       hackernews: ["Stable Diffusion 3", "Stable Diffusion"],
       smolai: ["Stable Diffusion 3", "Stable Diffusion"],
       reddit: ["Stable Diffusion 3.5", "SD3.5"],
@@ -505,12 +507,16 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-11-15", pricing_tier: "free", availability: "CLI,Web", open_source: 1,
     description: "Open-source autonomous AI agent for messaging platforms",
     sources: {
-      github: ["psteinerx/openclaw"],
+      github: ["openclaw/openclaw"],
+      npm: ["openclaw"],
       hackernews: ["OpenClaw", "Clawdbot", "Moltbot"],
       smolai: ["OpenClaw", "Clawdbot"],
       reddit: ["OpenClaw", "openclaw agent"],
       cloudflareRadar: "openclaw.ai",
       stackoverflow: ["openclaw"],
+      wikipedia: "OpenClaw",
+      dockerHub: ["1panel/openclaw", "alpine/openclaw"],
+      manifoldMarkets: ["OpenClaw"],
     }
   },
   {
@@ -522,6 +528,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Hermes Agent", "Nous Research agent"],
       smolai: ["Hermes Agent"],
       reddit: ["Hermes Agent", "Nous Research Hermes"],
+      cloudflareRadar: "nousresearch.com",
       stackoverflow: ["hermes-agent"],
     }
   },
@@ -537,6 +544,10 @@ const SEED_ENTITIES: SeedEntity[] = [
       pypi: ["autogpt"],
       stackoverflow: ["autogpt", "auto-gpt"],
       wikipedia: "Auto-GPT",
+      dockerHub: ["significantgravitas/auto-gpt"],
+      cloudflareRadar: "agpt.co",
+      arxiv: ["AutoGPT", "Auto-GPT"],
+      manifoldMarkets: ["AutoGPT"],
     }
   },
   {
@@ -549,6 +560,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["CrewAI"],
       smolai: ["CrewAI"],
       reddit: ["CrewAI"],
+      cloudflareRadar: "crewai.com",
       stackoverflow: ["crewai"],
     }
   },
@@ -559,11 +571,15 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       github: ["langchain-ai/langchain"],
       pypi: ["langchain"],
-      npm: ["langchain"],
+      npm: ["langchain", "@langchain/langgraph"],
       hackernews: ["LangChain agents", "LangChain"],
       smolai: ["LangChain agents"],
       reddit: ["LangChain agents"],
+      cloudflareRadar: "langchain.com",
       stackoverflow: ["langchain", "langchain-agents"],
+      wikipedia: "LangChain",
+      dockerHub: ["langchain/langchain", "langchain/langgraph-api"],
+      manifoldMarkets: ["LangChain"],
     }
   },
   {
@@ -572,12 +588,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "Multi-agent conversation framework by Microsoft Research",
     sources: {
       github: ["microsoft/autogen"],
-      pypi: ["autogen", "pyautogen"],
+      pypi: ["autogen", "pyautogen", "autogen-agentchat"],
       hackernews: ["AutoGen", "Microsoft AutoGen"],
       smolai: ["AutoGen"],
       reddit: ["AutoGen"],
       semanticScholar: ["AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation"],
       stackoverflow: ["autogen", "pyautogen"],
+      arxiv: ["AutoGen", "Microsoft AutoGen"],
     }
   },
   {
@@ -587,10 +604,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       github: ["openai/openai-agents-python"],
       pypi: ["openai-agents"],
+      npm: ["@openai/agents"],
       hackernews: ["OpenAI Agents SDK"],
       smolai: ["OpenAI Agents SDK"],
       reddit: ["OpenAI Agents SDK"],
+      cloudflareRadar: "openai.com",
       stackoverflow: ["openai-agents"],
+      manifoldMarkets: ["OpenAI Agents SDK"],
     }
   },
   {
@@ -603,6 +623,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Browser Use", "browser-use"],
       smolai: ["Browser Use"],
       reddit: ["Browser Use", "browser-use"],
+      cloudflareRadar: "browser-use.com",
       stackoverflow: ["browser-use"],
     }
   },
@@ -615,6 +636,10 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Manus AI"],
       reddit: ["Manus AI"],
       cloudflareRadar: "manus.im",
+      wikipedia: "Manus (AI agent)",
+      arxiv: ["Manus AI"],
+      semanticScholar: ["From Mind to Machine: The Rise of Manus AI as a Fully Autonomous Digital Agent"],
+      manifoldMarkets: ["Manus AI"],
     }
   },
   {
@@ -626,6 +651,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Devin AI", "Cognition Devin"],
       reddit: ["Devin AI", "Cognition Devin"],
       cloudflareRadar: "devin.ai",
+      wikipedia: "Devin AI",
+      manifoldMarkets: ["Devin AI"],
     }
   },
 
@@ -726,6 +753,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["DeepSeek-V3 Technical Report"],
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-v3"],
+      modelscope: ["deepseek-ai/DeepSeek-V3"],
       stackoverflow: ["deepseek"],
       arxiv: ["DeepSeek-V3","DeepSeek V3"],
       manifoldMarkets: ["DeepSeek V3"],
@@ -790,6 +818,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Mistral 7B"],
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral"],
+      modelscope: ["AI-ModelScope/Mistral-Large-Instruct-2411"],
       stackoverflow: ["mistral", "mistral-ai"],
       arxiv: ["Mistral Large","Mistral"],
       manifoldMarkets: ["Mistral Large"],
@@ -812,6 +841,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hfLeaderboard: "Qwen/Qwen2.5-72B-Instruct",
       semanticScholar: ["Qwen2 Technical Report"],
       ollama: ["qwen2.5:72b"],
+      modelscope: ["Qwen/Qwen2.5-72B-Instruct"],
       stackoverflow: ["qwen"],
       arxiv: ["Qwen 2.5","Qwen2.5"],
       manifoldMarkets: ["Qwen 2.5"],
@@ -1026,6 +1056,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["DeepSeek-R1"],
       cloudflareRadar: "deepseek.com",
       ollama: ["deepseek-r1"],
+      modelscope: ["deepseek-ai/DeepSeek-R1"],
       stackoverflow: ["deepseek-r1"],
       arxiv: ["DeepSeek-R1","DeepSeek R1"],
       manifoldMarkets: ["DeepSeek R1"],
@@ -1163,6 +1194,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "deepseek-v3.2",
       semanticScholar: ["DeepSeek-V3 Technical Report"],
       cloudflareRadar: "deepseek.com",
+      modelscope: ["deepseek-ai/DeepSeek-V3"],
       stackoverflow: ["deepseek"],
       arxiv: ["DeepSeek V3.2","DeepSeek-V3"],
       manifoldMarkets: ["DeepSeek V3.2"],
@@ -1410,6 +1442,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       github: ["MiniMax-AI/MiniMax-M1"],
       huggingface: ["MiniMaxAI/MiniMax-M2.5"],
+      modelscope: ["MiniMax/MiniMax-M1-80k"],
       hackernews: ["MiniMax", "MiniMax M2"],
       smolai: ["MiniMax", "MiniMax M2"],
       reddit: ["MiniMax AI", "MiniMax M2"],
@@ -1438,6 +1471,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "glm-5",
       semanticScholar: ["GLM-4 all tools practical tool calling"],
       ollama: ["glm4"],
+      modelscope: ["ZhipuAI/GLM-4-9B-Chat"],
       stackoverflow: ["glm", "chatglm"],
       arxiv: ["GLM-5","GLM-4"],
       manifoldMarkets: ["GLM-5"],
@@ -1458,6 +1492,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       groq: "moonshotai/kimi-k2-instruct-0905",
       lmsysArena: "kimi-k2.5-thinking",
       semanticScholar: ["Kimi K2: Open Agentic Intelligence"],
+      modelscope: ["moonshotai/Kimi-K2-Instruct"],
       stackoverflow: ["kimi", "moonshot"],
       arxiv: ["Kimi K2","Moonshot"],
       manifoldMarkets: ["Kimi K2"],
@@ -1495,6 +1530,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "qwen3-235b-a22b",
       semanticScholar: ["Qwen3 Technical Report"],
       ollama: ["qwen3:235b"],
+      modelscope: ["Qwen/Qwen3-235B-A22B"],
       stackoverflow: ["qwen"],
       arxiv: ["Qwen3","Qwen 3"],
       manifoldMarkets: ["Qwen 3"],
@@ -1554,6 +1590,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hfLeaderboard: "meta-llama/Llama-3.1-8B-Instruct",
       semanticScholar: ["The Llama 3 Herd of Models"],
       ollama: ["llama3.1:8b"],
+      modelscope: ["LLM-Research/Meta-Llama-3.1-8B-Instruct"],
       stackoverflow: ["llama", "meta-llama"],
       arxiv: ["Llama 3.1","Llama 3"],
       manifoldMarkets: ["Llama 3.1"],
@@ -1595,6 +1632,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "qwen3-32b",
       semanticScholar: ["Qwen3 Technical Report"],
       ollama: ["qwen3:32b"],
+      modelscope: ["Qwen/Qwen3-32B"],
       stackoverflow: ["qwen"],
       arxiv: ["Qwen3","Qwen 3"],
       manifoldMarkets: ["Qwen 3"],
@@ -1817,6 +1855,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       lmsysArena: "qwen3.5-397b-a17b",
       semanticScholar: ["Qwen3 Technical Report"],
       ollama: ["qwen3.5:397b"],
+      modelscope: ["Qwen/Qwen3.5-397B-A17B"],
       stackoverflow: ["qwen"],
     }
   },
@@ -1838,6 +1877,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "Mid-size Qwen 3.5 MoE model with 122B params (10B active)",
     sources: {
       huggingface: ["Qwen/Qwen3.5-122B-A10B"],
+      modelscope: ["Qwen/Qwen3.5-122B-A10B"],
       hackernews: ["Qwen 3.5 122B"],
       smolai: ["Qwen 3.5 122B"],
       reddit: ["Qwen 3.5 122B"],
@@ -1851,6 +1891,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "Compact multimodal Qwen 3.5 MoE model with 35B params (3B active)",
     sources: {
       huggingface: ["Qwen/Qwen3.5-35B-A3B"],
+      modelscope: ["Qwen/Qwen3.5-35B-A3B"],
       hackernews: ["Qwen 3.5 35B"],
       smolai: ["Qwen 3.5 35B"],
       reddit: ["Qwen 3.5 35B"],
@@ -1869,6 +1910,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Qwen 3.5 27B"],
       openRouter: "qwen/qwen3.5-27b",
       ollama: ["qwen3.5:27b"],
+      modelscope: ["Qwen/Qwen3.5-27B"],
       stackoverflow: ["qwen"],
     }
   },

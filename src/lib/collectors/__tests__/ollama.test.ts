@@ -124,6 +124,7 @@ function makeEntity(id: string, ollama: string[] | null) {
       manifoldMarkets: [],
       wikipedia: null,
       dockerHub: null,
+      modelscope: null,
     },
   };
 }
