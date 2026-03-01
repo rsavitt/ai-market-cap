@@ -390,6 +390,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       { signal: 'hfDownloads', getSourceKeys: (s) => s.huggingface },
       { signal: 'hfLikes', getSourceKeys: (s) => s.huggingface },
       { signal: 'hfDownloadsVelocity', getSourceKeys: (s) => s.huggingface },
+      { signal: 'cloudflareRadar', getSourceKeys: (s) => s.cloudflareRadar ? [s.cloudflareRadar] : null },
     ];
 
     for (const { signal, getSourceKeys } of deduplicationConfig) {
