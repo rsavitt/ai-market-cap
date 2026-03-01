@@ -6,7 +6,11 @@ interface S2SearchResponse {
   data: { citationCount: number; influentialCitationCount: number }[];
 }
 
-export async function collectSemanticScholar(): Promise<Map<string, number>> {
+export async function collectSemanticScholar(
+  /** Max time in ms before returning partial results (default: no limit) */
+  timeBudgetMs?: number,
+): Promise<Map<string, number>> {
+  const deadline = timeBudgetMs ? Date.now() + timeBudgetMs : Infinity;
   const entityRegistry = await getEntityRegistry();
   const results = new Map<string, number>();
   const apiKey = process.env.SEMANTIC_SCHOLAR_API_KEY;
@@ -88,6 +92,10 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
   if (apiKey) {
     // With API key: batch 3 at a time with short delays
     for (let i = 0; i < allQueries.length; i += 3) {
+      if (Date.now() >= deadline) {
+        console.log(`[semantic-scholar] Time budget exhausted. Got ${queryScores.size}/${allQueries.length} queries.`);
+        break;
+      }
       const batch = allQueries.slice(i, i + 3);
       await Promise.all(batch.map(processQuery));
       if (i + 3 < allQueries.length) {
@@ -99,6 +107,10 @@ export async function collectSemanticScholar(): Promise<Map<string, number>> {
     let consecutiveRateLimits = 0;
 
     for (const query of allQueries) {
+      if (Date.now() >= deadline) {
+        console.log(`[semantic-scholar] Time budget exhausted. Got ${queryScores.size}/${allQueries.length} queries.`);
+        break;
+      }
       if (consecutiveRateLimits >= 5) {
         console.log(`[semantic-scholar] Stopping after ${consecutiveRateLimits} consecutive rate limits. Got ${queryScores.size}/${allQueries.length} queries.`);
         break;

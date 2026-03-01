@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { runGroup3SemanticScholar } from '@/lib/collect';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 function isAuthorized(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
