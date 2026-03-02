@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SEED_ENTITIES } from '@/app/api/admin/seed-entities/route';
+import { SEED_ENTITIES, type SeedEntity } from '@/app/api/admin/seed-entities/route';
 
 /**
  * Text-search sources where generic terms cause false positives.
@@ -86,6 +86,27 @@ const ALLOWED_SINGLE_WORDS = new Set([
 
 const MIN_TERM_LENGTH = 3;
 
+function findSingleWordViolations(entities: SeedEntity[]): string[] {
+  const violations: string[] = [];
+  for (const entity of entities) {
+    for (const source of TEXT_SEARCH_SOURCES) {
+      const terms = entity.sources[source];
+      if (!terms || typeof terms === 'string') continue;
+
+      for (const term of terms) {
+        const isSingleWord = !term.includes(' ');
+        if (isSingleWord && !ALLOWED_SINGLE_WORDS.has(term)) {
+          violations.push(
+            `Entity "${entity.id}": term "${term}" in ${source} is a single word not in the allowlist. ` +
+            `Add a qualifier (e.g., "OpenAI Sora") or add to ALLOWED_SINGLE_WORDS with justification.`
+          );
+        }
+      }
+    }
+  }
+  return violations;
+}
+
 describe('Seed entity search terms', () => {
   it('should not have terms shorter than 3 characters in text-search sources', () => {
     const violations: string[] = [];
@@ -109,25 +130,21 @@ describe('Seed entity search terms', () => {
   });
 
   it('should not have unapproved single-word terms in text-search sources', () => {
-    const violations: string[] = [];
-
-    for (const entity of SEED_ENTITIES) {
-      for (const source of TEXT_SEARCH_SOURCES) {
-        const terms = entity.sources[source];
-        if (!terms || typeof terms === 'string') continue;
-
-        for (const term of terms) {
-          const isSingleWord = !term.includes(' ');
-          if (isSingleWord && !ALLOWED_SINGLE_WORDS.has(term)) {
-            violations.push(
-              `Entity "${entity.id}": term "${term}" in ${source} is a single word not in the allowlist. ` +
-              `Add a qualifier (e.g., "OpenAI Sora") or add to ALLOWED_SINGLE_WORDS with justification.`
-            );
-          }
-        }
-      }
-    }
-
+    const violations = findSingleWordViolations(SEED_ENTITIES);
     expect(violations, violations.join('\n')).toEqual([]);
+  });
+
+  it('should reject a bare generic term like "Sora"', () => {
+    const fakeEntity: SeedEntity = {
+      id: 'test-sora', name: 'Sora', category: 'video', company: 'OpenAI',
+      release_date: '2024-02-15', pricing_tier: 'paid', availability: 'Web',
+      open_source: 0, description: 'Test entity',
+      sources: { hackernews: ['Sora'] },
+    };
+
+    const violations = findSingleWordViolations([fakeEntity]);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]).toContain('"Sora"');
+    expect(violations[0]).toContain('not in the allowlist');
   });
 });
