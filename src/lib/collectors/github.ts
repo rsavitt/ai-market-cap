@@ -20,6 +20,9 @@ export interface GitHubResult {
   forksVelocity: Map<string, number>;
   clones: Map<string, number>;
   views: Map<string, number>;
+  releaseFrequency: Map<string, number>;
+  commitActivity: Map<string, number>;
+  issueResolutionRate: Map<string, number>;
 }
 
 /**
@@ -35,6 +38,9 @@ export async function collectGitHub(): Promise<GitHubResult> {
   const forksVelocity = new Map<string, number>();
   const clones = new Map<string, number>();
   const views = new Map<string, number>();
+  const releaseFrequency = new Map<string, number>();
+  const commitActivity = new Map<string, number>();
+  const issueResolutionRate = new Map<string, number>();
   const token = process.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {
@@ -51,6 +57,10 @@ export async function collectGitHub(): Promise<GitHubResult> {
     let totalForks = 0;
     let totalClones = 0;
     let totalViews = 0;
+    let totalReleases = 0;
+    let totalCommits = 0;
+    let totalClosedIssues = 0;
+    let totalOpenIssues = 0;
 
     for (const repo of entity.sources.github) {
       try {
@@ -95,6 +105,61 @@ export async function collectGitHub(): Promise<GitHubResult> {
             // Skip traffic on error — non-critical
           }
         }
+        // Release frequency: count releases in last 90 days
+        try {
+          const releasesRes = await fetchWithRetry(
+            `https://api.github.com/repos/${repo}/releases?per_page=100`,
+            { headers, signal: AbortSignal.timeout(10000) }
+          );
+          if (releasesRes.ok) {
+            const releases = await releasesRes.json() as { published_at: string }[];
+            const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+            const recentReleases = releases.filter(r =>
+              r.published_at && new Date(r.published_at) > ninetyDaysAgo
+            );
+            totalReleases += recentReleases.length;
+          }
+        } catch {
+          // Skip — non-critical
+        }
+
+        // Commit activity: sum commits over last 13 weeks
+        try {
+          const commitRes = await fetchWithRetry(
+            `https://api.github.com/repos/${repo}/stats/commit_activity`,
+            { headers, signal: AbortSignal.timeout(10000) }
+          );
+          if (commitRes.ok) {
+            const weeks = await commitRes.json() as { total: number }[];
+            if (Array.isArray(weeks)) {
+              totalCommits += weeks.reduce((sum, w) => sum + (w.total ?? 0), 0);
+            }
+          }
+        } catch {
+          // Skip — non-critical
+        }
+
+        // Issue resolution rate: closed / (closed + open) * 100
+        try {
+          const [closedRes, openRes] = await Promise.all([
+            fetchWithRetry(
+              `https://api.github.com/search/issues?q=repo:${repo}+type:issue+state:closed&per_page=1`,
+              { headers, signal: AbortSignal.timeout(10000) }
+            ),
+            fetchWithRetry(
+              `https://api.github.com/search/issues?q=repo:${repo}+type:issue+state:open&per_page=1`,
+              { headers, signal: AbortSignal.timeout(10000) }
+            ),
+          ]);
+          if (closedRes.ok && openRes.ok) {
+            const closedData = await closedRes.json() as { total_count: number };
+            const openData = await openRes.json() as { total_count: number };
+            totalClosedIssues += closedData.total_count ?? 0;
+            totalOpenIssues += openData.total_count ?? 0;
+          }
+        } catch {
+          // Skip — non-critical
+        }
       } catch {
         // Skip failed repos
       }
@@ -129,7 +194,17 @@ export async function collectGitHub(): Promise<GitHubResult> {
     if (totalViews > 0) {
       views.set(entity.id, totalViews);
     }
+    if (totalReleases > 0) {
+      releaseFrequency.set(entity.id, totalReleases);
+    }
+    if (totalCommits > 0) {
+      commitActivity.set(entity.id, totalCommits);
+    }
+    const totalIssues = totalClosedIssues + totalOpenIssues;
+    if (totalIssues > 0) {
+      issueResolutionRate.set(entity.id, Math.round(totalClosedIssues / totalIssues * 100));
+    }
   }
 
-  return { velocity, absolute, forks, forksVelocity, clones, views };
+  return { velocity, absolute, forks, forksVelocity, clones, views, releaseFrequency, commitActivity, issueResolutionRate };
 }

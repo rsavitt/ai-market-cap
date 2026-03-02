@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { exponentialDecay, type RawSignals } from '../../scoring';
+import { exponentialDecay, getDimensionWeights, type RawSignals, type DimensionWeights } from '../../scoring';
 
 // ── Mocks ──
 
@@ -71,7 +71,10 @@ function makeRawSignals(overrides?: Partial<Record<keyof RawSignals, Map<string,
     openRouterSignal: empty(), groqSignal: empty(),
     aaLlmIntelligence: empty(), aaImageArena: empty(),
     aaVideoArena: empty(), lmsysArena: empty(),
-    hfLeaderboard: empty(), semanticScholarCitations: empty(),
+    hfLeaderboard: empty(),
+    githubReleaseFrequency: empty(), githubCommitActivity: empty(),
+    githubIssueResolution: empty(),
+    semanticScholarCitations: empty(),
     openAlexCitations: empty(), arxivMentionVelocity: empty(),
     manifoldMarkets: empty(),
     ...overrides,
@@ -581,7 +584,7 @@ describe('computeScores', () => {
   // ── Composite total ──
 
   describe('composite total', () => {
-    it('total equals 0.25*usage + 0.30*attention + 0.25*capability + 0.20*expert (with confidence discount)', async () => {
+    it('total equals weighted dimensions (with confidence discount) using default weights', async () => {
       const entities = [
         makeEntity('a', 'llm', 'Co1', '2025-05-01'),
         makeEntity('b', 'llm', 'Co2', '2025-05-01'),
@@ -608,6 +611,142 @@ describe('computeScores', () => {
         const expectedTotal = Math.round(rawTotal * expectedDiscount * 100) / 100;
         expect(s.total_score).toBeCloseTo(expectedTotal, 1);
       }
+    });
+
+    it('agent_tools total uses custom weights (0.35/0.35/0.10/0.20)', async () => {
+      const entities = [
+        makeEntity('agent1', 'agent_tools', 'Co1', '2025-05-01', { pypi: ['agent1-pkg'], github: ['org/agent1'] }),
+        makeEntity('agent2', 'agent_tools', 'Co2', '2025-05-01', { pypi: ['agent2-pkg'], github: ['org/agent2'] }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        pypiDownloads: new Map([['agent1', 50000], ['agent2', 10000]]),
+        hackernewsSignal: new Map([['agent1', 80], ['agent2', 20]]),
+        githubCommitActivity: new Map([['agent1', 300], ['agent2', 100]]),
+        semanticScholarCitations: new Map([['agent1', 200], ['agent2', 50]]),
+      });
+      const scores = await computeScores(raw);
+
+      for (const id of ['agent1', 'agent2']) {
+        const s = scores.get(id)!;
+        const rawTotal = 0.35 * s.usage_score + 0.35 * s.attention_score
+          + 0.10 * s.capability_score + 0.20 * s.expert_score;
+        const expectedDiscount = 0.6 + 0.4 * s.confidence;
+        const expectedTotal = Math.round(rawTotal * expectedDiscount * 100) / 100;
+        expect(s.total_score).toBeCloseTo(expectedTotal, 1);
+      }
+    });
+  });
+
+  // ── getDimensionWeights ──
+
+  describe('getDimensionWeights', () => {
+    it('returns agent_tools weights for agent_tools category', () => {
+      const w = getDimensionWeights('agent_tools');
+      expect(w).toEqual({ usage: 0.35, attention: 0.35, capability: 0.10, expert: 0.20 });
+    });
+
+    it('returns default weights for unknown category', () => {
+      const w = getDimensionWeights('general_llm');
+      expect(w).toEqual({ usage: 0.25, attention: 0.30, capability: 0.25, expert: 0.20 });
+    });
+
+    it('all weight sets sum to 1.0', () => {
+      const categories = ['general_llm', 'agent_tools', 'coding', 'image', 'video', 'audio', 'app'];
+      for (const cat of categories) {
+        const w = getDimensionWeights(cat);
+        const sum = w.usage + w.attention + w.capability + w.expert;
+        expect(sum).toBeCloseTo(1.0, 10);
+      }
+    });
+  });
+
+  // ── Coherence check skip for agent_tools ──
+
+  describe('attention-capability coherence', () => {
+    it('skips coherence dampening for agent_tools', async () => {
+      // agent_tools entity with high attention and low capability (floor=5)
+      // Without the skip, attention would be dampened
+      const entities = [
+        makeEntity('agent-hot', 'agent_tools', 'Co1', '2025-05-01', { pypi: ['agent-pkg'] }),
+        makeEntity('agent-cold', 'agent_tools', 'Co2', '2025-05-01', { pypi: ['cold-pkg'] }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        hackernewsSignal: new Map([['agent-hot', 200], ['agent-cold', 10]]),
+        redditSignal: new Map([['agent-hot', 150], ['agent-cold', 5]]),
+        googleTrendsSignal: new Map([['agent-hot', 100], ['agent-cold', 5]]),
+      });
+      const scores = await computeScores(raw);
+
+      const hot = scores.get('agent-hot')!;
+      // Capability should be at floor (5) since no benchmark signals
+      expect(hot.capability_score).toBe(5);
+      // Attention should NOT be dampened to near capability
+      // Without the skip, attention would be capped at ~capability + 25 + remainder*0.5
+      expect(hot.attention_score).toBeGreaterThan(30);
+    });
+  });
+
+  // ── GitHub capability proxy signals ──
+
+  describe('GitHub capability proxy signals', () => {
+    it('agent_tools with GitHub activity scores above capability floor', async () => {
+      const entities = [
+        makeEntity('agent-active', 'agent_tools', 'Co1', '2025-05-01', { github: ['org/active'] }),
+        makeEntity('agent-stale', 'agent_tools', 'Co2', '2025-05-01', { github: ['org/stale'] }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        githubReleaseFrequency: new Map([['agent-active', 12], ['agent-stale', 1]]),
+        githubCommitActivity: new Map([['agent-active', 500], ['agent-stale', 20]]),
+        githubIssueResolution: new Map([['agent-active', 85], ['agent-stale', 30]]),
+      });
+      const scores = await computeScores(raw);
+
+      const active = scores.get('agent-active')!;
+      const stale = scores.get('agent-stale')!;
+      // Both should be above floor since they have GitHub capability data
+      expect(active.capability_score).toBeGreaterThan(5);
+      // Active should score higher than stale
+      expect(active.capability_score).toBeGreaterThan(stale.capability_score);
+    });
+
+    it('LLM entities with benchmarks are not disrupted by GitHub signals', async () => {
+      const entities = [
+        makeEntity('llm-strong', 'general_llm', 'Co1', '2025-05-01', {
+          openRouter: 'llm-or', groq: 'llm-groq',
+          artificialAnalysis: 'llm-aa', lmsysArena: 'llm-lmsys',
+          github: ['org/llm-repo'],
+        }),
+        makeEntity('llm-weak', 'general_llm', 'Co2', '2025-05-01', {
+          openRouter: 'weak-or', groq: 'weak-groq',
+          artificialAnalysis: 'weak-aa', lmsysArena: 'weak-lmsys',
+          github: ['org/weak-repo'],
+        }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        // Strong LLM dominates all benchmarks
+        openRouterSignal: new Map([['llm-strong', 90], ['llm-weak', 30]]),
+        groqSignal: new Map([['llm-strong', 85], ['llm-weak', 25]]),
+        aaLlmIntelligence: new Map([['llm-strong', 88], ['llm-weak', 28]]),
+        lmsysArena: new Map([['llm-strong', 92], ['llm-weak', 32]]),
+        // Weak LLM has more GitHub activity but worse benchmarks
+        githubCommitActivity: new Map([['llm-strong', 50], ['llm-weak', 500]]),
+        githubReleaseFrequency: new Map([['llm-strong', 2], ['llm-weak', 20]]),
+      });
+      const scores = await computeScores(raw);
+
+      const strong = scores.get('llm-strong')!;
+      const weak = scores.get('llm-weak')!;
+      // Multiple benchmark signals (combined weight >> GitHub proxy weight)
+      // should dominate, so strong still wins despite less GitHub activity
+      expect(strong.capability_score).toBeGreaterThan(weak.capability_score);
     });
   });
 });

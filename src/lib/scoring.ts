@@ -34,6 +34,9 @@ export interface RawSignals {
   aaVideoArena: Map<string, number>;
   lmsysArena: Map<string, number>;
   hfLeaderboard: Map<string, number>;
+  githubReleaseFrequency: Map<string, number>;
+  githubCommitActivity: Map<string, number>;
+  githubIssueResolution: Map<string, number>;
   // expert signals
   semanticScholarCitations: Map<string, number>;
   openAlexCitations: Map<string, number>;
@@ -67,6 +70,9 @@ const SIGNAL_NAMES = [
   'aaVideoArena',
   'lmsysArena',
   'hfLeaderboard',
+  'githubReleaseFrequency',
+  'githubCommitActivity',
+  'githubIssueResolution',
   'semanticScholarCitations',
   'openAlexCitations',
   'arxivMentionVelocity',
@@ -82,6 +88,25 @@ export const DECAY_HALF_LIVES: Record<string, number> = {
   capability: 180,
   expert: 90,
 };
+
+export interface DimensionWeights {
+  usage: number;
+  attention: number;
+  capability: number;
+  expert: number;
+}
+
+const DEFAULT_DIMENSION_WEIGHTS: DimensionWeights = {
+  usage: 0.25, attention: 0.30, capability: 0.25, expert: 0.20,
+};
+
+const CATEGORY_DIMENSION_WEIGHTS: Partial<Record<string, DimensionWeights>> = {
+  agent_tools: { usage: 0.35, attention: 0.35, capability: 0.10, expert: 0.20 },
+};
+
+export function getDimensionWeights(category: string): DimensionWeights {
+  return CATEGORY_DIMENSION_WEIGHTS[category] ?? DEFAULT_DIMENSION_WEIGHTS;
+}
 
 /**
  * Exponential decay weight for a data point of a given age.
@@ -348,6 +373,9 @@ function calculateConfidence(
     { map: raw.aaVideoArena, applicable: !!sources?.artificialAnalysis },
     { map: raw.lmsysArena, applicable: !!sources?.lmsysArena },
     { map: raw.hfLeaderboard, applicable: !!sources?.hfLeaderboard },
+    { map: raw.githubReleaseFrequency, applicable: !!sources?.github?.length },
+    { map: raw.githubCommitActivity, applicable: !!sources?.github?.length },
+    { map: raw.githubIssueResolution, applicable: !!sources?.github?.length },
     { map: raw.semanticScholarCitations, applicable: true },
     { map: raw.openAlexCitations, applicable: true },
     { map: raw.arxivMentionVelocity, applicable: !!sources?.arxiv?.length },
@@ -414,6 +442,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     aaVideoArena: new Map(),
     lmsysArena: new Map(),
     hfLeaderboard: new Map(),
+    githubReleaseFrequency: new Map(),
+    githubCommitActivity: new Map(),
+    githubIssueResolution: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
     arxivMentionVelocity: new Map(),
@@ -448,6 +479,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     aaVideoArena: raw.aaVideoArena,
     lmsysArena: raw.lmsysArena,
     hfLeaderboard: raw.hfLeaderboard,
+    githubReleaseFrequency: raw.githubReleaseFrequency,
+    githubCommitActivity: raw.githubCommitActivity,
+    githubIssueResolution: raw.githubIssueResolution,
     semanticScholarCitations: raw.semanticScholarCitations,
     openAlexCitations: raw.openAlexCitations,
     arxivMentionVelocity: raw.arxivMentionVelocity,
@@ -466,6 +500,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       { signal: 'npmDownloads', getSourceKeys: (s) => s.npm },
       { signal: 'githubStars', getSourceKeys: (s) => s.github },
       { signal: 'githubForks', getSourceKeys: (s) => s.github },
+      { signal: 'githubReleaseFrequency', getSourceKeys: (s) => s.github },
+      { signal: 'githubCommitActivity', getSourceKeys: (s) => s.github },
+      { signal: 'githubIssueResolution', getSourceKeys: (s) => s.github },
       { signal: 'huggingfaceSignal', getSourceKeys: (s) => s.huggingface },
       { signal: 'hfDownloads', getSourceKeys: (s) => s.huggingface },
       { signal: 'hfLikes', getSourceKeys: (s) => s.huggingface },
@@ -615,6 +652,9 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.aaVideoArena, weight: 0.08 },
     { normalized: normalizedSignals.lmsysArena, weight: 0.15 },
     { normalized: normalizedSignals.hfLeaderboard, weight: 0.12 },
+    { normalized: normalizedSignals.githubReleaseFrequency, weight: 0.06 },
+    { normalized: normalizedSignals.githubCommitActivity, weight: 0.05 },
+    { normalized: normalizedSignals.githubIssueResolution, weight: 0.06 },
   ], entityIds);
 
   // Expert: Semantic Scholar (0.38) + OpenAlex (0.38) + arXiv Velocity (0.24)
@@ -661,7 +701,11 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
   // inflated attention from generic search terms (e.g., "minimax" matching
   // the CS algorithm) shows as high attention with mediocre capability.
   // Only applies when attention exceeds capability by more than 25 points.
+  // Skipped for agent_tools — their capability is structurally low (no benchmarks),
+  // so dampening would incorrectly penalize legitimate attention.
   for (const id of entityIds) {
+    const entity = entityRegistry.find(e => e.id === id);
+    if (entity?.category === 'agent_tools') continue;
     const attention = attentionScores.get(id) ?? 5;
     const capability = capabilityScores.get(id) ?? 5;
     const gap = attention - capability;
@@ -682,7 +726,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
         const attention = attentionScores.get(id) ?? 5;
         const capability = capabilityScores.get(id) ?? 5;
         const expert = expertScores.get(id) ?? 5;
-        totals.push(0.25 * usage + 0.30 * attention + 0.25 * capability + 0.20 * expert);
+        const w = getDimensionWeights(category);
+        totals.push(w.usage * usage + w.attention * attention + w.capability * capability + w.expert * expert);
       }
     }
     totals.sort((a, b) => a - b);
@@ -697,7 +742,8 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     const capability = capabilityScores.get(id) ?? 5;
     const expert = expertScores.get(id) ?? 5;
 
-    let total = Math.round((0.25 * usage + 0.30 * attention + 0.25 * capability + 0.20 * expert) * 100) / 100;
+    const w = getDimensionWeights(entity?.category ?? 'general_llm');
+    let total = Math.round((w.usage * usage + w.attention * attention + w.capability * capability + w.expert * expert) * 100) / 100;
 
     // New entrants start at category median
     if (isNewEntrant(id, entityRegistry) && entity) {

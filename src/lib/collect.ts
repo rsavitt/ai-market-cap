@@ -146,6 +146,9 @@ async function writeProvenance(
       ['aa_video_arena', raw.aaVideoArena],
       ['lmsys_arena', raw.lmsysArena],
       ['hf_leaderboard', raw.hfLeaderboard],
+      ['github_release_frequency', raw.githubReleaseFrequency],
+      ['github_commit_activity', raw.githubCommitActivity],
+      ['github_issue_resolution', raw.githubIssueResolution],
       ['semantic_scholar_citations', raw.semanticScholarCitations],
       ['open_alex_citations', raw.openAlexCitations],
       ['arxiv_mention_velocity', raw.arxivMentionVelocity],
@@ -322,6 +325,9 @@ export async function runGroup2(): Promise<GroupResult> {
   const githubForksVelocity = githubResult?.forksVelocity ?? new Map<string, number>();
   const githubClones = githubResult?.clones ?? new Map<string, number>();
   const githubViews = githubResult?.views ?? new Map<string, number>();
+  const githubReleaseFrequency = githubResult?.releaseFrequency ?? new Map<string, number>();
+  const githubCommitActivity = githubResult?.commitActivity ?? new Map<string, number>();
+  const githubIssueResolution = githubResult?.issueResolutionRate ?? new Map<string, number>();
 
   await storeRawSignals([
     ['huggingface_signal', hfSignal],
@@ -334,6 +340,9 @@ export async function runGroup2(): Promise<GroupResult> {
     ['github_forks_velocity', githubForksVelocity],
     ['github_clones', githubClones],
     ['github_views', githubViews],
+    ['github_release_frequency', githubReleaseFrequency],
+    ['github_commit_activity', githubCommitActivity],
+    ['github_issue_resolution', githubIssueResolution],
     ['open_router_signal', or ?? new Map()],
     ['open_router_usage', orUsage ?? new Map()],
     ['groq_signal', groq ?? new Map()],
@@ -535,6 +544,9 @@ export async function runScoring(): Promise<ScoringResult> {
     aaVideoArena: new Map(),
     lmsysArena: new Map(),
     hfLeaderboard: new Map(),
+    githubReleaseFrequency: new Map(),
+    githubCommitActivity: new Map(),
+    githubIssueResolution: new Map(),
     semanticScholarCitations: new Map(),
     openAlexCitations: new Map(),
     arxivMentionVelocity: new Map(),
@@ -571,6 +583,9 @@ export async function runScoring(): Promise<ScoringResult> {
     ['aa_video_arena', 'aaVideoArena'],
     ['lmsys_arena', 'lmsysArena'],
     ['hf_leaderboard', 'hfLeaderboard'],
+    ['github_release_frequency', 'githubReleaseFrequency'],
+    ['github_commit_activity', 'githubCommitActivity'],
+    ['github_issue_resolution', 'githubIssueResolution'],
     ['semantic_scholar_citations', 'semanticScholarCitations'],
     ['open_alex_citations', 'openAlexCitations'],
     ['arxiv_mention_velocity', 'arxivMentionVelocity'],
