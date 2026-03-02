@@ -534,7 +534,7 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     ];
     for (const { signal: signalName, percentile } of signalsToClip) {
       const rawMap = signalToRaw[signalName];
-      for (const [category, catIds] of Object.entries(categoriesMap)) {
+      for (const [, catIds] of Object.entries(categoriesMap)) {
         const vals = catIds
           .map(id => rawMap.get(id) ?? 0)
           .filter(v => v > 0)

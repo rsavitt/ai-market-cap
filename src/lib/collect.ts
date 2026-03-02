@@ -27,16 +27,6 @@ import { collectDockerHub } from './collectors/docker-hub';
 import { collectModelScope } from './collectors/modelscope';
 import { detectVelocityAnomaly } from './anomaly';
 
-/**
- * Merge two Maps, keeping the higher value per key.
- */
-function mergeMapsMax(a: Map<string, number>, b: Map<string, number>): Map<string, number> {
-  const merged = new Map(a);
-  b.forEach((value, key) => {
-    merged.set(key, Math.max(merged.get(key) ?? 0, value));
-  });
-  return merged;
-}
 
 interface CollectionResult {
   date: string;

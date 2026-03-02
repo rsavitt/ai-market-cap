@@ -35,12 +35,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "AI pair programmer integrated into major IDEs",
     sources: {
       github: ["github/copilot.vim", "github/copilot-docs"],
-      hackernews: ["GitHub Copilot", "Copilot"],
-      smolai: ["GitHub Copilot", "Copilot"],
+      hackernews: ["GitHub Copilot", "Copilot coding"],
+      smolai: ["GitHub Copilot", "Copilot coding"],
       reddit: ["GitHub Copilot", "Copilot coding"],
       semanticScholar: ["Evaluating Large Language Models Trained on Code"],
       stackoverflow: ["github-copilot", "copilot"],
-      arxiv: ["GitHub Copilot","Copilot"],
+      arxiv: ["GitHub Copilot"],
       manifoldMarkets: ["GitHub Copilot"],
       wikipedia: "GitHub_Copilot",
     }
@@ -241,9 +241,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-08-19", pricing_tier: "freemium", availability: "Web,API", open_source: 0,
     description: "Best-in-class text rendering in AI images",
     sources: {
-      hackernews: ["Ideogram"],
-      smolai: ["Ideogram"],
-      reddit: ["Ideogram"],
+      hackernews: ["Ideogram AI", "Ideogram image"],
+      smolai: ["Ideogram AI", "Ideogram image"],
+      reddit: ["Ideogram AI", "Ideogram image"],
       cloudflareRadar: "ideogram.ai",
       stackoverflow: ["ideogram"],
     }
@@ -290,9 +290,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-10-29", pricing_tier: "freemium", availability: "Web,API", open_source: 0,
     description: "Professional design-focused image generation",
     sources: {
-      hackernews: ["Recraft"],
-      smolai: ["Recraft"],
-      reddit: ["Recraft"],
+      hackernews: ["Recraft AI", "Recraft V3"],
+      smolai: ["Recraft AI", "Recraft V3"],
+      reddit: ["Recraft AI", "Recraft V3"],
       cloudflareRadar: "recraft.ai",
       stackoverflow: ["recraft"],
     }
@@ -315,9 +315,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2025-02-10", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "Text-to-video model with world simulation",
     sources: {
-      hackernews: ["Sora", "OpenAI Sora"],
-      smolai: ["Sora", "OpenAI Sora"],
-      reddit: ["Sora", "OpenAI Sora"],
+      hackernews: ["OpenAI Sora", "Sora video"],
+      smolai: ["OpenAI Sora", "Sora video"],
+      reddit: ["OpenAI Sora", "Sora video"],
       semanticScholar: ["Video generation models as world simulators"],
       cloudflareRadar: "sora.com",
       stackoverflow: ["sora", "openai-sora"],
@@ -377,8 +377,8 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-12-05", pricing_tier: "freemium", availability: "Web,API", open_source: 0,
     description: "Long-form video generation platform (consumer brand: HaiLuo AI)",
     sources: {
-      hackernews: ["MiniMax video", "MiniMax AI", "HaiLuo"],
-      smolai: ["MiniMax video", "MiniMax AI", "HaiLuo"],
+      hackernews: ["MiniMax video", "MiniMax AI", "HaiLuo AI"],
+      smolai: ["MiniMax video", "MiniMax AI", "HaiLuo AI"],
       reddit: ["MiniMax AI", "HaiLuo AI"],
       cloudflareRadar: "hailuoai.video",
       stackoverflow: ["minimax-ai", "hailuo"],
@@ -401,9 +401,9 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-06-01", pricing_tier: "paid", availability: "Web,API", open_source: 0,
     description: "AI avatar video platform for enterprise",
     sources: {
-      hackernews: ["Synthesia"],
-      smolai: ["Synthesia"],
-      reddit: ["Synthesia"],
+      hackernews: ["Synthesia AI", "Synthesia video"],
+      smolai: ["Synthesia AI", "Synthesia video"],
+      reddit: ["Synthesia AI", "Synthesia video"],
       cloudflareRadar: "synthesia.io",
       stackoverflow: ["synthesia"],
     }
@@ -498,6 +498,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2022-11-30", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "OpenAI consumer AI chat application",
     sources: {
+      github: ["openai/openai-cookbook"],
       hackernews: ["ChatGPT"],
       smolai: ["ChatGPT"],
       reddit: ["ChatGPT"],
@@ -505,6 +506,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["chatgpt"],
       wikipedia: "ChatGPT",
       arxiv: ["ChatGPT"],
+      semanticScholar: ["Summary of ChatGPT-Related Research and Perspective Towards the Future of Large Language Models"],
       manifoldMarkets: ["ChatGPT"],
     }
   },
@@ -513,12 +515,15 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-03-14", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Anthropic consumer AI assistant application",
     sources: {
+      github: ["anthropics/claude-cookbooks"],
       hackernews: ["Claude app", "Claude AI chatbot"],
       smolai: ["Claude app", "Claude AI chatbot"],
       reddit: ["Claude app", "Claude AI chatbot"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude"],
       wikipedia: "Claude_(language_model)",
+      arxiv: ["Claude", "Anthropic Claude"],
+      semanticScholar: ["Constitutional AI: Harmlessness from AI Feedback"],
       manifoldMarkets: ["Claude AI app"],
     }
   },
@@ -527,12 +532,15 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-12-06", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Google consumer AI assistant application",
     sources: {
+      github: ["google-gemini/gemini-cli", "google-gemini/cookbook"],
       hackernews: ["Google Gemini app", "Gemini app"],
       smolai: ["Google Gemini app"],
       reddit: ["Gemini app", "Google Gemini app"],
       cloudflareRadar: "gemini.google.com",
       stackoverflow: ["google-gemini"],
       wikipedia: "Gemini_(chatbot)",
+      arxiv: ["Google Gemini", "Gemini app"],
+      semanticScholar: ["Gemini: A Family of Highly Capable Multimodal Models"],
       manifoldMarkets: ["Google Gemini app"],
     }
   },
@@ -541,12 +549,16 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-11-04", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "xAI consumer AI assistant integrated with X/Twitter",
     sources: {
+      github: ["xai-org/xai-cookbook"],
       hackernews: ["Grok app", "Grok xAI"],
       smolai: ["Grok app", "Grok xAI"],
       reddit: ["Grok app", "xAI Grok"],
       cloudflareRadar: "grok.com",
       stackoverflow: ["grok-xai"],
+      huggingface: ["xai-org/grok-1"],
       wikipedia: "Grok_(chatbot)",
+      arxiv: ["Grok xAI", "xAI Grok"],
+      semanticScholar: ["Grok-1: Technical Report"],
       manifoldMarkets: ["Grok xAI"],
     }
   },
@@ -559,10 +571,13 @@ const SEED_ENTITIES: SeedEntity[] = [
       hackernews: ["Perplexity AI", "Perplexity app"],
       smolai: ["Perplexity AI", "Perplexity app"],
       reddit: ["Perplexity AI", "Perplexity app"],
+      huggingface: ["perplexity-ai/r1-1776"],
       openWebUI: ["sonar"],
       cloudflareRadar: "perplexity.ai",
       stackoverflow: ["perplexity-ai"],
       wikipedia: "Perplexity.ai",
+      arxiv: ["Perplexity AI"],
+      semanticScholar: ["Search Engines in an AI Era: The False Promise of Factual Accuracy"],
       manifoldMarkets: ["Perplexity AI"],
     }
   },
@@ -571,6 +586,7 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-12-01", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Microsoft AI assistant integrated with Bing, Windows, and Office",
     sources: {
+      github: ["microsoft/CopilotStudioSamples"],
       hackernews: ["Microsoft Copilot", "Bing Copilot"],
       smolai: ["Microsoft Copilot"],
       reddit: ["Microsoft Copilot", "Bing Copilot"],
@@ -578,6 +594,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       stackoverflow: ["microsoft-copilot"],
       wikipedia: "Microsoft_Copilot",
       arxiv: ["Microsoft Copilot"],
+      semanticScholar: ["Microsoft Copilot"],
       manifoldMarkets: ["Microsoft Copilot"],
     }
   },
@@ -779,12 +796,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       github: ["microsoft/autogen"],
       pypi: ["autogen", "pyautogen", "autogen-agentchat"],
-      hackernews: ["AutoGen", "Microsoft AutoGen"],
-      smolai: ["AutoGen"],
-      reddit: ["AutoGen"],
+      hackernews: ["AutoGen agent", "Microsoft AutoGen"],
+      smolai: ["AutoGen agent", "Microsoft AutoGen"],
+      reddit: ["AutoGen agent", "Microsoft AutoGen"],
       semanticScholar: ["AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation"],
       stackoverflow: ["autogen", "pyautogen"],
-      arxiv: ["AutoGen", "Microsoft AutoGen"],
+      arxiv: ["AutoGen multi-agent", "Microsoft AutoGen"],
     }
   },
   {
@@ -890,7 +907,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["The Claude 3 Model Family", "Claude 3.5 Sonnet Model Card Addendum", "Model Card Addendum: Claude 3.5 Haiku and Upgraded Claude 3.5 Sonnet"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude", "anthropic"],
-      arxiv: ["Claude 3.5 Sonnet","Claude"],
+      arxiv: ["Claude 3.5 Sonnet","Claude Anthropic"],
       manifoldMarkets: ["Claude 3.5 Sonnet"],
       wikipedia: "Claude_(language_model)",
     }
@@ -973,7 +990,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "x-ai/grok-3",
       lmsysArena: "grok-3-preview-02-24",
       stackoverflow: ["grok", "xai"],
-      arxiv: ["Grok 3","Grok"],
+      arxiv: ["Grok 3","Grok xAI"],
       manifoldMarkets: ["Grok 3"],
       wikipedia: "Grok_(chatbot)",
     }
@@ -997,7 +1014,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       ollama: ["mistral"],
       modelscope: ["AI-ModelScope/Mistral-Large-Instruct-2411"],
       stackoverflow: ["mistral-ai"],
-      arxiv: ["Mistral Large","Mistral"],
+      arxiv: ["Mistral Large","Mistral AI"],
       manifoldMarkets: ["Mistral Large"],
       wikipedia: "Mistral_AI",
     }
@@ -1378,7 +1395,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral-large"],
       stackoverflow: ["mistral-ai"],
-      arxiv: ["Mistral Large 3","Mistral"],
+      arxiv: ["Mistral Large 3","Mistral AI"],
       manifoldMarkets: ["Mistral Large 3"],
     }
   },
@@ -1709,7 +1726,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openWebUI: ["grok-4-1", "grok-4.1"],
       lmsysArena: "grok-4.1",
       stackoverflow: ["grok"],
-      arxiv: ["Grok 4.1","Grok"],
+      arxiv: ["Grok 4.1","Grok xAI"],
       manifoldMarkets: ["Grok 4.1"],
     }
   },
