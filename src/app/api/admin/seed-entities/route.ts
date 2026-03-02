@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const entityStmts: { sql: string; args: any[] }[] = [];
     for (const e of SEED_ENTITIES) {
       entityStmts.push({
-        sql: `INSERT OR IGNORE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
+        sql: `INSERT OR REPLACE INTO entities (id, name, category, company, release_date, pricing_tier, availability, open_source, description, logo_url)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
         args: [e.id, e.name, e.category, e.company, e.release_date, e.pricing_tier, e.availability, e.open_source, e.description],
       });
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       const rows = flattenSources(e.id, e.sources);
       for (const r of rows) {
         sourceStmts.push({
-          sql: `INSERT OR IGNORE INTO entity_sources (entity_id, source_type, source_value) VALUES (?, ?, ?)`,
+          sql: `INSERT OR REPLACE INTO entity_sources (entity_id, source_type, source_value) VALUES (?, ?, ?)`,
           args: [e.id, r.source_type, r.source_value],
         });
         sourcesInserted++;
