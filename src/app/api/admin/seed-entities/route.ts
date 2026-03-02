@@ -381,7 +381,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["MiniMax video", "MiniMax AI", "HaiLuo"],
       reddit: ["MiniMax AI", "HaiLuo AI"],
       cloudflareRadar: "hailuoai.video",
-      stackoverflow: ["minimax-video", "hailuo"],
+      stackoverflow: ["minimax-ai", "hailuo"],
     }
   },
   {
@@ -475,7 +475,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Whisper OpenAI"],
       groq: "whisper-large-v3",
       semanticScholar: ["Robust Speech Recognition via Large-Scale Weak Supervision"],
-      stackoverflow: ["whisper", "openai-whisper"],
+      stackoverflow: ["openai-whisper"],
       wikipedia: "Whisper_(speech_recognition_system)",
       dockerHub: ["onerahmet/openai-whisper-asr-webservice"],
     }
@@ -876,7 +876,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral"],
       modelscope: ["AI-ModelScope/Mistral-Large-Instruct-2411"],
-      stackoverflow: ["mistral", "mistral-ai"],
+      stackoverflow: ["mistral-ai"],
       arxiv: ["Mistral Large","Mistral"],
       manifoldMarkets: ["Mistral Large"],
       wikipedia: "Mistral_AI",
@@ -1257,7 +1257,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["Mistral Large 3"],
       cloudflareRadar: "mistral.ai",
       ollama: ["mistral-large"],
-      stackoverflow: ["mistral", "mistral-ai"],
+      stackoverflow: ["mistral-ai"],
       arxiv: ["Mistral Large 3","Mistral"],
       manifoldMarkets: ["Mistral Large 3"],
     }
@@ -1483,16 +1483,16 @@ const SEED_ENTITIES: SeedEntity[] = [
       github: ["MiniMax-AI/MiniMax-M1"],
       huggingface: ["MiniMaxAI/MiniMax-M2.5"],
       modelscope: ["MiniMax/MiniMax-M1-80k"],
-      hackernews: ["MiniMax", "MiniMax M2"],
-      smolai: ["MiniMax", "MiniMax M2"],
+      hackernews: ["MiniMax AI", "MiniMax M2"],
+      smolai: ["MiniMax AI", "MiniMax M2"],
       reddit: ["MiniMax AI", "MiniMax M2"],
       openRouter: "minimax/minimax-m2.5",
       openWebUI: ["minimax-m2"],
       lmsysArena: "minimax-m2.5",
       semanticScholar: ["MiniMax-01 scaling foundation models mixture-of-experts"],
       cloudflareRadar: "minimax.io",
-      stackoverflow: ["minimax"],
-      arxiv: ["MiniMax"],
+      stackoverflow: ["minimax-ai"],
+      arxiv: ["MiniMax-01", "MiniMax AI"],
       manifoldMarkets: ["MiniMax"],
     }
   },
@@ -1512,7 +1512,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       semanticScholar: ["GLM-4 all tools practical tool calling"],
       ollama: ["glm4"],
       modelscope: ["ZhipuAI/GLM-4-9B-Chat"],
-      stackoverflow: ["glm", "chatglm"],
+      stackoverflow: ["chatglm"],
       arxiv: ["GLM-5","GLM-4"],
       manifoldMarkets: ["GLM-5"],
     }
@@ -1827,7 +1827,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/ministral-14b-2512",
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral"],
-      stackoverflow: ["mistral"],
+      stackoverflow: ["mistral-ai"],
       arxiv: ["Ministral"],
     }
   },
@@ -1846,7 +1846,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       hfLeaderboard: "mistralai/Ministral-8B-Instruct-2410",
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral:8b"],
-      stackoverflow: ["mistral"],
+      stackoverflow: ["mistral-ai"],
       arxiv: ["Ministral"],
     }
   },
@@ -1863,7 +1863,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/ministral-3b-2512",
       cloudflareRadar: "mistral.ai",
       ollama: ["ministral:3b"],
-      stackoverflow: ["mistral"],
+      stackoverflow: ["mistral-ai"],
       arxiv: ["Ministral"],
     }
   },
@@ -1880,7 +1880,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "mistralai/devstral-2512",
       cloudflareRadar: "mistral.ai",
       ollama: ["devstral"],
-      stackoverflow: ["mistral", "devstral"],
+      stackoverflow: ["mistral-ai", "devstral"],
       arxiv: ["Devstral"],
     }
   },
@@ -1895,7 +1895,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["Mistral Small Creative"],
       openRouter: "mistralai/mistral-small-creative",
       cloudflareRadar: "mistral.ai",
-      stackoverflow: ["mistral"],
+      stackoverflow: ["mistral-ai"],
     }
   },
 
@@ -2082,8 +2082,8 @@ const SEED_ENTITIES: SeedEntity[] = [
       openRouter: "minimax/minimax-m2.1",
       lmsysArena: "minimax-m2.1-preview",
       cloudflareRadar: "minimax.io",
-      stackoverflow: ["minimax"],
-      arxiv: ["MiniMax"],
+      stackoverflow: ["minimax-ai"],
+      arxiv: ["MiniMax-01", "MiniMax AI"],
     }
   },
 
@@ -2100,7 +2100,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GLM-4.7", "GLM 4.7"],
       openRouter: "z-ai/glm-4.7",
       lmsysArena: "glm-4.7",
-      stackoverflow: ["glm", "chatglm"],
+      stackoverflow: ["chatglm"],
       arxiv: ["GLM-4.7","GLM 4.7"],
     }
   },
@@ -2114,7 +2114,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       reddit: ["GLM-4.7 Flash"],
       openRouter: "z-ai/glm-4.7-flash",
       lmsysArena: "glm-4.7-flash",
-      stackoverflow: ["glm", "chatglm"],
+      stackoverflow: ["chatglm"],
       arxiv: ["GLM-4.7"],
     }
   },

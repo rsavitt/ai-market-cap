@@ -592,14 +592,16 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.modelscopeSignal, weight: 0.04 },
   ], entityIds, 8);
 
-  // Attention: HackerNews (0.35) + Reddit (0.30) + Google Trends (0.20) + SmolAI (0.15)
+  // Attention: HackerNews (0.25) + Reddit (0.20) + Google Trends (0.16) + SO (0.12)
+  //            + Wikipedia (0.07) + SmolAI (0.10) + Manifold Markets (0.10)
   const attentionScores = combineDimension([
-    { normalized: normalizedSignals.hackernewsSignal, weight: 0.28 },
-    { normalized: normalizedSignals.redditSignal, weight: 0.23 },
-    { normalized: normalizedSignals.googleTrendsSignal, weight: 0.18 },
-    { normalized: normalizedSignals.stackoverflowSignal, weight: 0.13 },
-    { normalized: normalizedSignals.wikipediaPageviews, weight: 0.08 },
+    { normalized: normalizedSignals.hackernewsSignal, weight: 0.25 },
+    { normalized: normalizedSignals.redditSignal, weight: 0.20 },
+    { normalized: normalizedSignals.googleTrendsSignal, weight: 0.16 },
+    { normalized: normalizedSignals.stackoverflowSignal, weight: 0.12 },
+    { normalized: normalizedSignals.wikipediaPageviews, weight: 0.07 },
     { normalized: normalizedSignals.smolaiSignal, weight: 0.10 },
+    { normalized: normalizedSignals.manifoldMarkets, weight: 0.10 },
   ], entityIds);
 
   // Capability: OpenRouter (0.20) + Groq (0.15) + AA LLM Intelligence (0.20)
@@ -615,12 +617,11 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     { normalized: normalizedSignals.hfLeaderboard, weight: 0.12 },
   ], entityIds);
 
-  // Expert: Semantic Scholar (0.30) + OpenAlex (0.30) + arXiv Velocity (0.20) + Manifold (0.20)
+  // Expert: Semantic Scholar (0.38) + OpenAlex (0.38) + arXiv Velocity (0.24)
   const expertScores = combineDimension([
-    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.30 },
-    { normalized: normalizedSignals.openAlexCitations, weight: 0.30 },
-    { normalized: normalizedSignals.arxivMentionVelocity, weight: 0.20 },
-    { normalized: normalizedSignals.manifoldMarkets, weight: 0.20 },
+    { normalized: normalizedSignals.semanticScholarCitations, weight: 0.38 },
+    { normalized: normalizedSignals.openAlexCitations, weight: 0.38 },
+    { normalized: normalizedSignals.arxivMentionVelocity, weight: 0.24 },
   ], entityIds);
 
   // ── Apply recency decay to attention and usage ──
@@ -641,6 +642,23 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
       if (attention !== undefined) {
         attentionScores.set(id, Math.round(attention * recencyFactor * 100) / 100);
       }
+    }
+  }
+
+  // ── Attention-capability coherence check ──
+  // Dampen attention scores that are disproportionately high compared to
+  // capability. Genuine top models have correlated attention and capability;
+  // inflated attention from generic search terms (e.g., "minimax" matching
+  // the CS algorithm) shows as high attention with mediocre capability.
+  // Only applies when attention exceeds capability by more than 25 points.
+  for (const id of entityIds) {
+    const attention = attentionScores.get(id) ?? 5;
+    const capability = capabilityScores.get(id) ?? 5;
+    const gap = attention - capability;
+    if (gap > 25) {
+      // Dampen excess attention: keep capability + 25, blend remainder at 50%
+      const dampened = capability + 25 + (gap - 25) * 0.5;
+      attentionScores.set(id, Math.round(dampened * 100) / 100);
     }
   }
 
