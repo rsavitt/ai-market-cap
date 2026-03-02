@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLatestScores } from '@/lib/db';
+import { CATEGORIES } from '@/lib/categories';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       entities,
-      categories: ['coding', 'image', 'video', 'audio', 'general_llm', 'agent_tools'],
+      categories: [...CATEGORIES],
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

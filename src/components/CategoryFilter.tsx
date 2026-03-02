@@ -1,13 +1,6 @@
 "use client";
 
-const LABELS: Record<string, string> = {
-  coding: "Coding",
-  image: "Image Gen",
-  video: "Video Gen",
-  audio: "Audio",
-  general_llm: "General LLMs",
-  agent_tools: "Agent Tools",
-};
+import { CATEGORY_LABELS as LABELS } from "@/lib/categories";
 
 interface Props {
   categories: string[];

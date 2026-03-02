@@ -8,17 +8,7 @@ import TrendChart from "@/components/TrendChart";
 import MomentumGraph from "@/components/MomentumGraph";
 import ComparisonToggle from "@/components/ComparisonToggle";
 
-const CATEGORY_LABELS: Record<string, string> = {
-  coding: "Coding", image: "Image Gen", video: "Video Gen", audio: "Audio", general_llm: "General LLMs", agent_tools: "Agent Tools",
-};
-const CATEGORY_COLORS: Record<string, string> = {
-  coding: "bg-blue-500/20 text-blue-400",
-  image: "bg-purple-500/20 text-purple-400",
-  video: "bg-pink-500/20 text-pink-400",
-  audio: "bg-orange-500/20 text-orange-400",
-  general_llm: "bg-emerald-500/20 text-emerald-400",
-  agent_tools: "bg-cyan-500/20 text-cyan-400",
-};
+import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/lib/categories";
 
 function RankDisplay({ rank, label }: { rank: number; label: string }) {
   const styles: Record<number, string> = {

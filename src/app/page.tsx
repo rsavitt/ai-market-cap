@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { TrendingUp, Activity, Trophy, BarChart3 } from "lucide-react";
 import CategoryFilter from "@/components/CategoryFilter";
 import RankingTable from "@/components/RankingTable";
+import { CATEGORY_LABELS } from "@/lib/categories";
 
 export default function HomePage() {
   const [entities, setEntities] = useState<any[]>([]);
@@ -69,10 +70,6 @@ export default function HomePage() {
   for (const e of entities) {
     categoryCounts[e.category] = (categoryCounts[e.category] || 0) + 1;
   }
-
-  const CATEGORY_LABELS: Record<string, string> = {
-    coding: "Coding", image: "Image Gen", video: "Video Gen", audio: "Audio", general_llm: "General LLMs",
-  };
 
   return (
     <div className="space-y-6 animate-fade-in">
