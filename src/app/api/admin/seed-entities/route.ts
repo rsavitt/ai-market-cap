@@ -570,6 +570,132 @@ const SEED_ENTITIES: SeedEntity[] = [
       manifoldMarkets: ["Perplexity AI"],
     }
   },
+  {
+    id: "microsoft-copilot", name: "Microsoft Copilot", category: "app", company: "Microsoft",
+    release_date: "2023-12-01", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "Microsoft AI assistant integrated with Bing, Windows, and Office",
+    sources: {
+      hackernews: ["Microsoft Copilot", "Bing Copilot"],
+      smolai: ["Microsoft Copilot"],
+      reddit: ["Microsoft Copilot", "Bing Copilot"],
+      cloudflareRadar: "copilot.microsoft.com",
+      stackoverflow: ["microsoft-copilot"],
+      wikipedia: "Microsoft_Copilot",
+      arxiv: ["Microsoft Copilot"],
+      manifoldMarkets: ["Microsoft Copilot"],
+    }
+  },
+  {
+    id: "deepseek-app", name: "DeepSeek", category: "app", company: "DeepSeek",
+    release_date: "2024-01-25", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
+    description: "DeepSeek consumer chat app with reasoning capabilities",
+    sources: {
+      hackernews: ["DeepSeek app", "DeepSeek chat"],
+      smolai: ["DeepSeek app", "DeepSeek chat"],
+      reddit: ["DeepSeek app", "DeepSeek chat"],
+      cloudflareRadar: "chat.deepseek.com",
+      stackoverflow: ["deepseek"],
+      wikipedia: "DeepSeek",
+      arxiv: ["DeepSeek"],
+      manifoldMarkets: ["DeepSeek"],
+    }
+  },
+  {
+    id: "character-ai", name: "Character.ai", category: "app", company: "Character.AI",
+    release_date: "2022-09-16", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "AI character chat and roleplay platform",
+    sources: {
+      hackernews: ["Character.ai", "Character AI"],
+      smolai: ["Character.ai", "Character AI"],
+      reddit: ["Character.ai", "Character AI", "CharacterAI"],
+      cloudflareRadar: "character.ai",
+      stackoverflow: ["character-ai"],
+      wikipedia: "Character.ai",
+      arxiv: ["Character.ai"],
+      manifoldMarkets: ["Character AI"],
+    }
+  },
+  {
+    id: "poe", name: "Poe", category: "app", company: "Quora",
+    release_date: "2022-12-01", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "Multi-model AI chat aggregator by Quora",
+    sources: {
+      hackernews: ["Poe AI", "Poe Quora"],
+      smolai: ["Poe AI"],
+      reddit: ["Poe AI", "Poe chatbot"],
+      cloudflareRadar: "poe.com",
+      stackoverflow: ["poe-ai"],
+      wikipedia: "Poe_(chatbot)",
+      manifoldMarkets: ["Poe AI"],
+    }
+  },
+  {
+    id: "meta-ai", name: "Meta AI", category: "app", company: "Meta",
+    release_date: "2024-04-18", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
+    description: "Meta AI assistant across WhatsApp, Instagram, and web",
+    sources: {
+      hackernews: ["Meta AI"],
+      smolai: ["Meta AI"],
+      reddit: ["Meta AI"],
+      cloudflareRadar: "meta.ai",
+      stackoverflow: ["meta-ai"],
+      wikipedia: "Meta_AI",
+      manifoldMarkets: ["Meta AI"],
+    }
+  },
+  {
+    id: "le-chat", name: "Le Chat", category: "app", company: "Mistral AI",
+    release_date: "2024-02-26", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
+    description: "Mistral consumer AI chat assistant",
+    sources: {
+      hackernews: ["Le Chat", "Mistral Le Chat"],
+      smolai: ["Le Chat", "Mistral Le Chat"],
+      reddit: ["Le Chat", "Mistral Le Chat"],
+      cloudflareRadar: "chat.mistral.ai",
+      stackoverflow: ["le-chat"],
+      manifoldMarkets: ["Le Chat"],
+    }
+  },
+  {
+    id: "huggingchat", name: "HuggingChat", category: "app", company: "Hugging Face",
+    release_date: "2023-04-25", pricing_tier: "free", availability: "Web", open_source: 1,
+    description: "Open-source AI chat app by Hugging Face",
+    sources: {
+      github: ["huggingface/chat-ui"],
+      hackernews: ["HuggingChat"],
+      smolai: ["HuggingChat"],
+      reddit: ["HuggingChat"],
+      cloudflareRadar: "huggingface.co",
+      stackoverflow: ["huggingchat"],
+    }
+  },
+  {
+    id: "you-com", name: "You.com", category: "app", company: "You.com",
+    release_date: "2022-12-23", pricing_tier: "freemium", availability: "Web", open_source: 0,
+    description: "AI search engine and assistant",
+    sources: {
+      hackernews: ["You.com", "You AI"],
+      smolai: ["You.com"],
+      reddit: ["You.com", "You AI search"],
+      cloudflareRadar: "you.com",
+      stackoverflow: ["you-com"],
+      manifoldMarkets: ["You.com"],
+    }
+  },
+  {
+    id: "pi", name: "Pi", category: "app", company: "Inflection AI",
+    release_date: "2023-05-02", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
+    description: "Personal AI assistant focused on empathetic conversation",
+    sources: {
+      hackernews: ["Pi AI", "Inflection Pi"],
+      smolai: ["Pi AI", "Inflection Pi"],
+      reddit: ["Pi AI", "Inflection AI"],
+      cloudflareRadar: "pi.ai",
+      stackoverflow: ["inflection-pi"],
+      wikipedia: "Inflection_AI",
+      manifoldMarkets: ["Inflection AI"],
+    }
+  },
 
   // ── AGENT TOOLS ──
   {
