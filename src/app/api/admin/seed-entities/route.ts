@@ -14,7 +14,7 @@ function isAuthorized(request: NextRequest): boolean {
   return false;
 }
 
-interface SeedEntity {
+export interface SeedEntity {
   id: string;
   name: string;
   category: string;
@@ -27,7 +27,7 @@ interface SeedEntity {
   sources: Record<string, string | string[] | null>;
 }
 
-const SEED_ENTITIES: SeedEntity[] = [
+export const SEED_ENTITIES: SeedEntity[] = [
   // ── CODING ──
   {
     id: "github-copilot", name: "GitHub Copilot", category: "coding", company: "Microsoft",
@@ -522,7 +522,7 @@ const SEED_ENTITIES: SeedEntity[] = [
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude"],
       wikipedia: "Claude_(language_model)",
-      arxiv: ["Claude", "Anthropic Claude"],
+      arxiv: ["Anthropic Claude"],
       semanticScholar: ["Constitutional AI: Harmlessness from AI Feedback"],
       manifoldMarkets: ["Claude AI app"],
     }
