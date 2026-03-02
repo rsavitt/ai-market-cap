@@ -36,6 +36,7 @@ export interface RegisteredEntity {
   open_source: number;
   description: string;
   sources: EntitySources;
+  parent_model?: string;
 }
 
 // Module-level cache
@@ -143,6 +144,9 @@ function assembleSourcesFromRows(rows: EntitySourceRow[]): EntitySources {
         if (!sources.modelscope) sources.modelscope = [];
         sources.modelscope.push(row.source_value);
         break;
+      case 'parent_model':
+        // Handled separately in loadRegistry — no-op here
+        break;
     }
   }
 
@@ -162,18 +166,23 @@ async function loadRegistry(): Promise<RegisteredEntity[]> {
     sourcesByEntity.get(s.entity_id)!.push(s);
   }
 
-  return entities.map((e: Entity) => ({
-    id: e.id,
-    name: e.name,
-    category: e.category,
-    company: e.company,
-    release_date: e.release_date,
-    pricing_tier: e.pricing_tier,
-    availability: e.availability,
-    open_source: e.open_source,
-    description: e.description,
-    sources: assembleSourcesFromRows(sourcesByEntity.get(e.id) ?? []),
-  }));
+  return entities.map((e: Entity) => {
+    const rows = sourcesByEntity.get(e.id) ?? [];
+    const parentModelRow = rows.find(r => r.source_type === 'parent_model');
+    return {
+      id: e.id,
+      name: e.name,
+      category: e.category,
+      company: e.company,
+      release_date: e.release_date,
+      pricing_tier: e.pricing_tier,
+      availability: e.availability,
+      open_source: e.open_source,
+      description: e.description,
+      sources: assembleSourcesFromRows(rows),
+      ...(parentModelRow ? { parent_model: parentModelRow.source_value } : {}),
+    };
+  });
 }
 
 export function invalidateRegistryCache(): void {

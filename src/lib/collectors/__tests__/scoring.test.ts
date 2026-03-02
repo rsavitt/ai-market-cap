@@ -506,6 +506,78 @@ describe('computeScores', () => {
     });
   });
 
+  // ── Parent model capability inheritance ──
+
+  describe('parent model capability inheritance', () => {
+    it('app inherits ~90% of parent model capability', async () => {
+      // Parent model in general_llm with capability data
+      const parentModel = makeEntity('parent-llm', 'general_llm', 'CoA', '2025-01-01', {
+        openRouter: 'parent-or', groq: 'parent-groq',
+        artificialAnalysis: 'parent-aa', lmsysArena: 'parent-lmsys',
+      });
+      // Another general_llm so normalization works (need 2+ for percentile)
+      const otherModel = makeEntity('other-llm', 'general_llm', 'CoB', '2025-01-01', {
+        openRouter: 'other-or', groq: 'other-groq',
+        artificialAnalysis: 'other-aa', lmsysArena: 'other-lmsys',
+      });
+      // App entity with parent_model set
+      const appEntity = {
+        ...makeEntity('my-app', 'app', 'CoA', '2025-01-01'),
+        parent_model: 'parent-llm',
+      };
+      // Another app so app category normalization works
+      const otherApp = makeEntity('other-app', 'app', 'CoC', '2025-01-01');
+
+      setupEntities([parentModel, otherModel, appEntity, otherApp]);
+
+      const raw = makeRawSignals({
+        openRouterSignal: new Map([['parent-llm', 90], ['other-llm', 50]]),
+        groqSignal: new Map([['parent-llm', 85], ['other-llm', 45]]),
+        aaLlmIntelligence: new Map([['parent-llm', 88], ['other-llm', 48]]),
+        lmsysArena: new Map([['parent-llm', 92], ['other-llm', 52]]),
+      });
+
+      const scores = await computeScores(raw);
+      const parent = scores.get('parent-llm')!;
+      const app = scores.get('my-app')!;
+
+      // Parent should have a real capability score (not floor)
+      expect(parent.capability_score).toBeGreaterThan(5);
+      // App should inherit ~90% of parent's capability
+      expect(app.capability_score).toBeCloseTo(parent.capability_score * 0.90, 1);
+      // App capability should be well above the floor
+      expect(app.capability_score).toBeGreaterThan(5);
+    });
+
+    it('app without parent_model stays at capability floor', async () => {
+      const appEntity = makeEntity('no-parent-app', 'app', 'CoA', '2025-05-01');
+      const otherApp = makeEntity('other-app', 'app', 'CoB', '2025-05-01');
+      setupEntities([appEntity, otherApp]);
+
+      const scores = await computeScores(makeRawSignals());
+      const app = scores.get('no-parent-app')!;
+      expect(app.capability_score).toBe(5);
+    });
+
+    it('app with parent at capability floor stays at floor', async () => {
+      // Parent model with no capability data → floor score of 5
+      const parentModel = makeEntity('floor-parent', 'general_llm', 'CoA', '2025-01-01');
+      const otherModel = makeEntity('other-llm', 'general_llm', 'CoB', '2025-01-01');
+      const appEntity = {
+        ...makeEntity('floor-app', 'app', 'CoA', '2025-01-01'),
+        parent_model: 'floor-parent',
+      };
+      const otherApp = makeEntity('other-app', 'app', 'CoC', '2025-01-01');
+
+      setupEntities([parentModel, otherModel, appEntity, otherApp]);
+
+      const scores = await computeScores(makeRawSignals());
+      const app = scores.get('floor-app')!;
+      // Parent is at floor (5), so inheritance doesn't activate (parentCap <= 5)
+      expect(app.capability_score).toBe(5);
+    });
+  });
+
   // ── Composite total ──
 
   describe('composite total', () => {

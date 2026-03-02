@@ -645,6 +645,16 @@ export async function computeScores(raw: RawSignals): Promise<Map<string, Entity
     }
   }
 
+  // ── App entities inherit capability from their parent model (90% discount) ──
+  for (const id of entityIds) {
+    const entity = entityRegistry.find(e => e.id === id);
+    if (entity?.category !== 'app' || !entity.parent_model) continue;
+    const parentCap = capabilityScores.get(entity.parent_model);
+    if (parentCap !== undefined && parentCap > 5) {
+      capabilityScores.set(id, Math.round(parentCap * 0.90 * 100) / 100);
+    }
+  }
+
   // ── Attention-capability coherence check ──
   // Dampen attention scores that are disproportionately high compared to
   // capability. Genuine top models have correlated attention and capability;
