@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SEED_ENTITIES, type SeedEntity } from '@/app/api/admin/seed-entities/route';
+import { SEED_ENTITIES, type SeedEntity } from '@/app/api/admin/seed-entities/data';
 
 /**
  * Text-search sources where generic terms cause false positives.
@@ -86,6 +86,25 @@ const ALLOWED_SINGLE_WORDS = new Set([
 
 const MIN_TERM_LENGTH = 3;
 
+function findShortTermViolations(entities: SeedEntity[]): string[] {
+  const violations: string[] = [];
+  for (const entity of entities) {
+    for (const source of TEXT_SEARCH_SOURCES) {
+      const terms = entity.sources[source];
+      if (!terms || typeof terms === 'string') continue;
+
+      for (const term of terms) {
+        if (term.length < MIN_TERM_LENGTH) {
+          violations.push(
+            `Entity "${entity.id}": term "${term}" in ${source} is shorter than ${MIN_TERM_LENGTH} characters.`
+          );
+        }
+      }
+    }
+  }
+  return violations;
+}
+
 function findSingleWordViolations(entities: SeedEntity[]): string[] {
   const violations: string[] = [];
   for (const entity of entities) {
@@ -109,23 +128,7 @@ function findSingleWordViolations(entities: SeedEntity[]): string[] {
 
 describe('Seed entity search terms', () => {
   it('should not have terms shorter than 3 characters in text-search sources', () => {
-    const violations: string[] = [];
-
-    for (const entity of SEED_ENTITIES) {
-      for (const source of TEXT_SEARCH_SOURCES) {
-        const terms = entity.sources[source];
-        if (!terms || typeof terms === 'string') continue;
-
-        for (const term of terms) {
-          if (term.length < MIN_TERM_LENGTH) {
-            violations.push(
-              `Entity "${entity.id}": term "${term}" in ${source} is shorter than ${MIN_TERM_LENGTH} characters.`
-            );
-          }
-        }
-      }
-    }
-
+    const violations = findShortTermViolations(SEED_ENTITIES);
     expect(violations, violations.join('\n')).toEqual([]);
   });
 
@@ -146,5 +149,19 @@ describe('Seed entity search terms', () => {
     expect(violations).toHaveLength(1);
     expect(violations[0]).toContain('"Sora"');
     expect(violations[0]).toContain('not in the allowlist');
+  });
+
+  it('should reject a term shorter than 3 characters', () => {
+    const fakeEntity: SeedEntity = {
+      id: 'test-short', name: 'Test', category: 'general_llm', company: 'Test',
+      release_date: '2024-01-01', pricing_tier: 'free', availability: 'API',
+      open_source: 0, description: 'Test entity',
+      sources: { reddit: ['AI'] },
+    };
+
+    const violations = findShortTermViolations([fakeEntity]);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]).toContain('"AI"');
+    expect(violations[0]).toContain('shorter than 3 characters');
   });
 });
