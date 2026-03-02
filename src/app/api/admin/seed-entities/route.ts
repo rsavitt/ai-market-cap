@@ -513,14 +513,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-03-14", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Anthropic consumer AI assistant application",
     sources: {
-      hackernews: ["Claude app", "Claude AI"],
-      smolai: ["Claude app", "Claude AI"],
-      reddit: ["Claude app", "Claude AI"],
+      hackernews: ["Claude app", "Claude AI chatbot"],
+      smolai: ["Claude app", "Claude AI chatbot"],
+      reddit: ["Claude app", "Claude AI chatbot"],
       cloudflareRadar: "claude.ai",
       stackoverflow: ["claude"],
       wikipedia: "Claude_(language_model)",
-      arxiv: ["Claude"],
-      manifoldMarkets: ["Claude AI"],
+      manifoldMarkets: ["Claude AI app"],
     }
   },
   {
@@ -530,12 +529,11 @@ const SEED_ENTITIES: SeedEntity[] = [
     sources: {
       hackernews: ["Google Gemini app", "Gemini app"],
       smolai: ["Google Gemini app"],
-      reddit: ["Gemini app", "Google Gemini"],
+      reddit: ["Gemini app", "Google Gemini app"],
       cloudflareRadar: "gemini.google.com",
       stackoverflow: ["google-gemini"],
       wikipedia: "Gemini_(chatbot)",
-      arxiv: ["Gemini"],
-      manifoldMarkets: ["Google Gemini"],
+      manifoldMarkets: ["Google Gemini app"],
     }
   },
   {
@@ -547,10 +545,9 @@ const SEED_ENTITIES: SeedEntity[] = [
       smolai: ["Grok app", "Grok xAI"],
       reddit: ["Grok app", "xAI Grok"],
       cloudflareRadar: "grok.com",
-      stackoverflow: ["grok"],
+      stackoverflow: ["grok-xai"],
       wikipedia: "Grok_(chatbot)",
-      arxiv: ["Grok"],
-      manifoldMarkets: ["Grok"],
+      manifoldMarkets: ["Grok xAI"],
     }
   },
   {
@@ -559,14 +556,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     description: "AI-powered answer engine with real-time search",
     sources: {
       github: ["ppl-ai/pplx-kernels"],
-      hackernews: ["Perplexity AI", "Perplexity"],
-      smolai: ["Perplexity AI", "Perplexity"],
-      reddit: ["Perplexity AI", "Perplexity"],
+      hackernews: ["Perplexity AI", "Perplexity app"],
+      smolai: ["Perplexity AI", "Perplexity app"],
+      reddit: ["Perplexity AI", "Perplexity app"],
       openWebUI: ["sonar"],
       cloudflareRadar: "perplexity.ai",
-      stackoverflow: ["perplexity"],
+      stackoverflow: ["perplexity-ai"],
       wikipedia: "Perplexity.ai",
-      arxiv: ["Perplexity"],
       manifoldMarkets: ["Perplexity AI"],
     }
   },
@@ -590,14 +586,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-01-25", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
     description: "DeepSeek consumer chat app with reasoning capabilities",
     sources: {
-      hackernews: ["DeepSeek app", "DeepSeek chat"],
-      smolai: ["DeepSeek app", "DeepSeek chat"],
-      reddit: ["DeepSeek app", "DeepSeek chat"],
+      hackernews: ["DeepSeek app", "DeepSeek chat app"],
+      smolai: ["DeepSeek app", "DeepSeek chat app"],
+      reddit: ["DeepSeek app", "DeepSeek chat app"],
       cloudflareRadar: "chat.deepseek.com",
       stackoverflow: ["deepseek"],
       wikipedia: "DeepSeek",
-      arxiv: ["DeepSeek"],
-      manifoldMarkets: ["DeepSeek"],
     }
   },
   {
@@ -620,13 +614,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2022-12-01", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Multi-model AI chat aggregator by Quora",
     sources: {
-      hackernews: ["Poe AI", "Poe Quora"],
-      smolai: ["Poe AI"],
-      reddit: ["Poe AI", "Poe chatbot"],
+      hackernews: ["Poe chatbot", "Poe Quora"],
+      smolai: ["Poe chatbot", "Poe Quora"],
+      reddit: ["Poe chatbot", "Poe Quora"],
       cloudflareRadar: "poe.com",
       stackoverflow: ["poe-ai"],
       wikipedia: "Poe_(chatbot)",
-      manifoldMarkets: ["Poe AI"],
+      manifoldMarkets: ["Poe chatbot"],
     }
   },
   {
@@ -634,13 +628,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-04-18", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
     description: "Meta AI assistant across WhatsApp, Instagram, and web",
     sources: {
-      hackernews: ["Meta AI"],
-      smolai: ["Meta AI"],
-      reddit: ["Meta AI"],
+      hackernews: ["Meta AI assistant", "Meta AI app"],
+      smolai: ["Meta AI assistant", "Meta AI app"],
+      reddit: ["Meta AI assistant", "Meta AI app"],
       cloudflareRadar: "meta.ai",
       stackoverflow: ["meta-ai"],
       wikipedia: "Meta_AI",
-      manifoldMarkets: ["Meta AI"],
+      manifoldMarkets: ["Meta AI assistant"],
     }
   },
   {
@@ -648,12 +642,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2024-02-26", pricing_tier: "freemium", availability: "Web,Mobile", open_source: 0,
     description: "Mistral consumer AI chat assistant",
     sources: {
-      hackernews: ["Le Chat", "Mistral Le Chat"],
-      smolai: ["Le Chat", "Mistral Le Chat"],
-      reddit: ["Le Chat", "Mistral Le Chat"],
+      hackernews: ["Mistral Le Chat", "Le Chat Mistral"],
+      smolai: ["Mistral Le Chat", "Le Chat Mistral"],
+      reddit: ["Mistral Le Chat", "Le Chat Mistral"],
       cloudflareRadar: "chat.mistral.ai",
-      stackoverflow: ["le-chat"],
-      manifoldMarkets: ["Le Chat"],
+      stackoverflow: ["le-chat-mistral"],
+      manifoldMarkets: ["Mistral Le Chat"],
     }
   },
   {
@@ -674,12 +668,12 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2022-12-23", pricing_tier: "freemium", availability: "Web", open_source: 0,
     description: "AI search engine and assistant",
     sources: {
-      hackernews: ["You.com", "You AI"],
-      smolai: ["You.com"],
-      reddit: ["You.com", "You AI search"],
+      hackernews: ["You.com AI", "You.com search"],
+      smolai: ["You.com AI"],
+      reddit: ["You.com AI", "You.com search"],
       cloudflareRadar: "you.com",
       stackoverflow: ["you-com"],
-      manifoldMarkets: ["You.com"],
+      manifoldMarkets: ["You.com AI"],
     }
   },
   {
@@ -687,13 +681,13 @@ const SEED_ENTITIES: SeedEntity[] = [
     release_date: "2023-05-02", pricing_tier: "free", availability: "Web,Mobile", open_source: 0,
     description: "Personal AI assistant focused on empathetic conversation",
     sources: {
-      hackernews: ["Pi AI", "Inflection Pi"],
-      smolai: ["Pi AI", "Inflection Pi"],
-      reddit: ["Pi AI", "Inflection AI"],
+      hackernews: ["Inflection Pi", "Pi chatbot Inflection"],
+      smolai: ["Inflection Pi", "Pi Inflection"],
+      reddit: ["Inflection Pi", "Pi Inflection AI"],
       cloudflareRadar: "pi.ai",
       stackoverflow: ["inflection-pi"],
       wikipedia: "Inflection_AI",
-      manifoldMarkets: ["Inflection AI"],
+      manifoldMarkets: ["Inflection Pi"],
     }
   },
 
