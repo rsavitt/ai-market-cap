@@ -102,6 +102,8 @@ const DEFAULT_DIMENSION_WEIGHTS: DimensionWeights = {
 
 const CATEGORY_DIMENSION_WEIGHTS: Partial<Record<string, DimensionWeights>> = {
   agent_tools: { usage: 0.35, attention: 0.35, capability: 0.10, expert: 0.20 },
+  app: { usage: 0.30, attention: 0.35, capability: 0.15, expert: 0.20 },
+  coding: { usage: 0.30, attention: 0.30, capability: 0.20, expert: 0.20 },
 };
 
 export function getDimensionWeights(category: string): DimensionWeights {

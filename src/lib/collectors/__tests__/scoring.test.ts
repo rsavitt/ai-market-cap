@@ -613,6 +613,55 @@ describe('computeScores', () => {
       }
     });
 
+    it('app total uses custom weights (0.30/0.35/0.15/0.20)', async () => {
+      const entities = [
+        makeEntity('app1', 'app', 'Co1', '2025-05-01', { pypi: ['app1-pkg'] }),
+        makeEntity('app2', 'app', 'Co2', '2025-05-01', { pypi: ['app2-pkg'] }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        pypiDownloads: new Map([['app1', 50000], ['app2', 10000]]),
+        hackernewsSignal: new Map([['app1', 80], ['app2', 20]]),
+        semanticScholarCitations: new Map([['app1', 200], ['app2', 50]]),
+      });
+      const scores = await computeScores(raw);
+
+      for (const id of ['app1', 'app2']) {
+        const s = scores.get(id)!;
+        const rawTotal = 0.30 * s.usage_score + 0.35 * s.attention_score
+          + 0.15 * s.capability_score + 0.20 * s.expert_score;
+        const expectedDiscount = 0.6 + 0.4 * s.confidence;
+        const expectedTotal = Math.round(rawTotal * expectedDiscount * 100) / 100;
+        expect(s.total_score).toBeCloseTo(expectedTotal, 1);
+      }
+    });
+
+    it('coding total uses custom weights (0.30/0.30/0.20/0.20)', async () => {
+      const entities = [
+        makeEntity('code1', 'coding', 'Co1', '2025-05-01', { pypi: ['code1-pkg'], github: ['org/code1'] }),
+        makeEntity('code2', 'coding', 'Co2', '2025-05-01', { pypi: ['code2-pkg'], github: ['org/code2'] }),
+      ];
+      setupEntities(entities);
+
+      const raw = makeRawSignals({
+        pypiDownloads: new Map([['code1', 50000], ['code2', 10000]]),
+        hackernewsSignal: new Map([['code1', 80], ['code2', 20]]),
+        githubCommitActivity: new Map([['code1', 300], ['code2', 100]]),
+        semanticScholarCitations: new Map([['code1', 200], ['code2', 50]]),
+      });
+      const scores = await computeScores(raw);
+
+      for (const id of ['code1', 'code2']) {
+        const s = scores.get(id)!;
+        const rawTotal = 0.30 * s.usage_score + 0.30 * s.attention_score
+          + 0.20 * s.capability_score + 0.20 * s.expert_score;
+        const expectedDiscount = 0.6 + 0.4 * s.confidence;
+        const expectedTotal = Math.round(rawTotal * expectedDiscount * 100) / 100;
+        expect(s.total_score).toBeCloseTo(expectedTotal, 1);
+      }
+    });
+
     it('agent_tools total uses custom weights (0.35/0.35/0.10/0.20)', async () => {
       const entities = [
         makeEntity('agent1', 'agent_tools', 'Co1', '2025-05-01', { pypi: ['agent1-pkg'], github: ['org/agent1'] }),
@@ -645,6 +694,16 @@ describe('computeScores', () => {
     it('returns agent_tools weights for agent_tools category', () => {
       const w = getDimensionWeights('agent_tools');
       expect(w).toEqual({ usage: 0.35, attention: 0.35, capability: 0.10, expert: 0.20 });
+    });
+
+    it('returns app weights for app category', () => {
+      const w = getDimensionWeights('app');
+      expect(w).toEqual({ usage: 0.30, attention: 0.35, capability: 0.15, expert: 0.20 });
+    });
+
+    it('returns coding weights for coding category', () => {
+      const w = getDimensionWeights('coding');
+      expect(w).toEqual({ usage: 0.30, attention: 0.30, capability: 0.20, expert: 0.20 });
     });
 
     it('returns default weights for unknown category', () => {
