@@ -1,14 +1,16 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { cache } from "react";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, TrendingUp, TrendingDown, Activity, Globe, Star } from "lucide-react";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import TrendChart from "@/components/TrendChart";
 import MomentumGraph from "@/components/MomentumGraph";
 import ComparisonToggle from "@/components/ComparisonToggle";
-
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/lib/categories";
+import { getEntityById, getDailyScores, getLatestScores, type ScoredEntity } from "@/lib/db";
+
+const getCachedLatestScores = cache(() => getLatestScores());
 
 function RankDisplay({ rank, label }: { rank: number; label: string }) {
   const styles: Record<number, string> = {
@@ -27,46 +29,75 @@ function RankDisplay({ rank, label }: { rank: number; label: string }) {
   );
 }
 
-export default function EntityPage() {
-  const params = useParams();
-  const id = params.id as string;
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const entity = await getEntityById(params.id);
+  if (!entity) return { title: "Entity Not Found | AI Market Cap" };
 
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    fetch(`/api/entities/${id}`)
-      .then(r => r.json())
-      .then(d => { if (d.error) throw new Error(d.error); setData(d); setError(null); })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [id]);
+  const allScored = await getCachedLatestScores();
+  const scored = allScored.find((e: ScoredEntity) => e.id === params.id);
 
-  if (loading) {
-    return (
-      <div className="space-y-6 animate-fade-in">
-        <div className="h-8 w-24 bg-[#111827] rounded animate-pulse" />
-        <div className="h-32 bg-[#111827] rounded-xl animate-pulse" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-64 bg-[#111827] rounded-xl animate-pulse" />
-          <div className="h-64 bg-[#111827] rounded-xl animate-pulse" />
-        </div>
-      </div>
-    );
-  }
+  const name = entity.name;
+  const company = entity.company;
+  const rank = scored?.overall_rank ?? 0;
+  const score = scored?.total_score?.toFixed(1) ?? "0";
+  const description = `${name} by ${company} ranks #${rank} with score ${score}. ${entity.description || ""}`.trim();
 
-  if (error || !data) {
-    return (
-      <div className="text-center py-20">
-        <p className="text-red-400 mb-4">Error: {error || "Entity not found"}</p>
-        <Link href="/" className="text-blue-400 hover:underline">← Back to rankings</Link>
-      </div>
-    );
-  }
+  const title = `${name} - #${rank} AI Ranking | AI Market Cap`;
 
-  const { entity, history, competitors } = data;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
+export default async function EntityPage({ params }: { params: { id: string } }) {
+  const entityBase = await getEntityById(params.id);
+  if (!entityBase) notFound();
+
+  const [history, allScored] = await Promise.all([
+    getDailyScores(params.id, 30),
+    getCachedLatestScores(),
+  ]);
+
+  const scored = allScored.find((e: ScoredEntity) => e.id === params.id);
+
+  const entity = {
+    ...entityBase,
+    usage_score: scored?.usage_score ?? 0,
+    attention_score: scored?.attention_score ?? 0,
+    capability_score: scored?.capability_score ?? 0,
+    expert_score: scored?.expert_score ?? 0,
+    total_score: scored?.total_score ?? 0,
+    confidence_lower: scored?.confidence_lower ?? null,
+    confidence_upper: scored?.confidence_upper ?? null,
+    overall_rank: scored?.overall_rank ?? 0,
+    category_rank: scored?.category_rank ?? 0,
+    momentum_7d: scored?.momentum_7d ?? 0,
+    volatility: scored?.volatility ?? 0,
+  };
+
+  const competitors = allScored
+    .filter((e: ScoredEntity) => e.category === entityBase.category && e.id !== entityBase.id)
+    .map((e: ScoredEntity) => ({
+      id: e.id,
+      name: e.name,
+      company: e.company,
+      total_score: e.total_score,
+      category: e.category,
+      category_rank: e.category_rank,
+    }));
+
+  const sortedHistory = [...history].reverse();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -124,10 +155,10 @@ export default function EntityPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <ScoreBreakdown scores={{ usage_score: entity.usage_score, attention_score: entity.attention_score, capability_score: entity.capability_score, expert_score: entity.expert_score, total_score: entity.total_score, confidence_lower: entity.confidence_lower, confidence_upper: entity.confidence_upper }} />
-          {history?.length > 0 && <TrendChart history={history} />}
+          {sortedHistory.length > 0 && <TrendChart history={sortedHistory} />}
         </div>
         <div className="space-y-6">
-          {history?.length > 0 && <MomentumGraph history={history} momentum={entity.momentum_7d || 0} volatility={entity.volatility || 0} />}
+          {sortedHistory.length > 0 && <MomentumGraph history={sortedHistory} momentum={entity.momentum_7d || 0} volatility={entity.volatility || 0} />}
           <div className="rounded-xl border border-[#1f2b3d] bg-[#111827] p-5">
             <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Quick Stats</h3>
             <div className="grid grid-cols-2 gap-3">
@@ -147,7 +178,7 @@ export default function EntityPage() {
               ))}
             </div>
           </div>
-          {competitors?.length > 0 && (
+          {competitors.length > 0 && (
             <ComparisonToggle competitors={competitors} currentId={entity.id} currentScore={entity.total_score} currentName={entity.name} />
           )}
         </div>
